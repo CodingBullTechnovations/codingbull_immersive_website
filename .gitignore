@@ -2,6 +2,7 @@
 
 # dependencies
 node_modules/
+website/node_modules/
 .pnp
 .pnp.*
 .yarn/*
@@ -15,13 +16,16 @@ coverage/
 
 # next.js
 .next/
+website/.next/
 out/
+website/out/
 
 # production
 build/
 
 # misc
 .DS_Store
+website/.DS_Store
 *.pem
 
 # debug

@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  /* Only ADDING colors, preserving all Tailwind v4 defaults for spacing, typography, widths, etc. */
+  --color-graphite: #1a1a2e;
+  --color-navy: #0f1628;
+  --color-navy-deep: #050505;
+  /* Extracted CodingBull Logo Color (#a7dcf4) */
+  --color-teal: #a7dcf4;
+  --color-teal-dim: #60a0bd;
+  
+  /* Corresponding accent (clean white/silver instead of copper) */
+  --color-copper: #ffffff;
+  --color-copper-dim: #b0b0b0;
+
+  --color-surface: #16182a;
+  --color-surface-elevated: #1e2038;
+  --color-surface-card: #222440;
+  --color-surface-hover: #2a2c4a;
+
+  --color-text-primary: #f0f0f5;
+  --color-text-secondary: #a0a3b5;
+  --color-text-muted: #6b6e80;
+
+  --color-border: #2a2c45;
+  --color-border-subtle: #1f2138;
+}
+
+/* Custom CSS variables used by components for widths */
+@layer base {
+  :root {
+    --max-w-narrow: 800px;
+    --max-w-content: 1200px;
+    --max-w-wide: 1400px;
+
+    /* Maintain Z-Index variables used previously */
+    --z-mobile-cta: 40;
+    --z-dropdown: 45;
+    --z-header: 50;
+    --z-modal: 60;
+  }
+}
+
+/* Base Styles */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--color-navy-deep);
+  color: var(--color-text-primary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-navy);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+::selection {
+  background: rgba(45, 212, 191, 0.25);
+  color: var(--color-text-primary);
+}
+
+/* Utilities */
+@utility gradient-bg-hero {
+  background: radial-gradient(ellipse at 30% 20%, rgba(45, 212, 191, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 80%, rgba(200, 149, 108, 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, var(--color-navy-deep) 0%, var(--color-navy) 100%);
+}
+
+@utility gradient-bg-section {
+  background: linear-gradient(180deg, var(--color-navy) 0%, var(--color-navy-deep) 100%);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

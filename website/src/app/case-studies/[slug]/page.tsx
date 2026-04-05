@@ -1,0 +1,100 @@
+import { redirect, notFound } from 'next/navigation';
+import { Metadata } from 'next';
+import { caseStudiesBySlug } from '@/content/case-studies';
+import { PageHero } from '@/components/sections/PageHero';
+import { SectionWrapper } from '@/components/ui/SectionWrapper';
+import { Button } from '@/components/ui/Button';
+import { generatePageMetadata } from '@/lib/seo';
+
+interface CaseStudyPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const study = caseStudiesBySlug[slug];
+  if (!study) return {};
+
+  return generatePageMetadata({
+    title: `${study.title} | Case Study | CodingBull`,
+    description: study.challenge.substring(0, 160),
+    canonical: `https://www.codingbullz.com/case-studies/${slug}`,
+  });
+}
+
+export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps) {
+  const { slug } = await params;
+  const study = caseStudiesBySlug[slug];
+  if (!study) notFound();
+
+  return (
+    <>
+      <PageHero
+        title={study.client}
+        subtitle={study.title}
+      />
+
+      <SectionWrapper className="py-24">
+        <div className="max-w-4xl mx-auto">
+          {/* Top Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-24">
+            {study.stats.map((stat) => (
+              <div key={stat.label} className="p-8 rounded-[2rem] bg-white/[0.03] border border-white/10 text-center">
+                <span className="text-3xl font-black text-white block mb-2">{stat.value}</span>
+                <span className="text-[10px] uppercase tracking-widest text-white/40">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <div className="lg:col-span-2 space-y-16">
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-widest text-teal mb-4">The Challenge</h2>
+                <p className="text-xl text-white/80 leading-relaxed font-light">{study.challenge}</p>
+              </div>
+
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-widest text-teal mb-4">The Solution</h2>
+                <p className="text-xl text-white/80 leading-relaxed font-light">{study.solution}</p>
+              </div>
+
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-widest text-teal mb-4">The Outcome</h2>
+                <p className="text-xl text-white/80 leading-relaxed font-light">{study.outcome}</p>
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-12">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-6">Tech Architecture</h3>
+                <div className="flex flex-wrap gap-2">
+                  {study.techStack.map((tech) => (
+                    <span key={tech} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-medium text-white/60">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-8 rounded-3xl bg-teal/10 border border-teal/20">
+                <h3 className="text-sm font-black mb-4 italic">Next System: Building one for you?</h3>
+                <p className="text-xs text-white/60 mb-8 leading-relaxed">
+                  We specialize in taking complex challenges like this and building proprietary solutions.
+                </p>
+                <Button
+                  label="Enquire Now"
+                  href="/contact"
+                  variant="primary"
+                  size="default"
+                  className="w-full justify-center"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionWrapper>
+    </>
+  );
+}

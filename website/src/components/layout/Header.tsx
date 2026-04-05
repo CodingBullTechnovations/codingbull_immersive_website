@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { mainNav } from '@/content/navigation';
 import { isNavGroup } from '@/types/content';
 import { Button } from '@/components/ui/Button';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -140,14 +139,11 @@ export function Header() {
           )}
         </nav>
 
-        {/* Desktop CTA & Theme Toggle */}
         <div className="hidden lg:flex items-center gap-5">
-          <ThemeToggle />
           <Button
-            label="Get Quote"
-            href="#whatsapp"
+            label="Initialize Project"
+            href="/contact"
             variant="primary"
-            icon="whatsapp"
             trackingSource="header_cta"
             size="default"
           />

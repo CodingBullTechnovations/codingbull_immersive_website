@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { ProcessStep } from '@/types/content';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,6 +22,7 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (!containerRef.current || !canvasRef.current || SEMICONDUCTOR_FRAMES.length === 0) return;
@@ -29,48 +31,63 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    // Use lower resolution on mobile to guarantee memory safety
-    const isMobile = window.innerWidth < 1024;
-    canvas.width = isMobile ? 1280 : 1920;
-    canvas.height = isMobile ? 720 : 1080;
+    // DPR-aware scaling
+    const dpr = window.devicePixelRatio || 1;
+    const displayWidth = window.innerWidth;
+    const displayHeight = window.innerHeight;
+    canvas.width = displayWidth * dpr;
+    canvas.height = displayHeight * dpr;
+    context.scale(dpr, dpr);
 
     const loadedImages: HTMLImageElement[] = [];
     let loadedCount = 0;
-
-    SEMICONDUCTOR_FRAMES.forEach((src: string, index: number) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        loadedCount++;
-        if (index === 0 && context) {
-          renderFrame(img);
-        }
-        if (loadedCount === SEMICONDUCTOR_FRAMES.length) {
-          setImagesLoaded(true);
-        }
-      };
-      loadedImages.push(img);
-    });
+    let hasStartedLoading = false;
 
     function renderFrame(img: HTMLImageElement) {
       if (!context || !canvas) return;
-      const hRatio = canvas.width / img.width;
-      const vRatio = canvas.height / img.height;
+      const hRatio = displayWidth / img.width;
+      const vRatio = displayHeight / img.height;
       const ratio = Math.max(hRatio, vRatio);
-      const centerShift_x = (canvas.width - img.width * ratio) / 2;
-      const centerShift_y = (canvas.height - img.height * ratio) / 2;
+      const cx = (displayWidth - img.width * ratio) / 2;
+      const cy = (displayHeight - img.height * ratio) / 2;
 
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(
-        img,
-        0, 0, img.width, img.height,
-        centerShift_x, centerShift_y, img.width * ratio, img.height * ratio
-      );
+      context.clearRect(0, 0, displayWidth, displayHeight);
+      context.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
+    }
+
+    function startLoading() {
+      if (hasStartedLoading) return;
+      hasStartedLoading = true;
+
+      SEMICONDUCTOR_FRAMES.forEach((src: string, index: number) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+          loadedCount++;
+          if (index === 0 && context) renderFrame(img);
+          if (loadedCount === SEMICONDUCTOR_FRAMES.length) setImagesLoaded(true);
+        };
+        loadedImages.push(img);
+      });
     }
 
     let ctx = gsap.context(() => {
       const playhead = { frame: 0 };
       
+      if (prefersReducedMotion) {
+        // Just render a stable starting frame
+        if (loadedImages[0]) renderFrame(loadedImages[0]);
+        return;
+      }
+
+      // Lazy loading trigger: start loading frames when section is near
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: 'top 120%',
+        onEnter: startLoading,
+        once: true,
+      });
+
       // Map the 240 frames accurately to the scroll distance of the entire section
       gsap.to(playhead, {
         frame: SEMICONDUCTOR_FRAMES.length - 1,
@@ -80,7 +97,7 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
           trigger: containerRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.5, // 0.5s scrub delay for smoothness
+          scrub: 0.5,
         },
         onUpdate: () => {
           if (loadedImages[playhead.frame]) {
@@ -89,7 +106,7 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
         },
       });
 
-      // Simple fade-in animation for each card as it enters the viewport
+      // Simple fade-in animation for each card
       textRefs.current.forEach((el) => {
         if (!el) return;
         gsap.fromTo(el,

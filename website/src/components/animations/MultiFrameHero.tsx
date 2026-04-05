@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,6 +21,7 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
   const textContainerRef = useRef<HTMLDivElement>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (!containerRef.current || !canvasRef.current || frames.length === 0) return;
@@ -28,8 +30,14 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    canvas.width = 1920;
-    canvas.height = 1080;
+    // DPR-aware scaling for sharpness
+    const dpr = window.devicePixelRatio || 1;
+    const displayWidth = window.innerWidth;
+    const displayHeight = window.innerHeight;
+
+    canvas.width = displayWidth * dpr;
+    canvas.height = displayHeight * dpr;
+    context.scale(dpr, dpr);
 
     const loadedImages: HTMLImageElement[] = [];
     let loadedCount = 0;
@@ -51,13 +59,13 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
 
     function renderFrame(img: HTMLImageElement) {
       if (!context || !canvas) return;
-      const hRatio = canvas.width / img.width;
-      const vRatio = canvas.height / img.height;
+      const hRatio = displayWidth / img.width;
+      const vRatio = displayHeight / img.height;
       const ratio = Math.max(hRatio, vRatio);
-      const centerShift_x = (canvas.width - img.width * ratio) / 2;
-      const centerShift_y = (canvas.height - img.height * ratio) / 2;
+      const centerShift_x = (displayWidth - img.width * ratio) / 2;
+      const centerShift_y = (displayHeight - img.height * ratio) / 2;
 
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.clearRect(0, 0, displayWidth, displayHeight);
       context.drawImage(
         img,
         0, 0, img.width, img.height,
@@ -68,8 +76,13 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
     const ctx = gsap.context(() => {
       const playhead = { frame: 0 };
 
-      // NO pin: true — the container uses CSS height: scrollHeight and the canvas is CSS sticky.
-      // This eliminates the GSAP pin spacer DOM manipulation that caused removeChild crashes.
+      if (prefersReducedMotion) {
+        // If reduced motion is preferred, just render the first frame and skip scrub
+        if (loadedImages[0]) renderFrame(loadedImages[0]);
+        return;
+      }
+
+      // NO pin: true — uses natural scroll height
       gsap.to(playhead, {
         frame: frames.length - 1,
         snap: 'frame',

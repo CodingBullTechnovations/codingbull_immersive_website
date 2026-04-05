@@ -3,6 +3,8 @@
 import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +14,7 @@ const SEMICONDUCTOR_FRAMES = Array.from({ length: 240 }, (_, i) =>
 );
 
 interface CaseStudy {
+  slug: string;
   title: string;
   industry: string;
   description: string;
@@ -35,21 +38,34 @@ export function CaseStudyScrollShowcase({ studies }: CaseStudyScrollShowcaseProp
     const context = canvas.getContext('2d');
     if (!context) return;
 
+    // DPR-aware scaling
+    const dpr = window.devicePixelRatio || 1;
     const isMobile = window.innerWidth < 1024;
-    canvas.width = isMobile ? 1280 : 1920;
-    canvas.height = isMobile ? 720 : 1080;
+    
+    // Physical size
+    const displayWidth = window.innerWidth;
+    const displayHeight = window.innerHeight;
+    
+    // Canvas resolution
+    canvas.width = displayWidth * dpr;
+    canvas.height = displayHeight * dpr;
+    
+    // Scale context back to CSS pixels
+    context.scale(dpr, dpr);
 
     const loadedImages: HTMLImageElement[] = [];
     let loadedCount = 0;
 
     function renderFrame(img: HTMLImageElement) {
       if (!context || !canvas) return;
-      const hRatio = canvas.width / img.width;
-      const vRatio = canvas.height / img.height;
+      
+      const hRatio = displayWidth / img.width;
+      const vRatio = displayHeight / img.height;
       const ratio = Math.max(hRatio, vRatio);
-      const cx = (canvas.width - img.width * ratio) / 2;
-      const cy = (canvas.height - img.height * ratio) / 2;
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = (displayWidth - img.width * ratio) / 2;
+      const cy = (displayHeight - img.height * ratio) / 2;
+      
+      context.clearRect(0, 0, displayWidth, displayHeight);
       context.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
     }
 
@@ -162,13 +178,23 @@ export function CaseStudyScrollShowcase({ studies }: CaseStudyScrollShowcaseProp
                 <p className="text-white/50 text-sm lg:text-base leading-relaxed mb-6 font-light">
                   {study.description}
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-8">
                   {study.highlights.map((h) => (
                     <span key={h} className="px-3 py-1.5 rounded-full border border-teal/20 bg-teal/[0.05] text-xs text-teal/80 font-medium">
                       {h}
                     </span>
                   ))}
                 </div>
+                {study.slug && (
+                  <Button
+                    label="View Deployment Detail"
+                    href={`/case-studies/${study.slug}`}
+                    variant="secondary"
+                    icon="arrow"
+                    size="default"
+                    trackingSource="case_study_scroll_showcase"
+                  />
+                )}
               </div>
             </div>
           ))}

@@ -268,9 +268,9 @@ Within 6 months:
 - **3x increase** in inbound project inquiries
 - **Enterprise clients** reaching out after seeing the Tesla project showcase
 
-## What We Can't Show
+## Tactical Architecture & Internal Systems
 
-Due to NDA agreements, some of ANR's backend operational tools we built (project tracking, vendor management) cannot be discussed publicly. But the portfolio website itself stands as proof that even traditional industries can benefit from premium digital presence.
+To protect the proprietary architectural advantages of our clients, certain mission-critical backend tools—such as bespoke project tracking and vendor management systems—remain strictly internal. However, the public-facing platform stands as a definitive case for modernizing industrial operations through premium digital engineering.
 
 ## Key Insight
 

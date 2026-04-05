@@ -11,7 +11,8 @@ import { MobileWhatsAppCTA } from '@/components/layout/MobileWhatsAppCTA';
 import SmoothScrolling from '@/components/animations/SmoothScrolling';
 import { Preloader } from '@/components/animations/Preloader';
 import { CustomCursor } from '@/components/animations/CustomCursor';
-import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
+import { CookieConsent } from '@/components/layout/CookieConsent';
 import './globals.css';
 
 const inter = Inter({
@@ -37,36 +38,21 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <JsonLd data={generateOrganizationSchema()} />
-        {env.gaId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${env.gaId}`}
-              strategy="afterInteractive"
-            />
-            <Script id="gtag-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${env.gaId}');
-              `}
-            </Script>
-          </>
-        )}
       </head>
       <body
         className="font-[family-name:var(--font-inter)] antialiased bg-[#050505] text-white"
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <AnalyticsProvider>
           <Preloader />
-        <CustomCursor />
-        <Header />
-        <SmoothScrolling>
-          <main>{children}</main>
-        </SmoothScrolling>
-        <Footer />
-        <MobileWhatsAppCTA />
-        </ThemeProvider>
+          <CustomCursor />
+          <Header />
+          <SmoothScrolling>
+            <main>{children}</main>
+          </SmoothScrolling>
+          <Footer />
+          <MobileWhatsAppCTA />
+          <CookieConsent />
+        </AnalyticsProvider>
       </body>
     </html>
   );

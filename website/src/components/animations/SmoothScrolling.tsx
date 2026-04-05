@@ -2,13 +2,17 @@
 
 import { ReactNode, useEffect } from 'react'
 import Lenis from 'lenis'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 
 export default function SmoothScrolling({
   children,
 }: {
   children: ReactNode
 }) {
+  const prefersReducedMotion = usePrefersReducedMotion()
+
   useEffect(() => {
+    if (prefersReducedMotion) return
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

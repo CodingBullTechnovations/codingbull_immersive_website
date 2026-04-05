@@ -7,13 +7,16 @@ import { getWhatsAppUrl } from '@/content/site';
 
 interface ButtonProps {
   label: string;
-  href: string;
+  href?: string;
   variant?: CTAVariant;
   icon?: 'whatsapp' | 'arrow' | 'phone' | 'calendar';
   trackingSource?: string;
   className?: string;
   whatsappMessageKey?: string;
   size?: 'default' | 'large';
+  onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 const WhatsAppIcon = () => (
@@ -35,9 +38,9 @@ const icons: Record<string, React.FC> = {
 
 const variantClasses: Record<CTAVariant, string> = {
   primary:
-    'bg-cta-green hover:bg-cta-green-hover text-white shadow-lg hover:shadow-xl',
+    'bg-primary hover:bg-primary-hover text-black shadow-glow hover:shadow-[0_0_30px_rgba(45,212,191,0.5)] transition-all duration-300',
   secondary:
-    'border border-teal/40 hover:border-teal/70 text-teal hover:bg-teal/10',
+    'border border-primary/40 hover:border-primary/80 text-primary hover:bg-primary/5',
   ghost:
     'text-text-secondary hover:text-text-primary hover:bg-surface-hover',
 };
@@ -51,32 +54,55 @@ export function Button({
   className = '',
   whatsappMessageKey,
   size = 'default',
+  onClick,
+  disabled,
+  type = 'button',
 }: ButtonProps) {
   const IconComponent = icon ? icons[icon] : null;
   const isWhatsApp = href === '#whatsapp' || icon === 'whatsapp';
   const finalHref = isWhatsApp
-    ? getWhatsAppUrl(whatsappMessageKey as 'general' | 'healthcare' | 'ecommerce' | 'hrms' ?? 'general')
+    ? getWhatsAppUrl((whatsappMessageKey || 'general') as any)
     : href;
-  const isExternal = finalHref.startsWith('http') || finalHref.startsWith('https');
+  const isExternal = finalHref?.startsWith('http') || finalHref?.startsWith('https');
 
   const sizeClass = size === 'large'
     ? 'px-8 py-4 text-base'
     : 'px-6 py-3 text-sm';
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+    if (onClick) onClick(e);
     if (trackingSource) {
       trackCTAClick(trackingSource);
     }
     if (isWhatsApp && trackingSource) {
-      trackWhatsAppClick(trackingSource as 'hero' | 'sticky' | 'cta_block' | 'service_page' | 'founder_note' | 'footer' | 'final_cta');
+      trackWhatsAppClick(trackingSource);
     }
   };
 
   const classes = `
     inline-flex items-center gap-2 font-semibold rounded-[var(--radius-button)]
     transition-all duration-[var(--duration-normal)] cursor-pointer
+    disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale-[0.5]
     ${sizeClass} ${variantClasses[variant]} ${className}
   `.trim();
+
+  if (!finalHref) {
+    return (
+      <button
+        type={type}
+        disabled={disabled}
+        className={classes}
+        onClick={handleClick}
+      >
+        {IconComponent && <IconComponent />}
+        {label}
+      </button>
+    );
+  }
 
   if (isExternal) {
     return (

@@ -32,7 +32,7 @@ export function getServerEnv() {
     emailApiKey: getEnvVar('EMAIL_API_KEY', ''),
 
     /** Email address to receive form submissions */
-    contactEmail: getEnvVar('CONTACT_EMAIL', 'hello@codingbullz.com'),
+    contactEmail: getEnvVar('CONTACT_EMAIL', 'codingbullz@gmail.com'),
 
     /** Email from address */
     emailFrom: getEnvVar('EMAIL_FROM', 'noreply@codingbullz.com'),

@@ -76,7 +76,7 @@ export function HeroSection({ content }: HeroSectionProps) {
       </div>
       <div className="hero-anim-item w-full max-w-2xl p-8 sm:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
         <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
-          Intelligent, scalable architecture engineered precisely for your operational complexity. We do not build websites; we build ecosystems.
+          From clinic websites to enterprise platforms — we design, build, and ship custom digital systems engineered precisely for your operational complexity.
         </p>
       </div>
     </div>

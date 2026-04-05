@@ -10,7 +10,7 @@ export function generateOrganizationSchema() {
     '@type': 'Organization',
     name: siteConfig.companyName,
     url: siteConfig.baseUrl,
-    logo: `${siteConfig.baseUrl}/images/logo.png`,
+    logo: `${siteConfig.baseUrl}/images/logo/logo.png`,
     description: siteConfig.positioningStatement,
     address: {
       '@type': 'PostalAddress',

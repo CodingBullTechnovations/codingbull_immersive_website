@@ -68,20 +68,9 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Socials & Legal Bar */}
+        {/* Socials & Legal Bar - Removed social links until verified */}
         <div className="py-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            {['LinkedIn', 'Twitter / X'].map((platform) => (
-              <div key={platform} className="group relative">
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                  Coming Soon
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45" />
-                </div>
-                <button className="px-5 py-2.5 rounded-full border border-white/10 text-xs font-semibold uppercase tracking-wider text-white/50 hover:text-white hover:border-white/30 hover:bg-white/[0.03] transition-all duration-300">
-                  {platform}
-                </button>
-              </div>
-            ))}
           </div>
 
           <p className="text-[11px] text-white/40 font-medium tracking-wider uppercase">

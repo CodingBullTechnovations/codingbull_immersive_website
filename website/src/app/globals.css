@@ -24,6 +24,15 @@
 
   --color-border: #2a2c45;
   --color-border-subtle: #1f2138;
+
+  /* CTA and Brand Primary colors (Radiant Cyan) */
+  --color-primary: #2dd4bf;
+  --color-primary-hover: #14b8a6;
+  --color-primary-glow: rgba(45, 212, 191, 0.35);
+
+  /* Shadows & Glows */
+  --shadow-elevated: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px -5px var(--color-primary-glow);
 }
 
 /* Custom CSS variables used by components for widths */
@@ -38,6 +47,10 @@
     --z-dropdown: 45;
     --z-header: 50;
     --z-modal: 60;
+
+    /* Component tokens */
+    --radius-button: 0.75rem;
+    --duration-normal: 300ms;
   }
 }
 

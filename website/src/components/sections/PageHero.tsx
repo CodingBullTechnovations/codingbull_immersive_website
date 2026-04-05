@@ -15,7 +15,7 @@ interface PageHeroProps {
 }
 
 const ACCENT_GRADIENTS: Record<string, { from: string; to: string; glow: string }> = {
-  teal: { from: '#14b8a6', to: '#5aeacc', glow: 'rgba(20,184,166,0.15)' },
+  teal: { from: '#2dd4bf', to: '#a7dcf4', glow: 'rgba(45,212,191,0.15)' },
   violet: { from: '#8b5cf6', to: '#c4b5fd', glow: 'rgba(139,92,246,0.15)' },
   amber: { from: '#f59e0b', to: '#fcd34d', glow: 'rgba(245,158,11,0.15)' },
   rose: { from: '#f43f5e', to: '#fda4af', glow: 'rgba(244,63,94,0.15)' },

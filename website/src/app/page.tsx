@@ -28,7 +28,7 @@ export default function Home() {
       <TrustBar stats={homeContent.trustStats} />
 
       {/* 3. What We Build */}
-      <WhatWeBuildSection items={homeContent.whatWeBuild} />
+      <WhatWeBuildSection />
 
       {/* 4. Why Choose Us */}
       <WhyChooseUs items={homeContent.whyChooseUs} />

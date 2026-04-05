@@ -16,8 +16,8 @@ export const siteConfig: SiteConfig = {
       'Hi, I need a custom e-commerce system built. Can we discuss scope and fixed pricing?',
     hrms: "Hi, I'm looking for HRMS/payroll software for my team. I'd like a fixed-price quote.",
   },
-  email: 'hello@codingbullz.com',
-  phone: '+91 98765 43210',
+  email: 'codingbullz@gmail.com',
+  phone: '+91 79848 91664',
   address: {
     street: 'Ahmedabad',
     city: 'Ahmedabad',
@@ -25,11 +25,7 @@ export const siteConfig: SiteConfig = {
     country: 'India',
     zip: '380015',
   },
-  socialLinks: {
-    linkedin: 'https://linkedin.com/company/codingbull',
-    twitter: 'https://twitter.com/codingbull',
-    instagram: 'https://instagram.com/codingbull',
-  },
+  socialLinks: {}, // Placeholder until profiles are verified as active
   registration: {
     gst: '24AAMCC7617E1ZP', // Add when available
     cin: '', // Add when available

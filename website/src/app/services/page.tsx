@@ -19,7 +19,7 @@ export default function ServicesPage() {
       />
 
       <div className="relative z-10 -mt-12 lg:-mt-20">
-        <WhatWeBuildSection items={homeContent.whatWeBuild} />
+        <WhatWeBuildSection />
       </div>
 
       <CTASection cta={homeContent.finalCTA} />

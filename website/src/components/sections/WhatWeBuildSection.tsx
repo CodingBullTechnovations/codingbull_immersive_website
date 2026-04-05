@@ -4,11 +4,10 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Button } from '@/components/ui/Button';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 // Intentionally ignoring props to maintain architectural content strictness
-interface WhatWeBuildSectionProps {
-  items?: any;
-}
+interface WhatWeBuildSectionProps {}
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -54,11 +53,11 @@ const industrialNiches = [
     title: 'Custom Hardware & Portals',
     subtitle: 'Deep integration architecture. From embedded machinery dashboards (Semiconductor interfaces) to massive bespoke CRM structures.',
     chips: ['Hardware Interfaces', 'Internal Portals', 'Legacy System APIs'],
-    href: '/services/custom-software',
+    href: '/contact',
   }
 ];
 
-export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
+export function WhatWeBuildSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const horizontalTrackRef = useRef<HTMLDivElement>(null);
@@ -70,19 +69,24 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
   const corePulseRef = useRef<HTMLDivElement>(null);
   const stageContainerRef = useRef<HTMLDivElement>(null);
 
-  // Staged Memory Management Cache
   const imageCache = useRef<Record<number, HTMLImageElement[]>>({});
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (!sectionRef.current || !canvasRef.current) return;
+    if (!sectionRef.current || !canvasRef.current || prefersReducedMotion) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Rendering Master 1080p
-    canvas.width = 1920;
-    canvas.height = 1080;
+    // DPR-aware scaling for crispness
+    const dpr = window.devicePixelRatio || 1;
+    const displayWidth = window.innerWidth;
+    const displayHeight = window.innerHeight;
+    
+    canvas.width = displayWidth * dpr;
+    canvas.height = displayHeight * dpr;
+    ctx.scale(dpr, dpr);
 
     const loadChapterImages = (idx: number) => {
       if (idx < 0 || idx >= 5) return;
@@ -103,7 +107,8 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
         img.decode().catch(() => {});
         if (idx === 0 && i === 0) {
           img.onload = () => {
-             if(Math.round(ScrollTrigger.getById('horizontal360Engine')?.progress || 0) === 0) {
+             const progress = ScrollTrigger.getById('horizontal360Engine')?.progress || 0;
+             if(Math.round(progress) === 0) {
                  renderToCanvas(img);
              }
           };
@@ -119,19 +124,26 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
     };
 
     const renderToCanvas = (img: HTMLImageElement) => {
-      const hRatio = canvas.width / img.width;
-      const vRatio = canvas.height / img.height;
+      const hRatio = displayWidth / img.width;
+      const vRatio = displayHeight / img.height;
       const ratio = Math.max(hRatio, vRatio); // Object-cover calculation
-      const cx = (canvas.width - img.width * ratio) / 2;
-      const cy = (canvas.height - img.height * ratio) / 2;
+      const cx = (displayWidth - img.width * ratio) / 2;
+      const cy = (displayHeight - img.height * ratio) / 2;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, displayWidth, displayHeight);
       ctx.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
     };
 
-    // Preload intro and chapter 1
-    loadChapterImages(0);
-    loadChapterImages(1);
+    // Lazy load: only start loading when section is entering viewport
+    ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: 'top 150%',
+      onEnter: () => {
+        loadChapterImages(0);
+        loadChapterImages(1);
+      },
+      once: true
+    });
 
     // Spatial Pointer listener (Holographic effect)
     const handleMouseMove = (e: MouseEvent) => {
@@ -163,7 +175,8 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
           // --- 1. Horizontal Tracking Math ---
           // Container is 500vw total (Intro + 4 Cards). We translate it -400vw across progress exactly.
           if (horizontalTrackRef.current) {
-             gsap.set(horizontalTrackRef.current, { x: `-${progress * 400}vw` });
+             // Use xPercent instead of vw for better mobile/Safari stability
+             gsap.set(horizontalTrackRef.current, { xPercent: -progress * 80 }); 
           }
 
           // --- 2. Master Canvas Frame Scrubbing ---
@@ -265,11 +278,11 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
       </div>
       <div className="w-full sm:w-[80%] max-w-2xl p-8 lg:p-12 bg-black/40 backdrop-blur-2xl border border-white/5 shadow-[0_0_80px_rgba(20,184,166,0.1)] relative overflow-hidden flex flex-col items-center">
         {/* Optical Center Beams */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-teal shadow-[0_0_15px_#14b8a6]" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-teal shadow-[0_0_15px_#14b8a6]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-primary shadow-[0_0_15px_#2dd4bf]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-primary shadow-[0_0_15px_#2dd4bf]" />
         
         <p className="text-white/80 text-xl sm:text-2xl font-light leading-relaxed relative z-10 text-center">
-          We do not build generic sites. We engineer 360-degree digital ecosystems that completely dominate specific markets.
+          We build websites, platforms, and digital systems custom-engineered to dominate your specific market.
         </p>
       </div>
     </div>
@@ -295,10 +308,10 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
       <div className="hud-glass-panel w-full p-8 lg:p-12 backdrop-blur-3xl border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.8)] flex flex-col gap-8 lg:gap-10 relative overflow-hidden group hover:border-teal/30 transition-colors duration-500 rounded-sm">
         
         {/* Tactical Outer Crosshairs */}
-        <div className="absolute top-0 left-0 w-8 h-[2px] bg-teal shadow-[0_0_15px_#14b8a6]" />
-        <div className="absolute top-0 left-0 w-[2px] h-8 bg-teal shadow-[0_0_15px_#14b8a6]" />
-        <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-teal shadow-[0_0_15px_#14b8a6]" />
-        <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-teal shadow-[0_0_15px_#14b8a6]" />
+        <div className="absolute top-0 left-0 w-8 h-[2px] bg-primary shadow-[0_0_15px_#2dd4bf]" />
+        <div className="absolute top-0 left-0 w-[2px] h-8 bg-primary shadow-[0_0_15px_#2dd4bf]" />
+        <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-primary shadow-[0_0_15px_#2dd4bf]" />
+        <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-primary shadow-[0_0_15px_#2dd4bf]" />
         
         {/* Scanline Interface grid */}
         <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-[0.04] bg-[linear-gradient(transparent_50%,rgba(255,255,255,1)_50%)] bg-[length:100%_4px]" />
@@ -310,7 +323,7 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
         {/* Modular Chips */}
         <div className="flex flex-wrap gap-3 relative z-10">
            {niche.chips.map((chip, cIdx) => (
-              <span key={cIdx} className="px-5 py-2.5 bg-black/50 border border-white/20 text-xs sm:text-[13px] font-mono tracking-widest text-white/60 backdrop-blur-md transition-colors shadow-inner group-hover:text-teal group-hover:bg-teal/5">
+              <span key={cIdx} className="px-5 py-2.5 bg-black/50 border border-white/20 text-xs sm:text-[13px] font-mono tracking-widest text-white/60 backdrop-blur-md transition-colors shadow-inner group-hover:text-primary group-hover:bg-primary/5">
                  {chip}
               </span>
            ))}
@@ -331,6 +344,21 @@ export function WhatWeBuildSection({ items }: WhatWeBuildSectionProps) {
   ));
 
   const trackNodes = [sectionIntro, ...specializedHUDs];
+
+  if (prefersReducedMotion) {
+    return (
+      <section className="relative w-full bg-black py-24 px-6 space-y-32">
+        {sectionIntro}
+        <div className="max-w-4xl mx-auto space-y-24">
+          {specializedHUDs.map((node, idx) => (
+            <div key={idx} className="w-full pointer-events-auto">
+              {node}
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={sectionRef} className="relative h-[800vh] w-full bg-black text-white">

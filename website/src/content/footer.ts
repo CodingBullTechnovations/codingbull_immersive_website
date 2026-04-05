@@ -34,6 +34,5 @@ export const footerContent: FooterContent = {
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Terms of Engagement', href: '/terms' },
   ],
-  companyInfo:
-    '© 2025 CodingBull Technovations Pvt. Ltd. | GSTIN: 24AAMCC7617E1ZP. All rights reserved.',
+  companyInfo: `© ${new Date().getFullYear()} CodingBull Technovations Pvt. Ltd. | GSTIN: 24AAMCC7617E1ZP. All rights reserved.`,
 };

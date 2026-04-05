@@ -2,40 +2,23 @@ import { PageHero } from '@/components/sections/PageHero';
 import { CaseStudyScrollShowcase } from '@/components/sections/CaseStudyScrollShowcase';
 import { CTASection } from '@/components/sections/CTASection';
 import { homeContent } from '@/content/home';
+import { caseStudies } from '@/content/case-studies';
+import { generatePageMetadata } from '@/lib/seo';
+import { pageMetadata } from '@/lib/seo';
+import { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Case Studies | CodingBull Technovations',
-  description: 'Explore our deployed enterprise software architectures — from healthcare scheduling platforms to e-commerce and HRMS core systems.',
-};
-
-const caseStudies = [
-  {
-    title: 'Physioways Active Health LLP',
-    industry: 'Healthcare Operations',
-    description: 'Developed a comprehensive software suite handling everything from patient scheduling and attendance tracking to automated payroll processing for a multi-branch physiotherapy clinic network.',
-    highlights: ['Attendance & KPI Tracking', 'Automated Payroll Algorithms', 'Staff Management Dashboard', 'Multi-Branch Operations'],
-  },
-  {
-    title: 'Shashwat IVF',
-    industry: 'Healthcare & Clinic Management',
-    description: 'Built a dynamic system utilizing a powerful Django backend panel, granting full frontend administrative control to update clinic information and patient flows anytime, anywhere.',
-    highlights: ['Dynamic Django Backend', 'Full Frontend CMS Control', 'Secure Patient Data Flow', 'Real-Time Content Updates'],
-  },
-  {
-    title: 'ANR Mechanicals',
-    industry: 'Engineering & Supply Chain',
-    description: 'Designed and developed their high-end portfolio website to capture enterprise attention, notably highlighting their massive 150,000 sqft Tesla project. Other backend work remains under NDA.',
-    highlights: ['Tesla 150,000 sqft Project', 'Premium Portfolio Design', 'Lead Capture Architecture', 'SEO Optimization'],
-  },
-  {
-    title: 'Enterprise E-Commerce Platform',
-    industry: 'Retail & Distribution',
-    description: 'Engineered a highly SEO-friendly React and Django e-commerce platform. Almost all media and inventory is centralized via the backend, integrated with Shiprocket logistics and Razorpay payments.',
-    highlights: ['React + Django Stack', 'Shiprocket Integration', 'Razorpay Gateway', 'Centralized Inventory', 'SEO-First Architecture'],
-  },
-];
+export const metadata: Metadata = generatePageMetadata(pageMetadata.caseStudies);
 
 export default function CaseStudiesPage() {
+  // Map content structure to component structure
+  const displayStudies = caseStudies.map(s => ({
+    slug: s.slug,
+    title: s.title,
+    industry: s.category,
+    description: s.challenge,
+    highlights: s.techStack.slice(0, 4),
+  }));
+
   return (
     <>
       <PageHero
@@ -45,7 +28,7 @@ export default function CaseStudiesPage() {
         accentColor="amber"
       />
 
-      <CaseStudyScrollShowcase studies={caseStudies} />
+      <CaseStudyScrollShowcase studies={displayStudies} />
 
       <CTASection cta={homeContent.finalCTA} />
     </>

@@ -11,7 +11,7 @@ export function generatePageMetadata(page: PageMetadata): Metadata {
     ? page.title
     : `${page.title} | CodingBull Technovations`;
 
-  const ogImage = page.ogImage ?? `${siteConfig.baseUrl}/og/default.jpg`;
+  const ogImage = page.ogImage ?? `${siteConfig.baseUrl}/images/logo/logo.png`;
 
   return {
     title,
@@ -108,5 +108,15 @@ export const pageMetadata: Record<string, PageMetadata> = {
       'Custom healthcare, e-commerce, and HRMS software for USA businesses. Fixed-price projects, direct founder communication, India-based development team.',
     keywords: ['custom software USA', 'offshore software development', 'healthcare software USA'],
     canonical: `${siteConfig.baseUrl}/usa`,
+  },
+  privacy: {
+    title: 'Privacy Policy | CodingBull Technovations',
+    description: 'Privacy policy for CodingBull Technovations. How we handle data and protect your identity in our custom software projects.',
+    canonical: `${siteConfig.baseUrl}/privacy`,
+  },
+  terms: {
+    title: 'Terms of Engagement | CodingBull Technovations',
+    description: 'Terms of engagement for CodingBull Technovations. Standard operational terms for our custom software development projects.',
+    canonical: `${siteConfig.baseUrl}/terms`,
   },
 };

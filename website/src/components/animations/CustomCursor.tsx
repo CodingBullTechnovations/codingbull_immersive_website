@@ -2,12 +2,15 @@
 
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
     // Only run on desktop
     if (typeof window === 'undefined' || window.innerWidth < 768) return;
 
@@ -67,6 +70,8 @@ export function CustomCursor() {
       document.removeEventListener('mouseout', handleMouseOut);
     };
   }, []);
+
+  if (prefersReducedMotion) return null;
 
   // Hidden on mobile via CSS (hidden md:block)
   return (

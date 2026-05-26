@@ -44,3 +44,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 website/next-env.d.ts
+.agent/workflows/ui-ux-pro-max.md
+.agent/workflows/when to code and how.md
+.codex/skills/ui-ux-pro-max/SKILL.md
+.shared/ui-ux-pro-max/design-rules.md
+website/AGENTS.md
+website/CLAUDE.md
+website/design-system/ACQUISITION_AND_DISCOVERY_PLAN.md
+website/design-system/IMPLEMENTATION_PLAN.md
+website/design-system/MASTER.md

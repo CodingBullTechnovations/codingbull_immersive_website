@@ -21,13 +21,44 @@ export function trackEvent(
   name: string,
   params?: Record<string, string | number | boolean>
 ) {
+  const payload = {
+    name,
+    page: typeof window !== 'undefined' ? window.location.pathname : params?.page,
+    referrer: typeof document !== 'undefined' ? document.referrer : undefined,
+    sessionId: getSessionId(),
+    params,
+  };
+
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    navigator.sendBeacon('/api/analytics/events', JSON.stringify(payload));
+  } else if (typeof fetch !== 'undefined') {
+    fetch('/api/analytics/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => undefined);
+  }
+
   if (!env.isProduction || !env.gaId) {
-    // eslint-disable-next-line no-console
+     
     console.debug('[Analytics]', name, params);
     return;
   }
 
   window.gtag?.('event', name, params);
+}
+
+function getSessionId() {
+  if (typeof window === 'undefined') return undefined;
+
+  const key = 'cb_session_id';
+  const existing = window.localStorage.getItem(key);
+  if (existing) return existing;
+
+  const id = window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+  window.localStorage.setItem(key, id);
+  return id;
 }
 
 // --- Type augmentation for gtag ---

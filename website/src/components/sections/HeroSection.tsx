@@ -94,7 +94,7 @@ export function HeroSection({ content }: HeroSectionProps) {
       </div>
       <div className="hero-anim-item w-full max-w-2xl p-8 sm:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
         <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
-          We don't use generic templates. Every line of code is structured organically around how your business naturally operates, scales, and generates revenue.
+          We don&apos;t use generic templates. Every line of code is structured organically around how your business naturally operates, scales, and generates revenue.
         </p>
       </div>
     </div>

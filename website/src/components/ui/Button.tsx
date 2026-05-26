@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import type { CTAVariant } from '@/types/content';
 import { trackCTAClick, trackWhatsAppClick } from '@/lib/tracking';
-import { getWhatsAppUrl } from '@/content/site';
+import { getWhatsAppUrl, type WhatsAppMessageKey } from '@/content/site';
 
 interface ButtonProps {
   label: string;
@@ -12,7 +12,7 @@ interface ButtonProps {
   icon?: 'whatsapp' | 'arrow' | 'phone' | 'calendar';
   trackingSource?: string;
   className?: string;
-  whatsappMessageKey?: string;
+  whatsappMessageKey?: WhatsAppMessageKey;
   size?: 'default' | 'large';
   onClick?: (e: React.MouseEvent) => void;
   disabled?: boolean;
@@ -61,7 +61,7 @@ export function Button({
   const IconComponent = icon ? icons[icon] : null;
   const isWhatsApp = href === '#whatsapp' || icon === 'whatsapp';
   const finalHref = isWhatsApp
-    ? getWhatsAppUrl((whatsappMessageKey || 'general') as any)
+    ? getWhatsAppUrl(whatsappMessageKey || 'general')
     : href;
   const isExternal = finalHref?.startsWith('http') || finalHref?.startsWith('https');
 

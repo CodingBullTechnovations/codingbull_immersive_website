@@ -1,10 +1,13 @@
-import { redirect, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { caseStudiesBySlug } from '@/content/case-studies';
+import { caseStudiesBySlug, type CaseStudy } from '@/content/case-studies';
 import { PageHero } from '@/components/sections/PageHero';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Button } from '@/components/ui/Button';
 import { generatePageMetadata } from '@/lib/seo';
+import { siteConfig } from '@/content/site';
+import { JsonLd, generateBreadcrumbSchema, generateCreativeWorkSchema } from '@/lib/schema';
+import { getPublishedCaseStudyBySlug } from '@/lib/server/public-content';
 
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;
@@ -12,23 +15,70 @@ interface CaseStudyPageProps {
 
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const study = caseStudiesBySlug[slug];
+  const study = mapDbCaseStudy(await getPublishedCaseStudyBySlug(slug)) ?? caseStudiesBySlug[slug];
   if (!study) return {};
 
   return generatePageMetadata({
     title: `${study.title} | Case Study | CodingBull`,
     description: study.challenge.substring(0, 160),
-    canonical: `https://www.codingbullz.com/case-studies/${slug}`,
+    canonical: `${siteConfig.baseUrl}/case-studies/${slug}`,
   });
+}
+
+function pairStats(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (typeof item !== 'object' || item === null) return null;
+      const record = item as Record<string, unknown>;
+      return { label: String(record.label ?? ''), value: String(record.value ?? '') };
+    })
+    .filter((item): item is { label: string; value: string } => Boolean(item?.label && item.value));
+}
+
+function mapDbCaseStudy(study: Awaited<ReturnType<typeof getPublishedCaseStudyBySlug>>): CaseStudy | null {
+  if (!study) return null;
+  const stats = pairStats(study.metrics);
+  const architecture = Array.isArray(study.architecture) ? study.architecture : [];
+
+  return {
+    slug: study.slug,
+    title: study.title,
+    client: study.client,
+    category: study.industry,
+    year: String((study.publishedAt ?? study.createdAt).getFullYear()),
+    accentColor: 'teal',
+    challenge: study.problem,
+    solution: study.solution,
+    outcome: study.outcomes,
+    stats,
+    techStack: architecture
+      .map((item) => (typeof item === 'object' && item !== null ? String((item as Record<string, unknown>).title ?? '') : ''))
+      .filter(Boolean),
+  };
 }
 
 export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps) {
   const { slug } = await params;
-  const study = caseStudiesBySlug[slug];
+  const study = mapDbCaseStudy(await getPublishedCaseStudyBySlug(slug)) ?? caseStudiesBySlug[slug];
   if (!study) notFound();
+
+  const caseUrl = `${siteConfig.baseUrl}/case-studies/${study.slug}`;
 
   return (
     <>
+      <JsonLd data={generateCreativeWorkSchema({
+        name: study.title,
+        description: study.challenge,
+        url: caseUrl,
+        about: study.category,
+      })} />
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'Case Studies', url: `${siteConfig.baseUrl}/case-studies` },
+        { name: study.client, url: caseUrl },
+      ])} />
+
       <PageHero
         title={study.client}
         subtitle={study.title}

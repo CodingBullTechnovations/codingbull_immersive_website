@@ -1,35 +1,76 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { PageHero } from '@/components/sections/PageHero';
 import { CTASection } from '@/components/sections/CTASection';
 import { homeContent } from '@/content/home';
-import { insights, insightsBySlug } from '@/content/insights';
+import { insights, insightsBySlug, type InsightPost } from '@/content/insights';
+import { siteConfig } from '@/content/site';
+import { generatePageMetadata } from '@/lib/seo';
+import { JsonLd, generateArticleSchema, generateBreadcrumbSchema } from '@/lib/schema';
+import { getPublishedInsightBySlug, listPublishedInsightSlugs } from '@/lib/server/public-content';
 
 export async function generateStaticParams() {
-  return insights.map((post) => ({ slug: post.slug }));
+  const dbPosts = await listPublishedInsightSlugs();
+  const slugs = new Set([...insights.map((post) => post.slug), ...dbPosts.map((post) => post.slug)]);
+  return Array.from(slugs).map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const post = insightsBySlug[slug];
-  if (!post) return { title: 'Post Not Found' };
+function mapDbPost(post: Awaited<ReturnType<typeof getPublishedInsightBySlug>>): InsightPost | null {
+  if (!post) return null;
 
   return {
-    title: `${post.title} | CodingBull Insights`,
-    description: post.excerpt,
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    content: post.body,
+    author: post.author,
+    date: (post.publishedAt ?? post.createdAt).toISOString().slice(0, 10),
+    readingTime: `${Math.max(3, Math.ceil(post.body.split(/\s+/).length / 220))} min read`,
+    category: post.niche.replaceAll('_', ' '),
+    accentColor: 'teal',
   };
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const dbPost = await getPublishedInsightBySlug(slug);
+  const post = mapDbPost(dbPost) ?? insightsBySlug[slug];
+  if (!post) return { title: 'Post Not Found' };
+
+  return generatePageMetadata({
+    title: post.title,
+    description: post.excerpt,
+    canonical: `${siteConfig.baseUrl}/insights/${slug}`,
+  });
 }
 
 export default async function InsightPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = insightsBySlug[slug];
+  const dbPost = await getPublishedInsightBySlug(slug);
+  const post = mapDbPost(dbPost) ?? insightsBySlug[slug];
 
   if (!post) {
     notFound();
   }
 
+  const postUrl = `${siteConfig.baseUrl}/insights/${post.slug}`;
+
   return (
     <>
+      <JsonLd data={generateArticleSchema({
+        title: post.title,
+        description: post.excerpt,
+        url: postUrl,
+        datePublished: post.date,
+        author: post.author,
+      })} />
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'Insights', url: `${siteConfig.baseUrl}/insights` },
+        { name: post.title, url: postUrl },
+      ])} />
+
       <PageHero
         title={post.title}
         subtitle={post.excerpt}

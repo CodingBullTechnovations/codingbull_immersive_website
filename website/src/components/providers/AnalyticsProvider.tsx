@@ -5,14 +5,12 @@ import Script from 'next/script';
 import { env } from '@/lib/env';
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
-  const [consent, setConsent] = useState<'accepted' | 'declined' | null>(null);
+  const [consent, setConsent] = useState<'accepted' | 'declined' | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('cookie-consent') as 'accepted' | 'declined' | null;
+  });
 
   useEffect(() => {
-    // Check initial consent
-    const savedConsent = localStorage.getItem('cookie-consent') as 'accepted' | 'declined' | null;
-    setConsent(savedConsent);
-
-    // Listen for updates from CookieConsent component
     const handleConsentUpdate = () => {
       const updatedConsent = localStorage.getItem('cookie-consent') as 'accepted' | 'declined' | null;
       setConsent(updatedConsent);

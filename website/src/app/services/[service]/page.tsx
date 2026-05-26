@@ -1,34 +1,99 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { PageHero } from '@/components/sections/PageHero';
 import { CTASection } from '@/components/sections/CTASection';
 import { homeContent } from '@/content/home';
-import { services, servicesBySlug } from '@/content/services';
+import { services, servicesBySlug, type ServiceContent } from '@/content/services';
+import { siteConfig } from '@/content/site';
+import { generatePageMetadata } from '@/lib/seo';
+import { JsonLd, generateBreadcrumbSchema, generateFAQSchema, generateServiceSchema } from '@/lib/schema';
+import { getPublishedServiceBySlug, listPublishedServiceSlugs } from '@/lib/server/public-content';
+
+type ServiceViewContent = ServiceContent & {
+  faqs?: Array<{ question: string; answer: string }>;
+};
 
 export async function generateStaticParams() {
-  return services.map(s => ({ service: s.slug }));
+  const dbServices = await listPublishedServiceSlugs();
+  const slugs = new Set([...services.map((s) => s.slug), ...dbServices.map((s) => s.slug)]);
+  return Array.from(slugs).map((service) => ({ service }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ service: string }> }) {
-  const { service } = await params;
-  const data = servicesBySlug[service];
-  if (!data) return { title: 'Service Not Found' };
+function stringArray(value: unknown) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+}
+
+function objectArray(value: unknown) {
+  return Array.isArray(value)
+    ? value
+        .map((item) => (typeof item === 'object' && item !== null ? (item as Record<string, unknown>) : null))
+        .filter((item): item is Record<string, unknown> => Boolean(item))
+    : [];
+}
+
+function mapDbService(service: Awaited<ReturnType<typeof getPublishedServiceBySlug>>): ServiceViewContent | null {
+  if (!service) return null;
+
+  const hero = typeof service.hero === 'object' && service.hero !== null ? (service.hero as Record<string, unknown>) : {};
+  const modules = objectArray(service.modules);
+  const faqs = objectArray(service.faqs);
 
   return {
-    title: `${data.title} | CodingBull Technovations`,
-    description: data.description,
+    slug: service.slug,
+    title: service.title,
+    description: service.metaDescription || String(hero.summary ?? ''),
+    accentColor: 'teal',
+    painPoints: stringArray(service.painPoints),
+    solution: String(hero.summary ?? service.metaDescription ?? ''),
+    features: modules.map((module) => ({
+      title: String(module.title ?? ''),
+      description: String(module.description ?? ''),
+    })),
+    techStack: [],
+    faqs: faqs.map((faq) => ({
+      question: String(faq.question ?? ''),
+      answer: String(faq.answer ?? ''),
+    })),
   };
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ service: string }> }): Promise<Metadata> {
+  const { service } = await params;
+  const data = mapDbService(await getPublishedServiceBySlug(service)) ?? servicesBySlug[service];
+  if (!data) return { title: 'Service Not Found' };
+
+  return generatePageMetadata({
+    title: data.title,
+    description: data.description,
+    canonical: `${siteConfig.baseUrl}/services/${service}`,
+  });
 }
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ service: string }> }) {
   const { service } = await params;
-  const serviceData = servicesBySlug[service];
+  const serviceData: ServiceViewContent | undefined = mapDbService(await getPublishedServiceBySlug(service)) ?? servicesBySlug[service];
 
   if (!serviceData) {
     notFound();
   }
 
+  const serviceUrl = `${siteConfig.baseUrl}/services/${serviceData.slug}`;
+  const faqs = serviceData.faqs ?? [];
+
   return (
     <>
+      <JsonLd data={generateServiceSchema({
+        name: serviceData.title,
+        description: serviceData.description,
+        url: serviceUrl,
+      })} />
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'Services', url: `${siteConfig.baseUrl}/services` },
+        { name: serviceData.title, url: serviceUrl },
+      ])} />
+      {faqs.length > 0 && <JsonLd data={generateFAQSchema(faqs)} />}
+
       <PageHero
         title={serviceData.title}
         subtitle={serviceData.description}
@@ -75,7 +140,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               </div>
 
               {/* Tech Stack */}
-              <div className="mt-8">
+              {serviceData.techStack.length > 0 && <div className="mt-8">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/30 block mb-3">
                   Tech Stack
                 </span>
@@ -86,7 +151,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                     </span>
                   ))}
                 </div>
-              </div>
+              </div>}
             </div>
           </div>
         </div>
@@ -124,6 +189,27 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
       </section>
+
+      {faqs.length > 0 && (
+        <section className="py-20 lg:py-28 relative z-10 border-t border-white/[0.05]">
+          <div className="max-w-4xl mx-auto px-6 lg:px-10">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-teal block mb-4">
+              Buyer Questions
+            </span>
+            <h2 className="text-3xl lg:text-5xl font-bold font-[family-name:var(--font-outfit)] text-white tracking-tight mb-10">
+              Direct Answers
+            </h2>
+            <div className="space-y-4">
+              {faqs.map((faq) => (
+                <div key={faq.question} className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6">
+                  <h3 className="font-semibold text-white">{faq.question}</h3>
+                  <p className="mt-3 text-sm leading-6 text-white/55">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <CTASection cta={homeContent.finalCTA} />
     </>

@@ -8,8 +8,7 @@ export const footerContent: FooterContent = {
         { label: 'Healthcare Software', href: '/services/healthcare-software-development' },
         { label: 'E-commerce Development', href: '/services/ecommerce-development' },
         { label: 'HRMS & Payroll', href: '/services/custom-hrms-payroll-software' },
-        { label: 'Clinic Websites & Scheduling', href: '/services/clinic-website-and-scheduling' },
-        { label: 'Custom CRM & Appointments', href: '/services/custom-crm-appointment-software' },
+        { label: 'Custom Business Systems', href: '/services/custom-business-systems' },
       ],
     },
     {

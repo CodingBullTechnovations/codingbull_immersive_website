@@ -71,7 +71,7 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
       });
     }
 
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       const playhead = { frame: 0 };
       
       if (prefersReducedMotion) {
@@ -132,7 +132,7 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
       ctx.revert();
       loadedImages.forEach(img => { img.src = ''; });
     };
-  }, []);  // SEMICONDUCTOR_FRAMES is module-level constant, no deps needed
+  }, [prefersReducedMotion, steps]);
 
   return (
     <section ref={containerRef} className="relative w-full bg-black">

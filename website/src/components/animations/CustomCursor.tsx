@@ -69,7 +69,7 @@ export function CustomCursor() {
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseout', handleMouseOut);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   if (prefersReducedMotion) return null;
 

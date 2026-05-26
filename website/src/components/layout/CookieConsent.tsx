@@ -42,7 +42,7 @@ export function CookieConsent() {
             <div className="flex-1">
               <h3 className="text-white font-bold mb-2">Privacy & Performance</h3>
               <p className="text-white/40 text-sm leading-relaxed">
-                We use cookies to analyze site traffic and improve your architecture experience. We don't sell your data.
+                We use cookies to analyze site traffic and improve your architecture experience. We don&apos;t sell your data.
               </p>
             </div>
             <div className="flex gap-3 w-full md:w-auto">

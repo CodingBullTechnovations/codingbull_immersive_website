@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -40,8 +39,6 @@ export function CaseStudyScrollShowcase({ studies }: CaseStudyScrollShowcaseProp
 
     // DPR-aware scaling
     const dpr = window.devicePixelRatio || 1;
-    const isMobile = window.innerWidth < 1024;
-    
     // Physical size
     const displayWidth = window.innerWidth;
     const displayHeight = window.innerHeight;

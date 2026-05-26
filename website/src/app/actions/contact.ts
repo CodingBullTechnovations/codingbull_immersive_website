@@ -1,15 +1,24 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { contactFormSchema, type ContactFormData } from '@/lib/validation';
+import { getClientIp, hashValue } from '@/lib/server/crypto';
+import { checkRateLimit } from '@/lib/server/rate-limit';
+import { createLeadFromContactForm } from '@/lib/server/leads';
 
 /**
- * Server Action for processing the contact form.
- * Includes honeypot check and simulated email sending for Phase 2.
+ * Server Action for production lead capture.
  */
 export async function submitContactForm(data: ContactFormData) {
-  // 1. Validate with Zod
+  if (data.website) {
+    return {
+      success: true,
+      message: 'Inquiry received. Thank you.',
+    };
+  }
+
   const validated = contactFormSchema.safeParse(data);
-  
+
   if (!validated.success) {
     return {
       success: false,
@@ -17,34 +26,44 @@ export async function submitContactForm(data: ContactFormData) {
     };
   }
 
-  // 2. Simulated Delay (Wait for UX feedback)
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  try {
+    const headersList = await headers();
+    const ipHash = hashValue(getClientIp(headersList));
+    const userAgentHash = hashValue(headersList.get('user-agent'));
+    const referrer = headersList.get('referer');
+    const emailHash = hashValue(validated.data.email.toLowerCase());
+    const identifier = ipHash ?? emailHash ?? 'anonymous';
 
-  // 3. Honeypot check (handled by Zod, but just to be sure)
-  if (data.website) {
-    console.warn('[SPAM DETECTED]: Honeypot filled by bot.');
+    const rateLimit = await checkRateLimit({
+      identifier,
+      action: 'contact_form',
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+    });
+
+    if (!rateLimit.allowed) {
+      return {
+        success: false,
+        error: `Too many inquiries from this connection. Please try again in ${rateLimit.retryAfterSeconds} seconds.`,
+      };
+    }
+
+    await createLeadFromContactForm(validated.data, {
+      ipHash,
+      userAgentHash,
+      referrer,
+    });
+
     return {
-      success: true, // Fail silently to not give bots feedback
-      message: 'Inquiry received. Thank you.', 
+      success: true,
+      message: 'Your inquiry has been received. We will respond within 24 hours.',
+    };
+  } catch (error) {
+    console.error('[contact_form_submit_failed]', error);
+
+    return {
+      success: false,
+      error: 'Lead capture is temporarily unavailable. Please contact us on WhatsApp.',
     };
   }
-
-  // 4. Log the lead for the founder (Simulating internal notification)
-  console.log('--- NEW LEAD RECEIVED ---');
-  console.log(`Name: ${data.name}`);
-  console.log(`Email: ${data.email}`);
-  console.log(`Company: ${data.company || 'N/A'}`);
-  console.log(`Phone: ${data.phone}`);
-  console.log(`Service: ${data.service}`);
-  console.log(`Budget: ${data.budget || 'Not specified'}`);
-  console.log(`Message: ${data.message}`);
-  console.log('-------------------------');
-
-  // 5. In a production environment, you would call an email service here:
-  // await resend.emails.send({ ... });
-
-  return {
-    success: true,
-    message: 'Your inquiry has been received. We will respond within 24 hours.',
-  };
 }

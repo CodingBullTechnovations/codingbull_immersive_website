@@ -21,14 +21,9 @@ export const mainNav: NavEntry[] = [
         description: 'Attendance, payroll, workforce management',
       },
       {
-        label: 'Clinic Website & Scheduling',
-        href: '/services/clinic-website-and-scheduling',
-        description: 'Premium clinic websites with booking',
-      },
-      {
-        label: 'Custom CRM & Appointments',
-        href: '/services/custom-crm-appointment-software',
-        description: 'CRM, scheduling, client management',
+        label: 'Custom Systems',
+        href: '/services/custom-business-systems',
+        description: 'Dashboards, workflows, CRMs, portals',
       },
     ],
   },

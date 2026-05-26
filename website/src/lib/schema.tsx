@@ -138,6 +138,27 @@ export function generateArticleSchema(article: {
   };
 }
 
+export function generateCreativeWorkSchema(work: {
+  name: string;
+  description: string;
+  url: string;
+  about?: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: work.name,
+    description: work.description,
+    url: work.url,
+    about: work.about,
+    creator: {
+      '@type': 'Organization',
+      name: siteConfig.companyName,
+      url: siteConfig.baseUrl,
+    },
+  };
+}
+
 // Helper to inject JSON-LD into page
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (

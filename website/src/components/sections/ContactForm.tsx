@@ -1,38 +1,73 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { contactFormSchema, type ContactFormData } from '@/lib/validation';
 import { submitContactForm } from '@/app/actions/contact';
 import { Button } from '@/components/ui/Button';
-import { trackFormSubmit } from '@/lib/tracking';
+import { trackFormStart, trackFormSubmit } from '@/lib/tracking';
 
-/**
- * Premium Contact Form for automated lead capture.
- * Features:
- * - Glassmorphism UI
- * - Zod Validation
- * - Honeypot Spam Protection
- * - Server Actions
- * - Tracking Integration
- */
+const inputClasses =
+  'w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-teal/50 focus:bg-white/[0.05] transition-all';
+
+const selectClasses =
+  'w-full bg-[#101522] border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-teal/50 transition-all appearance-none';
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="text-rose-400 text-[10px] ml-1 mt-1 font-medium">{message}</p>;
+}
+
+function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
+  return (
+    <label htmlFor={htmlFor} className="text-[10px] uppercase tracking-widest font-bold text-white/40 ml-1">
+      {children}
+    </label>
+  );
+}
+
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     success: boolean;
     message: string;
   } | null>(null);
+  const formStarted = useRef(false);
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      service: 'healthcare',
+      budget: '2000_3000',
+      timeline: 'this_month',
+      country: 'India',
+    },
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setValue('sourcePage', window.location.pathname);
+    setValue('referrer', document.referrer);
+    setValue('utmSource', params.get('utm_source') ?? '');
+    setValue('utmMedium', params.get('utm_medium') ?? '');
+    setValue('utmCampaign', params.get('utm_campaign') ?? '');
+    setValue('utmTerm', params.get('utm_term') ?? '');
+    setValue('utmContent', params.get('utm_content') ?? '');
+  }, [setValue]);
+
+  const handleFormFocus = () => {
+    if (formStarted.current) return;
+    formStarted.current = true;
+    trackFormStart('contact_page_form');
+  };
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
@@ -41,13 +76,13 @@ export function ContactForm() {
     try {
       const result = await submitContactForm(data);
       if (result.success) {
-        setSubmitStatus({ success: true, message: result.message || 'Thank you! We will reach out soon.' });
+        setSubmitStatus({ success: true, message: result.message || 'Thank you. We will reach out soon.' });
         reset();
         trackFormSubmit('contact_page_form');
       } else {
         setSubmitStatus({ success: false, message: result.error || 'Something went wrong. Please try again.' });
       }
-    } catch (err) {
+    } catch {
       setSubmitStatus({ success: false, message: 'Unexpected error. Please try again.' });
     } finally {
       setIsSubmitting(false);
@@ -55,8 +90,8 @@ export function ContactForm() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-1 bg-white/[0.03] rounded-[2.5rem] border border-white/10 backdrop-blur-3xl shadow-[0_0_80px_var(--color-primary-glow)]">
-      <div className="p-8 sm:p-12">
+    <div className="w-full max-w-2xl mx-auto p-1 bg-white/[0.03] rounded-[2rem] border border-white/10 backdrop-blur-3xl shadow-[0_0_80px_var(--color-primary-glow)]">
+      <div className="p-6 sm:p-10">
         <AnimatePresence mode="wait">
           {submitStatus?.success ? (
             <motion.div
@@ -86,95 +121,162 @@ export function ContactForm() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onSubmit={handleSubmit(onSubmit)}
+              onFocusCapture={handleFormFocus}
               className="space-y-6"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Name */}
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-white/40 ml-1">Full Name</label>
+                  <FieldLabel htmlFor="contact-name">Full Name</FieldLabel>
                   <input
+                    id="contact-name"
                     {...register('name')}
-                    placeholder="Your Name"
-                    className={`w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-white/20 focus:outline-none focus:border-teal/50 focus:bg-white/[0.05] transition-all ${errors.name ? 'border-rose-500/50' : ''}`}
+                    placeholder="Your name"
+                    className={`${inputClasses} ${errors.name ? 'border-rose-500/50' : ''}`}
                   />
-                  {errors.name && <p className="text-rose-500 text-[10px] ml-1 mt-1 font-medium">{errors.name.message}</p>}
+                  <FieldError message={errors.name?.message} />
                 </div>
 
-                {/* Email */}
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-white/40 ml-1">Email Address</label>
+                  <FieldLabel htmlFor="contact-email">Email Address</FieldLabel>
                   <input
+                    id="contact-email"
                     {...register('email')}
                     type="email"
                     placeholder="name@company.com"
-                    className={`w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-white/20 focus:outline-none focus:border-teal/50 focus:bg-white/[0.05] transition-all ${errors.email ? 'border-rose-500/50' : ''}`}
+                    className={`${inputClasses} ${errors.email ? 'border-rose-500/50' : ''}`}
                   />
-                  {errors.email && <p className="text-rose-500 text-[10px] ml-1 mt-1 font-medium">{errors.email.message}</p>}
+                  <FieldError message={errors.email?.message} />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Phone */}
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-white/40 ml-1">Contact Number</label>
+                  <FieldLabel htmlFor="contact-phone">Contact Number</FieldLabel>
                   <input
+                    id="contact-phone"
                     {...register('phone')}
-                    placeholder="+91 00000 00000"
-                    className={`w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-white/20 focus:outline-none focus:border-teal/50 focus:bg-white/[0.05] transition-all ${errors.phone ? 'border-rose-500/50' : ''}`}
+                    placeholder="+91 79848 91664"
+                    className={`${inputClasses} ${errors.phone ? 'border-rose-500/50' : ''}`}
                   />
-                  {errors.phone && <p className="text-rose-500 text-[10px] ml-1 mt-1 font-medium">{errors.phone.message}</p>}
+                  <FieldError message={errors.phone?.message} />
                 </div>
 
-                {/* Service Interest */}
                 <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-white/40 ml-1">Service Required</label>
+                  <FieldLabel htmlFor="contact-country">Country</FieldLabel>
+                  <input
+                    id="contact-country"
+                    {...register('country')}
+                    placeholder="India or United States"
+                    className={inputClasses}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <FieldLabel htmlFor="contact-company">Company</FieldLabel>
+                  <input
+                    id="contact-company"
+                    {...register('company')}
+                    placeholder="Company or clinic name"
+                    className={inputClasses}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <FieldLabel htmlFor="contact-company-website">Company Website</FieldLabel>
+                  <input
+                    id="contact-company-website"
+                    {...register('companyWebsite')}
+                    placeholder="https://example.com"
+                    className={`${inputClasses} ${errors.companyWebsite ? 'border-rose-500/50' : ''}`}
+                  />
+                  <FieldError message={errors.companyWebsite?.message} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <FieldLabel htmlFor="contact-service">Service Required</FieldLabel>
                   <select
+                    id="contact-service"
                     {...register('service')}
-                    className={`w-full bg-white/[0.05] border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-teal/50 transition-all appearance-none ${errors.service ? 'border-rose-500/50' : ''}`}
+                    className={`${selectClasses} ${errors.service ? 'border-rose-500/50' : ''}`}
                   >
                     <option value="healthcare">Healthcare Systems</option>
-                    <option value="ecommerce">E-Commerce Platforms</option>
-                    <option value="hrms">Enterprise HRMS</option>
-                    <option value="consulting">Performance Consulting</option>
+                    <option value="ecommerce">E-commerce Systems</option>
+                    <option value="hrms">HRMS and Payroll</option>
+                    <option value="custom_systems">Custom Systems</option>
+                    <option value="consulting">Architecture Consulting</option>
                     <option value="other">Other Inquiry</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <FieldLabel htmlFor="contact-budget">Budget</FieldLabel>
+                  <select id="contact-budget" {...register('budget')} className={selectClasses}>
+                    <option value="2000_3000">$2k-$3k</option>
+                    <option value="3000_5000">$3k-$5k</option>
+                    <option value="above_5000">$5k+</option>
+                    <option value="under_2000">Under $2k</option>
+                    <option value="unknown">Not sure</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <FieldLabel htmlFor="contact-timeline">Timeline</FieldLabel>
+                  <select id="contact-timeline" {...register('timeline')} className={selectClasses}>
+                    <option value="asap">ASAP</option>
+                    <option value="this_month">This month</option>
+                    <option value="this_quarter">This quarter</option>
+                    <option value="flexible">Flexible</option>
+                    <option value="unknown">Not sure</option>
                   </select>
                 </div>
               </div>
 
-              {/* Message */}
               <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest font-bold text-white/40 ml-1">Project Details</label>
+                <FieldLabel htmlFor="contact-message">Project Details</FieldLabel>
                 <textarea
+                  id="contact-message"
                   {...register('message')}
-                  rows={4}
-                  placeholder="Tell us about the system you want to build..."
-                  className={`w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-white/20 focus:outline-none focus:border-teal/50 focus:bg-white/[0.05] transition-all resize-none ${errors.message ? 'border-rose-500/50' : ''}`}
+                  rows={5}
+                  placeholder="Tell us what system you need, who will use it, and what outcome matters most."
+                  className={`${inputClasses} resize-none ${errors.message ? 'border-rose-500/50' : ''}`}
                 />
-                {errors.message && <p className="text-rose-500 text-[10px] ml-1 mt-1 font-medium">{errors.message.message}</p>}
+                <FieldError message={errors.message?.message} />
               </div>
 
-              {/* Honeypot field (hidden) */}
+              <input type="hidden" {...register('sourcePage')} />
+              <input type="hidden" {...register('referrer')} />
+              <input type="hidden" {...register('utmSource')} />
+              <input type="hidden" {...register('utmMedium')} />
+              <input type="hidden" {...register('utmCampaign')} />
+              <input type="hidden" {...register('utmTerm')} />
+              <input type="hidden" {...register('utmContent')} />
+
               <div className="hidden opacity-0 pointer-events-none absolute -left-[9999px]">
                 <input {...register('website')} tabIndex={-1} autoComplete="off" />
               </div>
 
               {submitStatus && !submitStatus.success && (
-                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 text-xs text-center">
+                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs text-center">
                   {submitStatus.message}
                 </div>
               )}
 
               <div className="pt-4">
                 <Button
-                  label={isSubmitting ? "Dispatching..." : "Initialize Architecture Inquiry"}
+                  type="submit"
+                  label={isSubmitting ? 'Submitting...' : 'Request Architecture Review'}
                   variant="primary"
                   size="large"
                   className="w-full justify-center shadow-[0_0_40px_-5px_rgba(20,184,166,0.2)]"
                   disabled={isSubmitting}
                   trackingSource="contact_form_submit"
                 />
-                <p className="text-center mt-6 text-[10px] text-white/20 uppercase tracking-[0.2em] font-medium">
-                  Founder-Led Interaction Guaranteed
+                <p className="text-center mt-6 text-[10px] text-white/30 uppercase tracking-[0.18em] font-medium">
+                  Founder-led review for qualified projects
                 </p>
               </div>
             </motion.form>

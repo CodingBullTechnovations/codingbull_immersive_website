@@ -6,9 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Button } from '@/components/ui/Button';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
-// Intentionally ignoring props to maintain architectural content strictness
-interface WhatWeBuildSectionProps {}
-
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -25,7 +22,7 @@ const FRAME_PATHS = [
 const TOTAL_FRAMES = 384; 
 const INDIVIDUAL_LENGTHS = [80, 80, 64, 80, 80];
 
-// Explicit Core Industrial Niches explicitly requested by user (Leading intensely with Healthcare)
+// Four primary commercial niches.
 const industrialNiches = [
   {
     verticalId: 'HEALTHCARE',
@@ -49,11 +46,11 @@ const industrialNiches = [
     href: '/services/custom-hrms-payroll-software',
   },
   {
-    verticalId: 'SYSTEM SOFTWARE',
-    title: 'Custom Hardware & Portals',
-    subtitle: 'Deep integration architecture. From embedded machinery dashboards (Semiconductor interfaces) to massive bespoke CRM structures.',
-    chips: ['Hardware Interfaces', 'Internal Portals', 'Legacy System APIs'],
-    href: '/contact',
+    verticalId: 'CUSTOM SYSTEMS',
+    title: 'Custom Business Systems',
+    subtitle: 'Workflow portals, internal CRMs, reporting dashboards, approvals, and integrations shaped around your operating model.',
+    chips: ['Internal Portals', 'Reporting Dashboards', 'Workflow Automation'],
+    href: '/services/custom-business-systems',
   }
 ];
 
@@ -78,6 +75,7 @@ export function WhatWeBuildSection() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    const cache = imageCache.current;
 
     // DPR-aware scaling for crispness
     const dpr = window.devicePixelRatio || 1;
@@ -90,9 +88,9 @@ export function WhatWeBuildSection() {
 
     const loadChapterImages = (idx: number) => {
       if (idx < 0 || idx >= 5) return;
-      if (imageCache.current[idx]) return; 
+      if (cache[idx]) return; 
 
-      imageCache.current[idx] = [];
+      cache[idx] = [];
       
       let baseOffset = 0;
       for (let i = 0; i < idx; i++) {
@@ -102,7 +100,7 @@ export function WhatWeBuildSection() {
       for (let i = 0; i < INDIVIDUAL_LENGTHS[idx]; i++) {
         const img = new Image();
         img.src = FRAME_PATHS[baseOffset + i];
-        imageCache.current[idx][i] = img;
+        cache[idx][i] = img;
         
         img.decode().catch(() => {});
         if (idx === 0 && i === 0) {
@@ -118,9 +116,9 @@ export function WhatWeBuildSection() {
 
     const unloadChapterImages = (idx: number) => {
       if (idx < 0 || idx >= 5) return;
-      if (!imageCache.current[idx]) return;
-      imageCache.current[idx].forEach(img => { if (img) img.src = ''; });
-      delete imageCache.current[idx];
+      if (!cache[idx]) return;
+      cache[idx].forEach(img => { if (img) img.src = ''; });
+      delete cache[idx];
     };
 
     const renderToCanvas = (img: HTMLImageElement) => {
@@ -202,7 +200,7 @@ export function WhatWeBuildSection() {
             unloadChapterImages(activeChap + 3);
           }
 
-          const activeImg = imageCache.current[activeChap]?.[localFrame];
+          const activeImg = cache[activeChap]?.[localFrame];
           if (activeImg && activeImg.complete && activeImg.naturalHeight > 0) {
             renderToCanvas(activeImg);
           }
@@ -256,11 +254,11 @@ export function WhatWeBuildSection() {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       ScrollTrigger.getById('horizontal360Engine')?.kill();
-      Object.keys(imageCache.current).forEach(key => {
+      Object.keys(cache).forEach(key => {
         unloadChapterImages(parseInt(key));
       });
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   // --- HTML Assembly ---
 
@@ -296,7 +294,7 @@ export function WhatWeBuildSection() {
         <div className="inline-flex">
            <span className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-teal bg-teal/10 px-5 py-2.5 border border-teal/20 backdrop-blur-md shadow-[0_0_15px_rgba(20,184,166,0.15)] flex items-center gap-3">
              <div className="w-2 h-2 bg-teal shadow-[0_0_10px_teal] animate-pulse" />
-             [ {String(idx + 1).padStart(2, '0')} // VERTICAL: {niche.verticalId} ]
+	             [ {String(idx + 1).padStart(2, '0')} VERTICAL: {niche.verticalId} ]
            </span>
         </div>
         <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-black font-[family-name:var(--font-outfit)] text-white leading-tight pr-4">

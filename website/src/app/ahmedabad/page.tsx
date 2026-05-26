@@ -25,7 +25,7 @@ export default function AhmedabadPage() {
 
       <SectionWrapper className="py-24">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8">Ahmedabad's Enterprise Software Partner</h2>
+          <h2 className="text-3xl font-bold mb-8">Ahmedabad&apos;s Enterprise Software Partner</h2>
           <p className="text-white/60 text-lg mb-12">
             Based in Satellite, Ahmedabad, CodingBull Technovations is not your average agency. We are a specialized technical architecture firm that builds proprietary systems for business owners who are tired of generic solutions.
           </p>

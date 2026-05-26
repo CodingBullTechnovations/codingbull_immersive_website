@@ -210,7 +210,7 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
       ctx.revert();
       loadedImages.forEach(img => { img.src = ''; });
     };
-  }, [frames, textSections, weights]);
+  }, [frames, prefersReducedMotion, textSections, weights]);
 
   return (
     // Height: scrollHeight creates the scroll distance dynamically (def: 500vh)

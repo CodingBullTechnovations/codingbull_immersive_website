@@ -35,7 +35,7 @@ export default function USAPage() {
             <div className="p-10 rounded-[3rem] bg-white/[0.03] border border-white/10 hover:border-teal/30 transition-all">
               <h3 className="text-xl font-bold mb-4 text-teal italic">Compliance First</h3>
               <p className="text-sm text-white/40 leading-relaxed">
-                Whether it's PII protection for healthcare or secure payment flows for e-commerce, we build with US security standards as the foundation of our code.
+                Whether it&apos;s PII protection for healthcare or secure payment flows for e-commerce, we build with US security standards as the foundation of our code.
               </p>
             </div>
           </div>

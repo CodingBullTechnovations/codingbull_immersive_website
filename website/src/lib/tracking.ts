@@ -41,6 +41,14 @@ export function trackFormSubmit(formType: string) {
   });
 }
 
+/** Track contact form start */
+export function trackFormStart(formType: string) {
+  trackEvent('form_start', {
+    form_type: formType,
+    page: window.location.pathname,
+  });
+}
+
 /** Track case study CTA click */
 export function trackCaseStudyClick(studyId: string) {
   trackEvent('case_study_click', {

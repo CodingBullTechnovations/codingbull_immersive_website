@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 
@@ -30,7 +29,7 @@ export default function NotFound() {
         </h1>
 
         <p className="text-white/40 text-lg sm:text-xl font-light leading-relaxed mb-12 max-w-lg mx-auto">
-          The architecture you're looking for doesn't exist or has been relocated to another vertical.
+          The architecture you&apos;re looking for doesn&apos;t exist or has been relocated to another vertical.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

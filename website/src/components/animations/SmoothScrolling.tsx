@@ -35,7 +35,7 @@ export default function SmoothScrolling({
     return () => {
       lenis.destroy()
     }
-  }, [])
+  }, [prefersReducedMotion])
 
   return <>{children}</>
 }

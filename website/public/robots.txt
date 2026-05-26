@@ -1,6 +1,14 @@
 User-agent: *
 Allow: /
-Disallow: /_next/
+Disallow: /admin/
 Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
 
 Sitemap: https://www.codingbullz.com/sitemap.xml

@@ -21,7 +21,7 @@ export function CTASection({ cta }: CTASectionProps) {
   useEffect(() => {
     if (!sectionRef.current || !bgRef.current || !contentRef.current) return;
 
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       // Slight parallax on background image
       gsap.to(bgRef.current, {
         yPercent: 10,

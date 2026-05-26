@@ -29,7 +29,7 @@ export default function IndiaPage() {
             <div className="p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10">
               <h3 className="text-xl font-bold mb-4 text-teal italic">Scale-Ready Architecture</h3>
               <p className="text-sm text-white/40 leading-relaxed">
-                We don't build MVPs; we build production-ready systems. Our India-based engineering team ensures every line of code is optimized for the next 1 million users.
+                We don&apos;t build MVPs; we build production-ready systems. Our India-based engineering team ensures every line of code is optimized for the next 1 million users.
               </p>
             </div>
             <div className="p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/10">

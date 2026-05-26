@@ -1,11 +1,17 @@
 import { MetadataRoute } from 'next';
 import { services } from '@/content/services';
 import { insights } from '@/content/insights';
+import { siteConfig } from '@/content/site';
+import { listPublishedCaseStudySlugs, listPublishedInsightSlugs, listPublishedServiceSlugs } from '@/lib/server/public-content';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.codingbullz.com';
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = siteConfig.baseUrl;
+  const [dbServices, dbInsights, dbCaseStudies] = await Promise.all([
+    listPublishedServiceSlugs(),
+    listPublishedInsightSlugs(),
+    listPublishedCaseStudySlugs(),
+  ]);
 
-  // Core Pages
   const routes = [
     '',
     '/services',
@@ -25,25 +31,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === '' ? 1 : 0.8,
   }));
 
-  // Service Pages
-  const serviceRoutes = services.map((service) => ({
-    url: `${baseUrl}/services/${service.slug}`,
+  const serviceSlugs = new Set([...services.map((service) => service.slug), ...dbServices.map((service) => service.slug)]);
+  const serviceRoutes = Array.from(serviceSlugs).map((slug) => ({
+    url: `${baseUrl}/services/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
 
-  // Insight Pages
-  const insightRoutes = insights.map((insight) => ({
-    url: `${baseUrl}/insights/${insight.slug}`,
+  const insightSlugs = new Set([...insights.map((insight) => insight.slug), ...dbInsights.map((insight) => insight.slug)]);
+  const insightRoutes = Array.from(insightSlugs).map((slug) => ({
+    url: `${baseUrl}/insights/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.6,
   }));
 
-  // Case Study Pages (Planned Slugs)
-  const caseStudySlugs = ['physioway', 'shashwat-ivf', 'anr-mechanical'];
-  const caseStudyRoutes = caseStudySlugs.map((slug) => ({
+  const caseStudySlugs = new Set(['physioway', 'shashwat-ivf', 'anr-mechanical', ...dbCaseStudies.map((study) => study.slug)]);
+  const caseStudyRoutes = Array.from(caseStudySlugs).map((slug) => ({
     url: `${baseUrl}/case-studies/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,

@@ -2,11 +2,9 @@ import { PageHero } from '@/components/sections/PageHero';
 import { Button } from '@/components/ui/Button';
 import { ContactForm } from '@/components/sections/ContactForm';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
+import { generatePageMetadata, pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Contact Us | CodingBull Technovations',
-  description: 'Discuss your custom software project with CodingBull. Direct founder access for healthcare, e-commerce, and HRMS systems.',
-};
+export const metadata = generatePageMetadata(pageMetadata.contact);
 
 export default function ContactPage() {
   return (
@@ -25,7 +23,7 @@ export default function ContactPage() {
             <p className="text-white/40 text-[11px] uppercase tracking-widest font-semibold mb-8">Fastest Architecture Scoping</p>
             <Button
               label="Chat on WhatsApp"
-              href="https://wa.me/917984891664"
+              href="#whatsapp"
               variant="primary"
               icon="whatsapp"
               trackingSource="contact_page_whatsapp"

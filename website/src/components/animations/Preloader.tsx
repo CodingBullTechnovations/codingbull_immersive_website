@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import gsap from 'gsap';
 
@@ -10,7 +9,6 @@ export function Preloader() {
   const progressRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [isComplete, setIsComplete] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     // We only want the preloader on initial home load ideally,
@@ -19,7 +17,7 @@ export function Preloader() {
 
     // document.body.style.overflow = 'hidden';
 
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
           setIsComplete(true);

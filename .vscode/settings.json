@@ -1,0 +1,12 @@
+{
+  "css.customData": ["./tailwind.css-data.json"],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.experimental.configFile": "website/src/app/globals.css",
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "tailwindcss",
+    "html": "tailwindcss",
+    "css": "tailwindcss"
+  }
+}

@@ -1,0 +1,420 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+}
+
+enum LeadStatus {
+  NEW
+  QUALIFIED
+  CONTACTED
+  PROPOSAL_SENT
+  WON
+  LOST
+  SPAM
+}
+
+enum ServiceInterest {
+  HEALTHCARE
+  ECOMMERCE
+  HRMS
+  CUSTOM_SYSTEMS
+  CONSULTING
+  OTHER
+}
+
+enum BudgetRange {
+  UNDER_2000
+  BETWEEN_2000_3000
+  BETWEEN_3000_5000
+  ABOVE_5000
+  UNKNOWN
+}
+
+enum ProjectTimeline {
+  ASAP
+  THIS_MONTH
+  THIS_QUARTER
+  FLEXIBLE
+  UNKNOWN
+}
+
+enum LeadActivityType {
+  FORM_SUBMIT
+  STATUS_CHANGE
+  NOTE
+  EMAIL_SENT
+  WHATSAPP_CLICK
+  ASSIGNED
+  SCORE_UPDATED
+}
+
+enum EmailProvider {
+  RESEND
+  SMTP
+  MANUAL
+}
+
+enum DeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
+enum ContentStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PermissionStatus {
+  UNKNOWN
+  REQUESTED
+  APPROVED
+  DENIED
+}
+
+enum AnalyticsEventType {
+  PAGE_VIEW
+  CTA_CLICK
+  WHATSAPP_CLICK
+  PHONE_CLICK
+  EMAIL_CLICK
+  FORM_START
+  FORM_SUBMIT
+  CASE_STUDY_CLICK
+  SCROLL_DEPTH
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          UserRole      @default(VIEWER)
+  status        UserStatus    @default(INVITED)
+  lastLoginAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  accounts       Account[]
+  sessions       Session[]
+  assignedLeads  Lead[]       @relation("LeadAssignee")
+  leadNotes      LeadNote[]
+  uploadedMedia  MediaAsset[]
+  auditLogs      AuditLog[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Lead {
+  id              String          @id @default(cuid())
+  name            String
+  email           String
+  phone           String
+  company         String?
+  website         String?
+  country         String?
+  serviceInterest ServiceInterest @default(OTHER)
+  budgetRange     BudgetRange     @default(UNKNOWN)
+  timeline        ProjectTimeline @default(UNKNOWN)
+  message         String
+  sourcePage      String?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmTerm         String?
+  utmContent      String?
+  referrer        String?
+  status          LeadStatus      @default(NEW)
+  score           Int             @default(0)
+  ipHash          String?
+  userAgentHash   String?
+  assignedToId    String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  assignedTo     User?           @relation("LeadAssignee", fields: [assignedToId], references: [id])
+  activities     LeadActivity[]
+  notes          LeadNote[]
+  emailDeliveries EmailDelivery[]
+
+  @@index([status, createdAt])
+  @@index([serviceInterest, createdAt])
+  @@index([email])
+}
+
+model LeadActivity {
+  id        String           @id @default(cuid())
+  leadId    String
+  type      LeadActivityType
+  title     String
+  detail    String?
+  metadata  Json?
+  createdAt DateTime         @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, createdAt])
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  leadId    String
+  authorId  String?
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lead   Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+model EmailDelivery {
+  id               String         @id @default(cuid())
+  leadId           String?
+  provider         EmailProvider
+  status           DeliveryStatus @default(PENDING)
+  toEmail          String
+  fromEmail        String
+  subject          String
+  providerMessageId String?
+  providerResponse Json?
+  error            String?
+  createdAt        DateTime       @default(now())
+  sentAt           DateTime?
+
+  lead Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+}
+
+model SiteSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ServicePage {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  metaTitle       String?
+  metaDescription String?
+  niche           ServiceInterest
+  hero            Json
+  painPoints      Json
+  modules         Json
+  faqs            Json?
+  relatedCaseStudyIds String[]  @default([])
+  schemaData      Json?
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status, niche])
+}
+
+model CaseStudy {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  client           String
+  industry         String
+  title            String
+  problem          String
+  constraints      String?
+  solution         String
+  architecture     Json?
+  outcomes         String
+  metrics          Json?
+  permissionStatus PermissionStatus @default(UNKNOWN)
+  media            Json?
+  status           ContentStatus    @default(DRAFT)
+  publishedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model InsightPost {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  title           String
+  metaTitle       String?
+  metaDescription String?
+  excerpt         String
+  body            String
+  author          String
+  niche           ServiceInterest
+  tags            String[]      @default([])
+  schemaData      Json?
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status, niche, publishedAt])
+}
+
+model Testimonial {
+  id               String           @id @default(cuid())
+  person           String
+  role             String?
+  company          String
+  quote            String
+  niche            ServiceInterest?
+  permissionStatus PermissionStatus @default(UNKNOWN)
+  status           ContentStatus    @default(DRAFT)
+  order            Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model FAQ {
+  id        String           @id @default(cuid())
+  question  String
+  answer    String
+  niche     ServiceInterest?
+  pageSlug  String?
+  status    ContentStatus    @default(DRAFT)
+  order     Int              @default(0)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([status, pageSlug, niche])
+}
+
+model MediaAsset {
+  id          String   @id @default(cuid())
+  fileName    String
+  url         String
+  mimeType    String
+  sizeBytes   Int?
+  width       Int?
+  height      Int?
+  altText     String
+  usage       String?
+  uploadedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  uploadedBy User? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+}
+
+model AnalyticsEvent {
+  id            String             @id @default(cuid())
+  type          AnalyticsEventType
+  page          String
+  sessionIdHash String?
+  referrer      String?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  device        String?
+  country       String?
+  metadata      Json?
+  createdAt     DateTime           @default(now())
+
+  @@index([type, page, createdAt])
+  @@index([sessionIdHash, createdAt])
+}
+
+model PageMetricDaily {
+  id             String   @id @default(cuid())
+  date           DateTime
+  page           String
+  visits         Int      @default(0)
+  ctaClicks      Int      @default(0)
+  formStarts     Int      @default(0)
+  formSubmits    Int      @default(0)
+  whatsappClicks Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([date, page])
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  actorId        String?
+  action         String
+  entityType     String
+  entityId       String?
+  beforeSummary  Json?
+  afterSummary   Json?
+  ipHash         String?
+  userAgentHash  String?
+  createdAt      DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+model RateLimitBucket {
+  id          String   @id @default(cuid())
+  identifier  String
+  action      String
+  windowStart DateTime
+  count       Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([identifier, action, windowStart])
+}

@@ -18,7 +18,7 @@ export default function TermsPage() {
       <SectionWrapper className="py-24">
         <div className="max-w-3xl mx-auto prose prose-invert prose-teal">
           <p className="text-white/60 mb-12 italic">
-            CodingBull Technovations Pvt. Ltd. (the "Company") provides custom software architecture and development services. By engaging with us, you agree to the following terms.
+            CodingBull Technovations Pvt. Ltd. (the &quot;Company&quot;) provides custom software architecture and development services. By engaging with us, you agree to the following terms.
           </p>
 
           <h2 className="text-2xl font-bold mb-6">1. Scope of Work</h2>

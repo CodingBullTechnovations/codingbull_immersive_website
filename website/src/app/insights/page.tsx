@@ -3,11 +3,10 @@ import { PageHero } from '@/components/sections/PageHero';
 import { CTASection } from '@/components/sections/CTASection';
 import { homeContent } from '@/content/home';
 import { insights } from '@/content/insights';
+import { pageMetadata, generatePageMetadata } from '@/lib/seo';
+import { getPublishedInsightBySlug, listPublishedInsightSlugs } from '@/lib/server/public-content';
 
-export const metadata = {
-  title: 'Insights & Engineering Notes | CodingBull Technovations',
-  description: 'Deep architectural insights on scaling enterprise software in healthcare, e-commerce, and workforce management.',
-};
+export const metadata = generatePageMetadata(pageMetadata.insights);
 
 const ACCENT_COLORS: Record<string, { border: string; bg: string; text: string }> = {
   teal: { border: 'border-teal/20', bg: 'bg-teal/[0.05]', text: 'text-teal' },
@@ -17,7 +16,24 @@ const ACCENT_COLORS: Record<string, { border: string; bg: string; text: string }
   rose: { border: 'border-rose-400/20', bg: 'bg-rose-400/[0.05]', text: 'text-rose-400' },
 };
 
-export default function InsightsPage() {
+export default async function InsightsPage() {
+  const dbSlugs = await listPublishedInsightSlugs();
+  const dbPosts = await Promise.all(dbSlugs.map((item) => getPublishedInsightBySlug(item.slug)));
+  const publishedPosts = dbPosts.flatMap((post) =>
+    post
+      ? [{
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      author: post.author,
+      readingTime: `${Math.max(3, Math.ceil(post.body.split(/\s+/).length / 220))} min read`,
+      category: post.niche.replaceAll('_', ' '),
+      accentColor: 'teal',
+    }]
+      : [],
+  );
+  const posts = [...publishedPosts, ...insights.filter((post) => !publishedPosts.some((dbPost) => dbPost.slug === post.slug))];
+
   return (
     <>
       <PageHero
@@ -30,7 +46,7 @@ export default function InsightsPage() {
       <section className="py-20 lg:py-28 relative z-10">
         <div className="max-w-[var(--max-w-content)] mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {insights.map((post) => {
+            {posts.map((post) => {
               const accent = ACCENT_COLORS[post.accentColor] || ACCENT_COLORS.teal;
               return (
                 <Link

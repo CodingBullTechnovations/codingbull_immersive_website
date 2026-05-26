@@ -24,7 +24,7 @@ export const homeContent: HomeContent = {
   trustStats: [
     { label: 'Founder-Led Architecture', value: 'Direct', icon: 'shield' },
     { label: 'Products Deployed', value: '50+', icon: 'check' },
-    { label: 'Core Platforms', value: 'Healthcare · E-com · HRMS', icon: 'layers' },
+    { label: 'Core Platforms', value: 'Healthcare · E-com · HRMS · Custom', icon: 'layers' },
     { label: 'Adopters', value: 'India & USA', icon: 'globe' },
   ],
 
@@ -54,7 +54,7 @@ export const homeContent: HomeContent = {
       title: 'Custom Business Software',
       description:
         'CRM platforms, appointment systems, reporting dashboards, approval workflows, and operational tools tailored to your process.',
-      href: '/contact',
+      href: '/services/custom-business-systems',
       icon: 'settings',
     },
   ],

@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
+import { usePathname } from 'next/navigation';
 import { env } from '@/lib/env';
+import { trackPageView } from '@/lib/analytics';
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [consent, setConsent] = useState<'accepted' | 'declined' | null>(() => {
     if (typeof window === 'undefined') return null;
     return localStorage.getItem('cookie-consent') as 'accepted' | 'declined' | null;
@@ -19,6 +22,11 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener('cookie-consent-updated', handleConsentUpdate);
     return () => window.removeEventListener('cookie-consent-updated', handleConsentUpdate);
   }, []);
+
+  useEffect(() => {
+    if (!pathname) return;
+    trackPageView(pathname);
+  }, [pathname]);
 
   // Only load GA if consent is explicitly 'accepted'
   const shouldLoadAnalytics = consent === 'accepted' && env.gaId;

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { AnalyticsEventType } from '@prisma/client';
+import { AnalyticsEventType, SeoIndustry, TrafficChannel } from '@prisma/client';
 import { z } from 'zod';
+import { getIndustryForPath, getLandingPage, getTrafficChannel, industries, trafficChannels } from '@/lib/industry';
 import { prisma } from '@/lib/server/prisma';
 import { hashValue } from '@/lib/server/crypto';
 
@@ -9,8 +10,15 @@ export const runtime = 'nodejs';
 const analyticsEventSchema = z.object({
   name: z.string().max(80),
   page: z.string().max(300).optional(),
+  landingPage: z.string().max(300).optional(),
+  industry: z.enum(industries).optional(),
+  trafficChannel: z.enum(trafficChannels).optional(),
   referrer: z.string().max(500).optional(),
   sessionId: z.string().max(120).optional(),
+  visitorId: z.string().max(120).optional(),
+  utmSource: z.string().max(120).optional(),
+  utmMedium: z.string().max(120).optional(),
+  utmCampaign: z.string().max(160).optional(),
   params: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
 });
 
@@ -51,7 +59,16 @@ export async function POST(request: Request) {
     }
 
     const page = parsed.data.page || '/';
+    if (page.startsWith('/admin') || page.startsWith('/api') || page.startsWith('/_next')) {
+      return NextResponse.json({ ok: true });
+    }
+
+    const industry = (parsed.data.industry ?? getIndustryForPath(page)) as SeoIndustry;
+    const trafficChannel = (parsed.data.trafficChannel ??
+      getTrafficChannel(parsed.data.referrer, parsed.data.utmMedium, parsed.data.utmSource)) as TrafficChannel;
+    const landingPage = getLandingPage(page, parsed.data.landingPage);
     const sessionIdHash = hashValue(parsed.data.sessionId);
+    const visitorIdHash = hashValue(parsed.data.visitorId ?? parsed.data.sessionId);
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     const increment = getDailyMetricIncrement(type);
@@ -61,21 +78,32 @@ export async function POST(request: Request) {
         data: {
           type,
           page,
+          landingPage,
+          industry,
+          trafficChannel,
           sessionIdHash,
+          visitorIdHash,
           referrer: parsed.data.referrer || null,
+          utmSource: parsed.data.utmSource || null,
+          utmMedium: parsed.data.utmMedium || null,
+          utmCampaign: parsed.data.utmCampaign || null,
           metadata: parsed.data.params ?? {},
         },
       }),
       prisma.pageMetricDaily.upsert({
         where: {
-          date_page: {
+          date_page_industry_trafficChannel: {
             date: today,
             page,
+            industry,
+            trafficChannel,
           },
         },
         create: {
           date: today,
           page,
+          industry,
+          trafficChannel,
           ...increment,
         },
         update: {
@@ -90,7 +118,18 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error('[analytics_event_failed]', error);
-    return NextResponse.json({ ok: true }, { status: 202 });
+    const message = error instanceof Error ? error.message : 'Unknown analytics write error';
+    const conciseMessage = message.includes('Unknown argument') || message.includes('does not exist')
+      ? 'Analytics schema is not ready. Run npm run db:generate, npm run db:deploy, and restart the dev/server process.'
+      : message;
+
+    await prisma.siteSetting.upsert({
+      where: { key: 'analytics.lastError' },
+      update: { value: conciseMessage, description: 'Last analytics API write error.' },
+      create: { key: 'analytics.lastError', value: conciseMessage, description: 'Last analytics API write error.' },
+    }).catch(() => undefined);
+
+    console.error('[analytics_event_failed]', conciseMessage);
+    return NextResponse.json({ ok: false, error: conciseMessage }, { status: 202 });
   }
 }

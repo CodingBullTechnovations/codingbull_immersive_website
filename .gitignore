@@ -26,6 +26,7 @@ build/
 # misc
 .DS_Store
 website/.DS_Store
+*.code-workspace
 *.pem
 
 # debug

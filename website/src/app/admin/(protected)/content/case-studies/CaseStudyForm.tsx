@@ -1,4 +1,4 @@
-import { ContentStatus, PermissionStatus, type CaseStudy } from '@prisma/client';
+import { ContentStatus, PermissionStatus, SeoIndustry, type CaseStudy } from '@prisma/client';
 import { AdminField, adminInputClass, adminSelectClass, AdminSubmitButton } from '@/components/admin/AdminForm';
 import { saveCaseStudyAction } from '../actions';
 
@@ -72,6 +72,39 @@ export function CaseStudyForm({ study }: { study?: CaseStudy | null }) {
       <AdminField label="Metrics" hint="One per line: Label | Value">
         <textarea name="metrics" rows={5} defaultValue={pairValue(study?.metrics, 'label', 'value')} className={adminInputClass} />
       </AdminField>
+
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+        <h2 className="mb-5 font-semibold text-white">Advanced SEO</h2>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <AdminField label="SEO industry">
+            <select name="seoIndustry" defaultValue={study?.seoIndustry ?? SeoIndustry.GENERAL} className={adminSelectClass}>
+              {Object.values(SeoIndustry).map((industry) => <option key={industry} value={industry}>{industry}</option>)}
+            </select>
+          </AdminField>
+          <AdminField label="Search intent">
+            <input name="seoSearchIntent" defaultValue={study?.seoSearchIntent ?? ''} className={adminInputClass} />
+          </AdminField>
+          <AdminField label="Funnel stage">
+            <input name="seoFunnelStage" defaultValue={study?.seoFunnelStage ?? ''} className={adminInputClass} />
+          </AdminField>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <AdminField label="Primary keyword">
+            <input name="seoPrimaryKeyword" defaultValue={study?.seoPrimaryKeyword ?? ''} className={adminInputClass} />
+          </AdminField>
+          <AdminField label="Secondary keywords" hint="Comma separated.">
+            <input name="seoSecondaryKeywords" defaultValue={study?.seoSecondaryKeywords.join(', ') ?? ''} className={adminInputClass} />
+          </AdminField>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <AdminField label="Canonical path">
+            <input name="canonicalPath" defaultValue={study?.canonicalPath ?? ''} className={adminInputClass} />
+          </AdminField>
+          <AdminField label="Internal link targets" hint="One path per line.">
+            <textarea name="internalLinkTargets" rows={4} defaultValue={study?.internalLinkTargets.join('\n') ?? ''} className={adminInputClass} />
+          </AdminField>
+        </div>
+      </div>
 
       <AdminSubmitButton />
     </form>

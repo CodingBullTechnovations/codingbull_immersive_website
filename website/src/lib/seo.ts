@@ -11,14 +11,28 @@ export function generatePageMetadata(page: PageMetadata): Metadata {
     ? page.title
     : `${page.title} | CodingBull Technovations`;
 
-  const ogImage = page.ogImage ?? `${siteConfig.baseUrl}/images/logo/logo.png`;
+  const ogImage = page.ogImage ?? `${siteConfig.baseUrl}/images/og/codingbull-og.png`;
 
   return {
+    metadataBase: new URL(siteConfig.baseUrl),
     title,
+    applicationName: 'CodingBull Technovations',
     description: page.description,
     keywords: page.keywords,
+    creator: 'CodingBull Technovations Pvt. Ltd.',
+    publisher: siteConfig.companyName,
+    category: 'Software Development',
     alternates: {
       canonical: page.canonical,
+    },
+    manifest: '/site.webmanifest',
+    icons: {
+      icon: [
+        { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+        { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },
+        { url: '/icon-512.png', type: 'image/png', sizes: '512x512' },
+      ],
+      apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
     },
     openGraph: {
       title,

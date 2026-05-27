@@ -1,4 +1,4 @@
-import { ContentStatus, ServiceInterest, type ServicePage } from '@prisma/client';
+import { ContentStatus, SeoIndustry, ServiceInterest, type ServicePage } from '@prisma/client';
 import { AdminField, adminInputClass, adminSelectClass, AdminSubmitButton } from '@/components/admin/AdminForm';
 import { saveServicePageAction } from '../actions';
 
@@ -82,6 +82,39 @@ export function ServiceForm({ service }: { service?: ServicePage | null }) {
       <AdminField label="FAQs" hint="One per line: Question | Answer">
         <textarea name="faqs" rows={6} defaultValue={pairValue(service?.faqs, 'question', 'answer')} className={adminInputClass} />
       </AdminField>
+
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+        <h2 className="mb-5 font-semibold text-white">Advanced SEO</h2>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          <AdminField label="SEO industry">
+            <select name="seoIndustry" defaultValue={service?.seoIndustry ?? SeoIndustry.GENERAL} className={adminSelectClass}>
+              {Object.values(SeoIndustry).map((industry) => <option key={industry} value={industry}>{industry}</option>)}
+            </select>
+          </AdminField>
+          <AdminField label="Search intent">
+            <input name="seoSearchIntent" defaultValue={service?.seoSearchIntent ?? ''} className={adminInputClass} />
+          </AdminField>
+          <AdminField label="Funnel stage">
+            <input name="seoFunnelStage" defaultValue={service?.seoFunnelStage ?? ''} className={adminInputClass} />
+          </AdminField>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <AdminField label="Primary keyword">
+            <input name="seoPrimaryKeyword" defaultValue={service?.seoPrimaryKeyword ?? ''} className={adminInputClass} />
+          </AdminField>
+          <AdminField label="Secondary keywords" hint="Comma separated.">
+            <input name="seoSecondaryKeywords" defaultValue={service?.seoSecondaryKeywords.join(', ') ?? ''} className={adminInputClass} />
+          </AdminField>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <AdminField label="Canonical path">
+            <input name="canonicalPath" defaultValue={service?.canonicalPath ?? ''} className={adminInputClass} />
+          </AdminField>
+          <AdminField label="Internal link targets" hint="One path per line.">
+            <textarea name="internalLinkTargets" rows={4} defaultValue={listValue(service?.internalLinkTargets)} className={adminInputClass} />
+          </AdminField>
+        </div>
+      </div>
 
       <AdminSubmitButton />
     </form>

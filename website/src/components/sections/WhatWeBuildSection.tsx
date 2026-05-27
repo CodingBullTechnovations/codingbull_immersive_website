@@ -27,7 +27,7 @@ const industrialNiches = [
   {
     verticalId: 'HEALTHCARE',
     title: 'Healthcare Operating Systems',
-    subtitle: 'Complete EHR integrations, intelligent appointment engines, HIPAA-compliant storage, and multi-location clinic coordination architecture.',
+    subtitle: 'EHR integrations, intelligent appointment engines, scoped privacy controls, audit-ready storage, and multi-location clinic coordination architecture.',
     chips: ['Scheduling Core', 'Patient Intake', 'Telemedicine Portals'],
     href: '/services/healthcare-software-development',
   },

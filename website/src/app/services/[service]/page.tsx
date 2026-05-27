@@ -1,11 +1,15 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import type { Metadata } from 'next';
 import { PageHero } from '@/components/sections/PageHero';
 import { CTASection } from '@/components/sections/CTASection';
 import { homeContent } from '@/content/home';
+import { caseStudies } from '@/content/case-studies';
+import { insights } from '@/content/insights';
 import { services, servicesBySlug, type ServiceContent } from '@/content/services';
 import { siteConfig } from '@/content/site';
 import { generatePageMetadata } from '@/lib/seo';
+import { getIndustryForPath, industryLabels } from '@/lib/industry';
 import { JsonLd, generateBreadcrumbSchema, generateFAQSchema, generateServiceSchema } from '@/lib/schema';
 import { getPublishedServiceBySlug, listPublishedServiceSlugs } from '@/lib/server/public-content';
 
@@ -79,6 +83,9 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
   const serviceUrl = `${siteConfig.baseUrl}/services/${serviceData.slug}`;
   const faqs = serviceData.faqs ?? [];
+  const industry = getIndustryForPath(`/services/${serviceData.slug}`);
+  const relatedInsights = insights.filter((post) => getIndustryForPath(`/insights/${post.slug}`) === industry).slice(0, 3);
+  const relatedCaseStudies = caseStudies.filter((study) => getIndustryForPath(`/case-studies/${study.slug}`) === industry).slice(0, 2);
 
   return (
     <>
@@ -186,6 +193,43 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 lg:py-28 relative z-10 border-t border-white/[0.05]">
+        <div className="max-w-[var(--max-w-content)] mx-auto px-6 lg:px-10">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-teal block mb-4">
+                Proof and topical depth
+              </span>
+              <h2 className="text-3xl lg:text-5xl font-bold font-[family-name:var(--font-outfit)] text-white tracking-tight">
+                {industryLabels[industry]} SEO cluster
+              </h2>
+              <p className="mt-5 text-sm leading-6 text-white/50">
+                These linked proof and insight assets help buyers, search engines, and AI systems understand the exact operating problems this service solves.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {[...relatedCaseStudies.map((study) => ({
+                href: `/case-studies/${study.slug}`,
+                label: 'Case study',
+                title: study.title,
+                description: study.challenge,
+              })), ...relatedInsights.map((post) => ({
+                href: `/insights/${post.slug}`,
+                label: 'Insight',
+                title: post.title,
+                description: post.excerpt,
+              }))].map((item) => (
+                <Link key={item.href} href={item.href} className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 transition-colors hover:border-teal/25 hover:bg-white/[0.05]">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-teal">{item.label}</span>
+                  <h3 className="mt-3 text-lg font-semibold text-white">{item.title}</h3>
+                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-white/50">{item.description}</p>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

@@ -30,6 +30,22 @@ export function generateOrganizationSchema() {
   };
 }
 
+export function generateWebSiteSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${siteConfig.baseUrl}/#website`,
+    name: siteConfig.companyName,
+    url: siteConfig.baseUrl,
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.companyName,
+      url: siteConfig.baseUrl,
+    },
+    inLanguage: 'en',
+  };
+}
+
 export function generateLocalBusinessSchema(location: {
   name: string;
   city: string;

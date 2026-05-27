@@ -14,3 +14,13 @@ export function getEmailConfig() {
 export function getBaseUrl() {
   return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://www.codingbullz.com';
 }
+
+export function getSeoIntegrationConfig() {
+  return {
+    gaMeasurementId: process.env.NEXT_PUBLIC_GA_ID ?? '',
+    searchConsoleSiteUrl: process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL ?? '',
+    ga4PropertyId: process.env.GA4_PROPERTY_ID ?? '',
+    hasGoogleServiceAccountJson: Boolean(process.env.GOOGLE_SERVICE_ACCOUNT_JSON),
+    googleApplicationCredentials: process.env.GOOGLE_APPLICATION_CREDENTIALS ?? '',
+  };
+}

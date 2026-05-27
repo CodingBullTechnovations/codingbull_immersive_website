@@ -15,14 +15,14 @@ export default function USAPage() {
       <JsonLd data={generateOrganizationSchema()} />
       <PageHero
         title="Custom Software Development for USA Businesses"
-        subtitle="Premium digital architecture for American enterprises. Specialized in HIPAA-compliant healthcare, e-commerce, and HRMS for operational scale."
+        subtitle="Premium digital architecture for American enterprises. Specialized in healthcare, e-commerce, and HRMS systems with security controls scoped to the project."
       />
 
       <SectionWrapper className="py-24">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-black mb-8 italic tracking-tight">Enterprise Infrastructure, Simplified.</h2>
           <p className="text-white/60 text-lg mb-12">
-            CodingBull provides USA-based enterprises with a unique combination: direct founder-led communication and a high-performance India-based engineering team. We deliver custom systems that meet US regulatory standards (HIPAA, GDPR) at competitive fixed prices.
+            CodingBull provides USA-based enterprises with a unique combination: direct founder-led communication and a high-performance India-based engineering team. We deliver custom systems with privacy, access-control, and audit requirements scoped during discovery.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">

@@ -7,6 +7,7 @@ import {
   ServiceInterest,
 } from '@prisma/client';
 import type { ContactFormData } from '@/lib/validation';
+import { getIndustryForServiceInterest, getLandingPage, getTrafficChannel } from '@/lib/industry';
 import { prisma } from '@/lib/server/prisma';
 import { scoreLead } from '@/lib/server/lead-scoring';
 import { sendLeadNotification } from '@/lib/server/email';
@@ -56,6 +57,7 @@ export interface CreateLeadContext {
 
 export async function createLeadFromContactForm(data: ContactFormData, context: CreateLeadContext) {
   const serviceInterest = mapServiceInterest(data.service);
+  const industry = getIndustryForServiceInterest(serviceInterest);
   const budgetRange = mapBudget(data.budget);
   const timeline = mapTimeline(data.timeline);
   const sourcePage = data.sourcePage || '/contact';
@@ -78,6 +80,7 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
         website: data.companyWebsite?.trim() || null,
         country: data.country?.trim() || null,
         serviceInterest,
+        industry,
         budgetRange,
         timeline,
         message: data.message.trim(),
@@ -105,14 +108,20 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
           budgetRange,
           timeline,
           serviceInterest,
+          industry,
         },
       },
     });
+
+    const trafficChannel = getTrafficChannel(data.referrer || context.referrer, data.utmMedium, data.utmSource);
 
     await tx.analyticsEvent.create({
       data: {
         type: AnalyticsEventType.FORM_SUBMIT,
         page: sourcePage,
+        landingPage: getLandingPage(sourcePage),
+        industry,
+        trafficChannel,
         referrer: data.referrer || context.referrer || null,
         utmSource: data.utmSource || null,
         utmMedium: data.utmMedium || null,
@@ -120,6 +129,7 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
         metadata: {
           leadId: createdLead.id,
           serviceInterest,
+          industry,
           budgetRange,
         },
       },

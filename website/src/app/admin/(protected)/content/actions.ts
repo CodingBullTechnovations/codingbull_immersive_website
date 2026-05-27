@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { ContentStatus, PermissionStatus, ServiceInterest } from '@prisma/client';
+import { ContentStatus, PermissionStatus, SeoIndustry, ServiceInterest } from '@prisma/client';
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/server/authz';
 import { prisma } from '@/lib/server/prisma';
@@ -12,6 +12,7 @@ const slugSchema = z.string().trim().min(2).max(120).regex(/^[a-z0-9]+(?:-[a-z0-
 const statusSchema = z.nativeEnum(ContentStatus);
 const nicheSchema = z.nativeEnum(ServiceInterest);
 const permissionSchema = z.nativeEnum(PermissionStatus);
+const seoIndustrySchema = z.nativeEnum(SeoIndustry);
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? '').trim();
@@ -76,6 +77,13 @@ export async function saveServicePageAction(formData: FormData) {
     painPoints: lines(value(formData, 'painPoints')),
     modules: pairs(value(formData, 'modules'), 'title', 'description'),
     faqs: pairs(value(formData, 'faqs'), 'question', 'answer'),
+    seoPrimaryKeyword: optionalValue(formData, 'seoPrimaryKeyword'),
+    seoSecondaryKeywords: tags(value(formData, 'seoSecondaryKeywords')),
+    seoSearchIntent: optionalValue(formData, 'seoSearchIntent'),
+    seoFunnelStage: optionalValue(formData, 'seoFunnelStage'),
+    seoIndustry: seoIndustrySchema.parse(value(formData, 'seoIndustry')),
+    canonicalPath: optionalValue(formData, 'canonicalPath'),
+    internalLinkTargets: lines(value(formData, 'internalLinkTargets')),
     status,
     publishedAt: publishedAt(status, existing?.publishedAt),
   };
@@ -113,6 +121,13 @@ export async function saveInsightPostAction(formData: FormData) {
     author: z.string().min(2).parse(value(formData, 'author')),
     niche: nicheSchema.parse(value(formData, 'niche')),
     tags: tags(value(formData, 'tags')),
+    seoPrimaryKeyword: optionalValue(formData, 'seoPrimaryKeyword'),
+    seoSecondaryKeywords: tags(value(formData, 'seoSecondaryKeywords')),
+    seoSearchIntent: optionalValue(formData, 'seoSearchIntent'),
+    seoFunnelStage: optionalValue(formData, 'seoFunnelStage'),
+    seoIndustry: seoIndustrySchema.parse(value(formData, 'seoIndustry')),
+    canonicalPath: optionalValue(formData, 'canonicalPath'),
+    internalLinkTargets: lines(value(formData, 'internalLinkTargets')),
     status,
     publishedAt: publishedAt(status, existing?.publishedAt),
   };
@@ -151,6 +166,13 @@ export async function saveCaseStudyAction(formData: FormData) {
     architecture: pairs(value(formData, 'architecture'), 'title', 'description'),
     outcomes: z.string().min(20).parse(value(formData, 'outcomes')),
     metrics: pairs(value(formData, 'metrics'), 'label', 'value'),
+    seoPrimaryKeyword: optionalValue(formData, 'seoPrimaryKeyword'),
+    seoSecondaryKeywords: tags(value(formData, 'seoSecondaryKeywords')),
+    seoSearchIntent: optionalValue(formData, 'seoSearchIntent'),
+    seoFunnelStage: optionalValue(formData, 'seoFunnelStage'),
+    seoIndustry: seoIndustrySchema.parse(value(formData, 'seoIndustry')),
+    canonicalPath: optionalValue(formData, 'canonicalPath'),
+    internalLinkTargets: lines(value(formData, 'internalLinkTargets')),
     permissionStatus: permissionSchema.parse(value(formData, 'permissionStatus')),
     status,
     publishedAt: publishedAt(status, existing?.publishedAt),

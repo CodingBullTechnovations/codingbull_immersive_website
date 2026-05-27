@@ -282,6 +282,264 @@ For B2B companies, your website's job isn't to sell — it's to qualify. The Tes
     category: 'Case Study',
     accentColor: 'sky',
   },
+  {
+    slug: 'clinic-management-software-modules',
+    title: 'Clinic Management Software Modules Every Growing Clinic Needs',
+    excerpt: 'A practical breakdown of appointment, patient, staff, billing, and reporting modules that make clinic software operationally useful.',
+    content: `
+## Direct Answer
+
+Clinic management software should manage appointments, patient records, staff availability, billing, follow-ups, branch operations, and reporting from one secure workflow.
+
+## Core Modules
+
+- Appointment booking with doctor, room, and branch availability
+- Patient intake, medical history, and document uploads
+- Staff attendance, shift planning, and access control
+- Billing, receipts, payment status, and follow-up reminders
+- Dashboards for patient flow, lead leakage, cancellations, and branch performance
+
+## Why Custom Builds Matter
+
+Most clinics do not fail because they lack software. They fail because the software does not match the real operating process. A custom system should mirror how reception, doctors, therapists, administrators, and owners actually work.
+
+## Implementation Notes
+
+For sensitive healthcare workflows, define user roles early, separate patient-facing and staff-facing interfaces, log critical changes, and scope compliance requirements by region before engineering starts.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'Healthcare Software',
+    accentColor: 'teal',
+  },
+  {
+    slug: 'patient-appointment-booking-system-architecture',
+    title: 'Patient Appointment Booking System Architecture',
+    excerpt: 'How to design booking flows that avoid double-bookings, reduce manual calls, and keep clinic schedules reliable.',
+    content: `
+## Direct Answer
+
+A patient appointment booking system needs real-time slot rules, doctor availability, branch calendars, cancellation handling, reminders, and admin override controls.
+
+## Architecture Pattern
+
+- Availability engine for doctors, rooms, branches, and appointment types
+- Booking API that locks a slot before confirming payment or intake
+- Reminder workflow through WhatsApp, SMS, or email
+- Admin calendar for rescheduling, cancellation, and no-show handling
+- Reporting for utilization, no-shows, and source-wise appointment quality
+
+## Common Mistake
+
+The mistake is treating booking as a simple form. In clinics, a booking is an operational commitment. It touches staff, room capacity, consultation duration, payments, and patient communication.
+
+## Buyer Checklist
+
+Before building, document appointment types, time buffers, branch holidays, doctor leaves, cancellation policy, and who can override a schedule.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'Healthcare Software',
+    accentColor: 'teal',
+  },
+  {
+    slug: 'custom-ecommerce-inventory-order-automation',
+    title: 'Custom E-commerce Inventory And Order Automation',
+    excerpt: 'What to automate when product stock, order flow, shipping, and payment operations become too complex for generic store plugins.',
+    content: `
+## Direct Answer
+
+Custom e-commerce automation connects inventory, orders, payments, shipping, product content, and reporting so teams stop reconciling the same data manually.
+
+## High-Value Automations
+
+- Stock updates across warehouse, store, and admin views
+- Low-stock alerts and purchase planning
+- Payment status reconciliation
+- Shipping label generation and tracking sync
+- Category, product, and media publishing workflows
+- Operations dashboards for delayed orders, refunds, and conversion issues
+
+## When Custom Is Worth It
+
+Custom is worth it when operations are the bottleneck: multi-warehouse stock, unusual product rules, B2B pricing, custom shipping logic, or SEO pages that need more control than a template allows.
+
+## SEO Impact
+
+Inventory and content architecture affect SEO. Pages should be server-rendered, internally linked, structured with schema where applicable, and kept updated from a controlled backend.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'E-Commerce Engineering',
+    accentColor: 'amber',
+  },
+  {
+    slug: 'shopify-vs-custom-ecommerce-platform',
+    title: 'Shopify Vs Custom E-commerce Platform: When To Choose Each',
+    excerpt: 'A clear decision guide for businesses choosing between Shopify speed and a custom commerce operating system.',
+    content: `
+## Direct Answer
+
+Choose Shopify when speed, standard catalog behavior, and app-based operations are enough. Choose custom e-commerce when workflow, performance, SEO architecture, or backend operations require full control.
+
+## Shopify Is Usually Better For
+
+- Small catalogs
+- Standard checkout
+- Fast launch requirements
+- Limited backend complexity
+- Teams comfortable with app subscriptions
+
+## Custom Is Usually Better For
+
+- Complex inventory or order routing
+- B2B pricing and approval workflows
+- Deep ERP, shipping, or payment integrations
+- Custom SEO landing pages and category logic
+- Owner dashboards that must match business operations
+
+## Practical Recommendation
+
+Do not rebuild Shopify features unless the business case is clear. Build custom when the operating model itself is the advantage.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'E-Commerce Engineering',
+    accentColor: 'amber',
+  },
+  {
+    slug: 'payroll-automation-rules-custom-hrms',
+    title: 'Payroll Automation Rules For Custom HRMS Platforms',
+    excerpt: 'How custom payroll rules handle attendance, overtime, incentives, deductions, payslips, and approval workflows.',
+    content: `
+## Direct Answer
+
+Payroll automation should convert attendance, leave, salary structure, deductions, bonuses, taxes, and approvals into repeatable calculations with auditability.
+
+## Rule Areas
+
+- Attendance deductions and late marks
+- Overtime, incentives, and branch-specific allowances
+- PF, ESI, TDS, professional tax, and other deductions
+- Leave encashment and carry-forward policies
+- Payslip generation and approval locks
+
+## Why Generic Payroll Fails
+
+Generic payroll systems often fail when policies differ by branch, employee type, shift, department, or contract. A custom rules engine avoids spreadsheet exceptions every month.
+
+## Engineering Advice
+
+Make payroll explainable. Every number on the payslip should trace back to a rule, source attendance record, or approved override.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'Enterprise Systems',
+    accentColor: 'violet',
+  },
+  {
+    slug: 'multi-location-attendance-management-system',
+    title: 'Multi-location Attendance Management System Design',
+    excerpt: 'The data model and workflow decisions behind reliable attendance across branches, shifts, departments, and employee types.',
+    content: `
+## Direct Answer
+
+Multi-location attendance management needs branch calendars, shift rules, employee assignments, approvals, exception handling, and payroll-ready reporting.
+
+## Required Concepts
+
+- Branch, department, role, and employee context
+- Shift definitions with grace periods and holidays
+- Regularization requests with approval history
+- Device, biometric, GPS, or manual source tagging
+- Payroll export rules that separate final attendance from raw punches
+
+## What Owners Need
+
+Owners need visibility into absence patterns, branch coverage, late arrivals, overtime, and unresolved exceptions before payroll is finalized.
+
+## Implementation Rule
+
+Do not overwrite raw attendance. Keep raw entries, corrections, approvals, and final payroll values separate.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'Enterprise Systems',
+    accentColor: 'violet',
+  },
+  {
+    slug: 'internal-crm-workflow-automation-guide',
+    title: 'Internal CRM And Workflow Automation Guide',
+    excerpt: 'How internal CRM systems connect leads, tasks, approvals, documents, reminders, and reporting into one operating system.',
+    content: `
+## Direct Answer
+
+An internal CRM should capture customer context, assign work, track status, trigger reminders, control approvals, and expose reporting without forcing teams into disconnected tools.
+
+## Core Building Blocks
+
+- Lead and customer records
+- Task routing by role, team, or branch
+- Approval flows with audit history
+- Document and communication logs
+- Dashboards for owners and managers
+- Integration with email, WhatsApp links, calendars, payments, or accounting exports
+
+## When Custom Helps
+
+Custom CRM helps when the business has unique qualification steps, internal approvals, document review, field teams, or owner dashboards that standard CRMs cannot model cleanly.
+
+## Success Metric
+
+The best internal CRM reduces status meetings. Owners should see bottlenecks directly in the dashboard.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'Custom Development',
+    accentColor: 'sky',
+  },
+  {
+    slug: 'saas-vs-custom-software-decision-guide',
+    title: 'SaaS Vs Custom Software Decision Guide',
+    excerpt: 'A practical framework for deciding whether to buy SaaS, customize existing tools, or build a custom business system.',
+    content: `
+## Direct Answer
+
+Use SaaS when the workflow is standard. Build custom software when the workflow is proprietary, integration-heavy, compliance-sensitive, or central to how the company creates value.
+
+## Choose SaaS When
+
+- The process is common and not a competitive advantage
+- Your team can adapt to the tool
+- Integrations are simple
+- Reporting needs are basic
+- Speed is more important than ownership
+
+## Choose Custom When
+
+- The workflow is unique or operationally sensitive
+- Teams repeat manual reconciliation
+- Data is split across too many systems
+- Permissions and approval rules are complex
+- Leadership needs dashboards that SaaS cannot provide
+
+## Decision Rule
+
+Do not build custom software for vanity. Build it when it removes measurable operational friction or creates a system the business can rely on for years.
+    `.trim(),
+    author: 'Pranshu Dixit',
+    date: '2026-05-27',
+    readingTime: '4 min read',
+    category: 'Custom Development',
+    accentColor: 'sky',
+  },
 ];
 
 export const insightsBySlug = Object.fromEntries(insights.map(i => [i.slug, i]));

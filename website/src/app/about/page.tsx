@@ -2,11 +2,9 @@ import { PageHero } from '@/components/sections/PageHero';
 import { FounderNoteSection } from '@/components/sections/FounderNoteSection';
 import { CTASection } from '@/components/sections/CTASection';
 import { homeContent } from '@/content/home';
+import { generatePageMetadata, pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'About CodingBull | Technovations Pvt. Ltd.',
-  description: 'Learn about our proprietary software engineering approach and the founder-led architecture powering enterprise systems across healthcare, e-commerce, and HRMS.',
-};
+export const metadata = generatePageMetadata(pageMetadata.about);
 
 export default function AboutPage() {
   return (

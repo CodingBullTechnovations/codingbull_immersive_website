@@ -7,13 +7,14 @@ export interface ServiceContent {
   solution: string;
   features: { title: string; description: string }[];
   techStack: string[];
+  faqs?: { question: string; answer: string }[];
 }
 
 export const services: ServiceContent[] = [
   {
     slug: 'healthcare-software-development',
     title: 'Healthcare Software Development',
-    description: 'Clinic systems, smart scheduling, patient management, and full-scale healthcare platform architecture built for HIPAA-compliant, high-volume modern clinics.',
+    description: 'Clinic systems, smart scheduling, patient management, and full-scale healthcare platform architecture built with scoped privacy, audit, and security controls for high-volume modern clinics.',
     accentColor: 'teal',
     painPoints: [
       'Manual appointment scheduling causing double-bookings and no-shows',
@@ -21,7 +22,7 @@ export const services: ServiceContent[] = [
       'No real-time visibility into doctor availability across branches',
       'Compliance gaps in patient data handling',
     ],
-    solution: 'We architect end-to-end healthcare platforms that automate patient flow — from online booking through consultation to follow-up — while keeping all data encrypted and compliant.',
+    solution: 'We architect end-to-end healthcare platforms that automate patient flow — from online booking through consultation to follow-up — while keeping encryption, auditability, and access controls scoped to the operating model.',
     features: [
       { title: 'Smart Appointment Engine', description: 'Real-time slot management with automated reminders via WhatsApp and SMS, reducing no-shows by up to 40%.' },
       { title: 'Patient Records & Analytics', description: 'Centralized digital records with search, filters, and analytics dashboards for clinical decision-making.' },
@@ -29,6 +30,20 @@ export const services: ServiceContent[] = [
       { title: 'Compliance & Security', description: 'End-to-end encryption, role-based access, audit logs, and data residency controls for healthcare regulations.' },
     ],
     techStack: ['React', 'Next.js', 'Django', 'PostgreSQL', 'Redis', 'WhatsApp API', 'AWS'],
+    faqs: [
+      {
+        question: 'What is healthcare software development?',
+        answer: 'Healthcare software development is the design and engineering of secure digital systems for clinics, hospitals, diagnostics, patient intake, appointment booking, medical records, staff workflows, and operational reporting.',
+      },
+      {
+        question: 'Can CodingBull build clinic appointment and patient management software?',
+        answer: 'Yes. CodingBull builds clinic appointment systems, patient intake flows, branch-wise schedules, patient records, staff dashboards, and reporting modules around the clinic workflow.',
+      },
+      {
+        question: 'Do healthcare systems need custom security controls?',
+        answer: 'Yes. Healthcare systems should use role-based access, audit logs, encrypted transport, controlled backups, and scoped data access. Compliance requirements are finalized during project discovery based on country and use case.',
+      },
+    ],
   },
   {
     slug: 'ecommerce-development',
@@ -49,6 +64,20 @@ export const services: ServiceContent[] = [
       { title: 'Django Admin Panel', description: 'Full frontend control from the backend — update products, banners, categories, and media without touching code.' },
     ],
     techStack: ['React', 'Next.js', 'Django REST', 'PostgreSQL', 'Razorpay', 'Shiprocket', 'Cloudflare'],
+    faqs: [
+      {
+        question: 'When should a business choose custom e-commerce development?',
+        answer: 'Custom e-commerce development is useful when inventory, pricing, checkout, shipping, SEO, or backend operations cannot be handled cleanly by a standard template or plugin stack.',
+      },
+      {
+        question: 'Can CodingBull build SEO-first e-commerce websites?',
+        answer: 'Yes. CodingBull uses server-rendered pages, structured data, clean category architecture, optimized media, and backend-controlled product content for SEO-first e-commerce builds.',
+      },
+      {
+        question: 'Which e-commerce operations can be automated?',
+        answer: 'Common automations include inventory alerts, order routing, invoice generation, shipping labels, payment reconciliation, product publishing, abandoned inquiry follow-up, and operations dashboards.',
+      },
+    ],
   },
   {
     slug: 'custom-hrms-payroll-software',
@@ -69,6 +98,20 @@ export const services: ServiceContent[] = [
       { title: 'Employee Self-Service', description: 'Mobile-friendly portal for leave requests, payslip downloads, attendance history, and document uploads.' },
     ],
     techStack: ['React', 'Django', 'PostgreSQL', 'Celery', 'Redis', 'PDF Generation', 'REST API'],
+    faqs: [
+      {
+        question: 'What is a custom HRMS and payroll system?',
+        answer: 'A custom HRMS and payroll system manages employee records, attendance, leave policies, salary rules, payslips, approvals, compliance exports, and workforce reporting around a company-specific process.',
+      },
+      {
+        question: 'Can custom HRMS handle complex payroll formulas?',
+        answer: 'Yes. Custom payroll engines can model attendance deductions, overtime, incentives, allowances, PF, ESI, TDS, leave encashment, branch rules, and role-specific salary logic.',
+      },
+      {
+        question: 'When is custom HRMS better than SaaS HR software?',
+        answer: 'Custom HRMS is better when the organization has non-standard shifts, multi-branch attendance rules, unique payroll formulas, custom approvals, or deep integration needs.',
+      },
+    ],
   },
   {
     slug: 'custom-business-systems',
@@ -89,6 +132,20 @@ export const services: ServiceContent[] = [
       { title: 'Integration Layer', description: 'Connect payments, calendars, email, WhatsApp-safe links, accounting exports, and third-party APIs without creating data silos.' },
     ],
     techStack: ['Next.js', 'React', 'PostgreSQL', 'Prisma', 'Node.js', 'Resend', 'Cloudflare'],
+    faqs: [
+      {
+        question: 'What are custom business systems?',
+        answer: 'Custom business systems are private software platforms for operations such as internal CRM, approval workflows, dashboards, vendor portals, document flows, reporting, and process automation.',
+      },
+      {
+        question: 'When should a company build custom software instead of buying SaaS?',
+        answer: 'A company should consider custom software when off-the-shelf tools force process compromises, create data silos, require excessive manual work, or cannot match the business workflow.',
+      },
+      {
+        question: 'Can CodingBull build internal dashboards and workflow portals?',
+        answer: 'Yes. CodingBull builds role-based dashboards, internal CRMs, approval portals, reporting systems, and automation layers using Next.js, React, PostgreSQL, and secure server-side architecture.',
+      },
+    ],
   },
 ];
 

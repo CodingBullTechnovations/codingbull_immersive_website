@@ -2,6 +2,17 @@ import type { Metadata } from 'next';
 import type { PageMetadata } from '@/types/content';
 import { siteConfig } from '@/content/site';
 
+export const defaultOgImage = `${siteConfig.baseUrl}/images/og/codingbull-og.png`;
+export const defaultOgImageDimensions = {
+  width: 654,
+  height: 780,
+} as const;
+export const premiumMarketingOgImage = `${siteConfig.baseUrl}/imresizer-CBTLOGO-1.png`;
+export const premiumMarketingOgDimensions = {
+  width: 1200,
+  height: 630,
+} as const;
+
 /**
  * Generate Next.js Metadata from our typed PageMetadata.
  * Centralizes title template, OG defaults, and Twitter card config.
@@ -11,7 +22,9 @@ export function generatePageMetadata(page: PageMetadata): Metadata {
     ? page.title
     : `${page.title} | CodingBull Technovations`;
 
-  const ogImage = page.ogImage ?? `${siteConfig.baseUrl}/images/og/codingbull-og.png`;
+  const ogImage = page.ogImage ?? defaultOgImage;
+  const ogWidth = page.ogImageWidth ?? defaultOgImageDimensions.width;
+  const ogHeight = page.ogImageHeight ?? defaultOgImageDimensions.height;
 
   return {
     metadataBase: new URL(siteConfig.baseUrl),
@@ -42,8 +55,8 @@ export function generatePageMetadata(page: PageMetadata): Metadata {
       images: [
         {
           url: ogImage,
-          width: 1200,
-          height: 630,
+          width: ogWidth,
+          height: ogHeight,
           alt: page.title,
         },
       ],
@@ -77,30 +90,45 @@ export const pageMetadata: Record<string, PageMetadata> = {
       'fixed price software',
     ],
     canonical: siteConfig.baseUrl,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   about: {
     title: 'About CodingBull — Founder-Led Custom Software Company',
     description:
       'CodingBull Technovations is a founder-led software company in Ahmedabad building custom healthcare, e-commerce, and HRMS systems for India and USA clients.',
     canonical: `${siteConfig.baseUrl}/about`,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   contact: {
     title: 'Get a Fixed-Price Quote — Contact CodingBull',
     description:
       'Discuss your custom software project with CodingBull. Get a fixed-price quote via WhatsApp or our inquiry form. Healthcare, e-commerce, HRMS specialists.',
     canonical: `${siteConfig.baseUrl}/contact`,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   caseStudies: {
     title: 'Case Studies — Real Systems We\'ve Built | CodingBull',
     description:
       'See real healthcare, e-commerce, and HRMS systems built by CodingBull. Detailed case studies with challenges, solutions, and outcomes.',
     canonical: `${siteConfig.baseUrl}/case-studies`,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   insights: {
     title: 'Insights — Software Development & Business Systems | CodingBull',
     description:
       'Expert insights on healthcare software, e-commerce systems, HRMS, and custom business software development from the CodingBull team.',
     canonical: `${siteConfig.baseUrl}/insights`,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   ahmedabad: {
     title: 'Best Software Development Company in Ahmedabad | CodingBull',
@@ -108,6 +136,9 @@ export const pageMetadata: Record<string, PageMetadata> = {
       'CodingBull Technovations — Ahmedabad-based custom software company specializing in healthcare, e-commerce, and HRMS systems. Fixed-price, founder-led delivery.',
     keywords: ['software company Ahmedabad', 'custom software Ahmedabad', 'web development Ahmedabad'],
     canonical: `${siteConfig.baseUrl}/ahmedabad`,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   india: {
     title: 'Custom Software Development Company in India | CodingBull',
@@ -115,6 +146,9 @@ export const pageMetadata: Record<string, PageMetadata> = {
       'India-based custom software development for healthcare, e-commerce, and HRMS. Fixed-price projects with founder-led delivery. Serving India and international clients.',
     keywords: ['software development India', 'custom software company India'],
     canonical: `${siteConfig.baseUrl}/india`,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   usa: {
     title: 'Custom Software Development for USA Businesses | CodingBull',
@@ -122,6 +156,9 @@ export const pageMetadata: Record<string, PageMetadata> = {
       'Custom healthcare, e-commerce, and HRMS software for USA businesses. Fixed-price projects, direct founder communication, India-based development team.',
     keywords: ['custom software USA', 'offshore software development', 'healthcare software USA'],
     canonical: `${siteConfig.baseUrl}/usa`,
+    ogImage: premiumMarketingOgImage,
+    ogImageWidth: premiumMarketingOgDimensions.width,
+    ogImageHeight: premiumMarketingOgDimensions.height,
   },
   privacy: {
     title: 'Privacy Policy | CodingBull Technovations',

@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 const email = process.env.ADMIN_EMAIL;
 const password = process.env.ADMIN_PASSWORD;
 const name = process.env.ADMIN_NAME || 'CodingBull Owner';
+const forceSeed = process.argv.includes('--force') || process.env.SEED_FORCE === 'true' || process.env.SEED_FORCE === '1';
 
 async function main() {
   if (!email || !password) {
@@ -38,7 +39,7 @@ async function main() {
     console.log(`Owner admin is ready: ${email}`);
   }
 
-  await seedContent(prisma);
+  await seedContent(prisma, { force: forceSeed });
 }
 
 main()

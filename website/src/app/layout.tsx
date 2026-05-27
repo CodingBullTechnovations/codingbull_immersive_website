@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { generatePageMetadata } from '@/lib/seo';
 import { pageMetadata } from '@/lib/seo';
-import { JsonLd, generateOrganizationSchema, generateWebSiteSchema } from '@/lib/schema';
 import { AppShell } from '@/components/layout/AppShell';
 import './globals.css';
 
@@ -14,10 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <head>
-        <JsonLd data={generateOrganizationSchema()} />
-        <JsonLd data={generateWebSiteSchema()} />
-      </head>
+      <head />
       <body
         className="font-[family-name:var(--font-inter)] antialiased bg-[#050505] text-white"
       >

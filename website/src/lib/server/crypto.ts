@@ -9,9 +9,9 @@ export function hashValue(value?: string | null) {
 
 export function getClientIp(headersList: Headers) {
   return (
-    headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    headersList.get('x-real-ip') ||
     headersList.get('cf-connecting-ip') ||
+    headersList.get('x-real-ip') ||
+    headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     null
   );
 }

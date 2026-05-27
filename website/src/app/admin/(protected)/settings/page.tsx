@@ -323,6 +323,13 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
             <code className="rounded-lg bg-black/30 p-3">https://www.codingbullz.com/api/admin/integrations/google/callback</code>
           </div>
         </div>
+
+        <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">
+          <p className="text-sm font-semibold text-white">Consent mode note</p>
+          <p className="mt-2 text-xs leading-5 text-white/45">
+            Current GA4 behavior is delayed loading after analytics cookie consent. Google Consent Mode v2 is an optional future enhancement for advanced Google Ads or remarketing workflows; no Ads or remarketing tags are installed here.
+          </p>
+        </div>
       </section>
 
       <section className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-[1fr_0.9fr]">

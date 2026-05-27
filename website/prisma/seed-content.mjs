@@ -66,7 +66,58 @@ function keywordFromSlug(slug) {
   return slug.replaceAll('-', ' ');
 }
 
-export async function seedContent(prisma) {
+function detectForceMode() {
+  return process.argv.includes('--force') || process.env.SEED_FORCE === 'true' || process.env.SEED_FORCE === '1';
+}
+
+async function upsertBySlug({ prismaModel, slug, createData, updateData, force, counters }) {
+  const existing = await prismaModel.findUnique({ where: { slug }, select: { id: true } });
+  if (!existing) {
+    await prismaModel.create({ data: createData });
+    counters.created += 1;
+    return;
+  }
+
+  if (!force) {
+    counters.skipped += 1;
+    return;
+  }
+
+  await prismaModel.update({
+    where: { slug },
+    data: updateData,
+  });
+  counters.forceUpdated += 1;
+}
+
+async function upsertByCompound({ prismaModel, where, createData, updateData, force, counters }) {
+  const existing = await prismaModel.findUnique({ where, select: { id: true } });
+  if (!existing) {
+    await prismaModel.create({ data: createData });
+    counters.created += 1;
+    return;
+  }
+
+  if (!force) {
+    counters.skipped += 1;
+    return;
+  }
+
+  await prismaModel.update({
+    where,
+    data: updateData,
+  });
+  counters.forceUpdated += 1;
+}
+
+export async function seedContent(prisma, options = {}) {
+  const force = options.force ?? detectForceMode();
+  const summary = {
+    services: { created: 0, skipped: 0, forceUpdated: 0 },
+    caseStudies: { created: 0, skipped: 0, forceUpdated: 0 },
+    insights: { created: 0, skipped: 0, forceUpdated: 0 },
+    testimonials: { created: 0, skipped: 0, forceUpdated: 0 },
+  };
   const { services } = loadTsModule('src/content/services.ts');
   const { caseStudies } = loadTsModule('src/content/case-studies.ts');
   const { insights } = loadTsModule('src/content/insights.ts');
@@ -75,155 +126,109 @@ export async function seedContent(prisma) {
     const [primaryKeyword, secondaryKeywords, searchIntent, funnelStage] = keywordsForService(service);
     const pathname = `/services/${service.slug}`;
 
-    await prisma.servicePage.upsert({
-      where: { slug: service.slug },
-      update: {
-        title: service.title,
-        metaTitle: service.title,
-        metaDescription: service.description,
-        niche: serviceInterestForPath(pathname),
-        hero: {
-          headline: service.title,
-          summary: service.description,
-        },
-        painPoints: service.painPoints,
-        modules: service.features,
-        faqs: service.faqs ?? [],
-        schemaData: { type: 'Service' },
-        seoPrimaryKeyword: primaryKeyword,
-        seoSecondaryKeywords: secondaryKeywords,
-        seoSearchIntent: searchIntent,
-        seoFunnelStage: funnelStage,
-        seoIndustry: seoIndustryForPath(pathname),
-        canonicalPath: pathname,
-        internalLinkTargets: [],
-        status: 'PUBLISHED',
-        publishedAt: new Date(),
+    const data = {
+      slug: service.slug,
+      title: service.title,
+      metaTitle: service.title,
+      metaDescription: service.description,
+      niche: serviceInterestForPath(pathname),
+      hero: {
+        headline: service.title,
+        summary: service.description,
       },
-      create: {
-        slug: service.slug,
-        title: service.title,
-        metaTitle: service.title,
-        metaDescription: service.description,
-        niche: serviceInterestForPath(pathname),
-        hero: {
-          headline: service.title,
-          summary: service.description,
-        },
-        painPoints: service.painPoints,
-        modules: service.features,
-        faqs: service.faqs ?? [],
-        schemaData: { type: 'Service' },
-        seoPrimaryKeyword: primaryKeyword,
-        seoSecondaryKeywords: secondaryKeywords,
-        seoSearchIntent: searchIntent,
-        seoFunnelStage: funnelStage,
-        seoIndustry: seoIndustryForPath(pathname),
-        canonicalPath: pathname,
-        internalLinkTargets: [],
-        status: 'PUBLISHED',
-        publishedAt: new Date(),
-      },
+      painPoints: service.painPoints,
+      modules: service.features,
+      faqs: service.faqs ?? [],
+      schemaData: { type: 'Service' },
+      seoPrimaryKeyword: primaryKeyword,
+      seoSecondaryKeywords: secondaryKeywords,
+      seoSearchIntent: searchIntent,
+      seoFunnelStage: funnelStage,
+      seoIndustry: seoIndustryForPath(pathname),
+      canonicalPath: pathname,
+      internalLinkTargets: [],
+      status: 'PUBLISHED',
+      publishedAt: new Date(),
+    };
+
+    await upsertBySlug({
+      prismaModel: prisma.servicePage,
+      slug: service.slug,
+      createData: data,
+      updateData: data,
+      force,
+      counters: summary.services,
     });
   }
 
   for (const study of caseStudies) {
     const pathname = `/case-studies/${study.slug}`;
 
-    await prisma.caseStudy.upsert({
-      where: { slug: study.slug },
-      update: {
-        client: study.client,
-        industry: study.category,
-        title: study.title,
-        problem: study.challenge,
-        constraints: null,
-        solution: study.solution,
-        architecture: study.techStack.map((tech) => ({ title: tech, description: `${tech} used in the project architecture.` })),
-        outcomes: study.outcome,
-        metrics: study.stats,
-        permissionStatus: 'APPROVED',
-        seoPrimaryKeyword: keywordFromSlug(study.slug),
-        seoSecondaryKeywords: [study.client, study.category],
-        seoSearchIntent: 'Proof evaluation',
-        seoFunnelStage: 'Consideration',
-        seoIndustry: seoIndustryForPath(pathname),
-        canonicalPath: pathname,
-        internalLinkTargets: [],
-        status: 'PUBLISHED',
-        publishedAt: new Date(`${study.year}-01-01T00:00:00.000Z`),
-      },
-      create: {
-        slug: study.slug,
-        client: study.client,
-        industry: study.category,
-        title: study.title,
-        problem: study.challenge,
-        constraints: null,
-        solution: study.solution,
-        architecture: study.techStack.map((tech) => ({ title: tech, description: `${tech} used in the project architecture.` })),
-        outcomes: study.outcome,
-        metrics: study.stats,
-        permissionStatus: 'APPROVED',
-        seoPrimaryKeyword: keywordFromSlug(study.slug),
-        seoSecondaryKeywords: [study.client, study.category],
-        seoSearchIntent: 'Proof evaluation',
-        seoFunnelStage: 'Consideration',
-        seoIndustry: seoIndustryForPath(pathname),
-        canonicalPath: pathname,
-        internalLinkTargets: [],
-        status: 'PUBLISHED',
-        publishedAt: new Date(`${study.year}-01-01T00:00:00.000Z`),
-      },
+    const data = {
+      slug: study.slug,
+      client: study.client,
+      industry: study.category,
+      title: study.title,
+      problem: study.challenge,
+      constraints: null,
+      solution: study.solution,
+      architecture: study.techStack.map((tech) => ({ title: tech, description: `${tech} used in the project architecture.` })),
+      outcomes: study.outcome,
+      metrics: study.stats,
+      permissionStatus: 'APPROVED',
+      seoPrimaryKeyword: keywordFromSlug(study.slug),
+      seoSecondaryKeywords: [study.client, study.category],
+      seoSearchIntent: 'Proof evaluation',
+      seoFunnelStage: 'Consideration',
+      seoIndustry: seoIndustryForPath(pathname),
+      canonicalPath: pathname,
+      internalLinkTargets: [],
+      status: 'PUBLISHED',
+      publishedAt: new Date(`${study.year}-01-01T00:00:00.000Z`),
+    };
+
+    await upsertBySlug({
+      prismaModel: prisma.caseStudy,
+      slug: study.slug,
+      createData: data,
+      updateData: data,
+      force,
+      counters: summary.caseStudies,
     });
   }
 
   for (const post of insights) {
     const pathname = `/insights/${post.slug}`;
 
-    await prisma.insightPost.upsert({
-      where: { slug: post.slug },
-      update: {
-        title: post.title,
-        metaTitle: post.title,
-        metaDescription: post.excerpt,
-        excerpt: post.excerpt,
-        body: post.content,
-        author: post.author,
-        niche: serviceInterestForPath(pathname),
-        tags: [post.category],
-        schemaData: { type: 'Article' },
-        seoPrimaryKeyword: keywordFromSlug(post.slug),
-        seoSecondaryKeywords: [post.category],
-        seoSearchIntent: 'Informational',
-        seoFunnelStage: 'Awareness',
-        seoIndustry: seoIndustryForPath(pathname),
-        canonicalPath: pathname,
-        internalLinkTargets: [],
-        status: 'PUBLISHED',
-        publishedAt: new Date(`${post.date}T00:00:00.000Z`),
-      },
-      create: {
-        slug: post.slug,
-        title: post.title,
-        metaTitle: post.title,
-        metaDescription: post.excerpt,
-        excerpt: post.excerpt,
-        body: post.content,
-        author: post.author,
-        niche: serviceInterestForPath(pathname),
-        tags: [post.category],
-        schemaData: { type: 'Article' },
-        seoPrimaryKeyword: keywordFromSlug(post.slug),
-        seoSecondaryKeywords: [post.category],
-        seoSearchIntent: 'Informational',
-        seoFunnelStage: 'Awareness',
-        seoIndustry: seoIndustryForPath(pathname),
-        canonicalPath: pathname,
-        internalLinkTargets: [],
-        status: 'PUBLISHED',
-        publishedAt: new Date(`${post.date}T00:00:00.000Z`),
-      },
+    const data = {
+      slug: post.slug,
+      title: post.title,
+      metaTitle: post.title,
+      metaDescription: post.excerpt,
+      excerpt: post.excerpt,
+      body: post.content,
+      author: post.author,
+      niche: serviceInterestForPath(pathname),
+      tags: [post.category],
+      schemaData: { type: 'Article' },
+      seoPrimaryKeyword: keywordFromSlug(post.slug),
+      seoSecondaryKeywords: [post.category],
+      seoSearchIntent: 'Informational',
+      seoFunnelStage: 'Awareness',
+      seoIndustry: seoIndustryForPath(pathname),
+      canonicalPath: pathname,
+      internalLinkTargets: [],
+      status: 'PUBLISHED',
+      publishedAt: new Date(`${post.date}T00:00:00.000Z`),
+    };
+
+    await upsertBySlug({
+      prismaModel: prisma.insightPost,
+      slug: post.slug,
+      createData: data,
+      updateData: data,
+      force,
+      counters: summary.insights,
     });
   }
 
@@ -255,23 +260,25 @@ export async function seedContent(prisma) {
   ];
 
   for (const testimonial of testimonials) {
-    await prisma.testimonial.upsert({
-      where: {
-        person_company: {
-          person: testimonial.person,
-          company: testimonial.company,
-        },
+    const where = {
+      person_company: {
+        person: testimonial.person,
+        company: testimonial.company,
       },
-      update: {
-        ...testimonial,
-        permissionStatus: 'APPROVED',
-        status: 'PUBLISHED',
-      },
-      create: {
-        ...testimonial,
-        permissionStatus: 'APPROVED',
-        status: 'PUBLISHED',
-      },
+    };
+    const data = {
+      ...testimonial,
+      permissionStatus: 'APPROVED',
+      status: 'PUBLISHED',
+    };
+
+    await upsertByCompound({
+      prismaModel: prisma.testimonial,
+      where,
+      createData: data,
+      updateData: data,
+      force,
+      counters: summary.testimonials,
     });
   }
 
@@ -290,14 +297,32 @@ export async function seedContent(prisma) {
     });
   }
 
-  console.log(`Seeded content: ${services.length} services, ${caseStudies.length} case studies, ${insights.length} insights, ${testimonials.length} testimonials.`);
+  console.log(
+    JSON.stringify(
+      {
+        mode: force ? 'force_update' : 'safe_create_only',
+        services: summary.services,
+        caseStudies: summary.caseStudies,
+        insights: summary.insights,
+        testimonials: summary.testimonials,
+        expected: {
+          services: services.length,
+          caseStudies: caseStudies.length,
+          insights: insights.length,
+          testimonials: testimonials.length,
+        },
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const { PrismaClient } = await import('@prisma/client');
   const prisma = new PrismaClient();
 
-  seedContent(prisma)
+  seedContent(prisma, { force: detectForceMode() })
     .catch((error) => {
       console.error(error);
       process.exit(1);

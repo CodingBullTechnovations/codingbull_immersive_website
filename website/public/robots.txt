@@ -7,29 +7,65 @@ Allow: /images/
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: GPTBot
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: Claude-User
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Allow: /_next/static/
+Allow: /images/
 
 Sitemap: https://www.codingbullz.com/sitemap.xml

@@ -436,6 +436,7 @@ model MediaAsset {
 
 model AnalyticsEvent {
   id             String             @id @default(cuid())
+  visitorSessionId String?
   type           AnalyticsEventType
   page           String
   landingPage    String?
@@ -452,11 +453,85 @@ model AnalyticsEvent {
   metadata       Json?
   createdAt      DateTime           @default(now())
 
+  visitorSession VisitorSession? @relation(fields: [visitorSessionId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([page])
+  @@index([visitorSessionId])
   @@index([type, page, createdAt])
   @@index([industry, createdAt])
   @@index([trafficChannel, createdAt])
   @@index([sessionIdHash, createdAt])
   @@index([visitorIdHash, createdAt])
+}
+
+model VisitorProfile {
+  id               String   @id @default(cuid())
+  visitorIdHash    String   @unique
+  firstSeenAt      DateTime @default(now())
+  lastSeenAt       DateTime @default(now())
+  totalSessions    Int      @default(0)
+  totalEvents      Int      @default(0)
+  latestIpAddress  String?
+  latestCountry    String?
+  latestRegion     String?
+  latestCity       String?
+  latestDeviceType String?
+  latestBrowser    String?
+  latestOs         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  sessions VisitorSession[]
+
+  @@index([lastSeenAt])
+}
+
+model VisitorSession {
+  id             String         @id @default(cuid())
+  sessionIdHash  String         @unique
+  visitorIdHash  String
+  visitorId      String
+  ipAddress      String?
+  userAgent      String?
+  country        String?
+  region         String?
+  city           String?
+  landingPage    String?
+  lastPage       String?
+  referrer       String?
+  trafficChannel TrafficChannel @default(UNKNOWN)
+  utmSource      String?
+  utmMedium      String?
+  utmCampaign    String?
+  deviceType     String?
+  browser        String?
+  browserVersion String?
+  os             String?
+  osVersion      String?
+  screenWidth    Int?
+  screenHeight   Int?
+  viewportWidth  Int?
+  viewportHeight Int?
+  timezone       String?
+  language       String?
+  platform       String?
+  touchEnabled   Boolean?
+  colorScheme    String?
+  firstSeenAt    DateTime       @default(now())
+  lastSeenAt     DateTime       @default(now())
+  eventCount     Int            @default(0)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  visitor VisitorProfile  @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  events  AnalyticsEvent[]
+
+  @@index([visitorIdHash])
+  @@index([ipAddress])
+  @@index([createdAt])
+  @@index([lastSeenAt])
+  @@index([trafficChannel, lastSeenAt])
 }
 
 model PageMetricDaily {
@@ -546,6 +621,16 @@ model AuditLog {
 
   @@index([entityType, entityId, createdAt])
   @@index([actorId, createdAt])
+}
+
+model AnalyticsRetentionReview {
+  id                 String    @id @default(cuid())
+  lastReviewedAt     DateTime?
+  reviewDueAfterDays Int       @default(30)
+  dismissedUntil     DateTime?
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }
 
 model RateLimitBucket {

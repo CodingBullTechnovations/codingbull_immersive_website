@@ -3,7 +3,7 @@ import { AnalyticsEventType, SeoIndustry, TrafficChannel } from '@prisma/client'
 import { z } from 'zod';
 import { getIndustryForPath, getLandingPage, getTrafficChannel, industries, trafficChannels } from '@/lib/industry';
 import { prisma } from '@/lib/server/prisma';
-import { hashValue } from '@/lib/server/crypto';
+import { getClientIp, hashValue } from '@/lib/server/crypto';
 
 export const runtime = 'nodejs';
 
@@ -20,6 +20,17 @@ const analyticsEventSchema = z.object({
   utmMedium: z.string().max(120).optional(),
   utmCampaign: z.string().max(160).optional(),
   params: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+  clientContext: z.object({
+    screenWidth: z.number().int().positive().max(20000).optional(),
+    screenHeight: z.number().int().positive().max(20000).optional(),
+    viewportWidth: z.number().int().positive().max(20000).optional(),
+    viewportHeight: z.number().int().positive().max(20000).optional(),
+    timezone: z.string().max(120).optional(),
+    language: z.string().max(80).optional(),
+    platform: z.string().max(160).optional(),
+    colorScheme: z.string().max(30).optional(),
+    touchEnabled: z.boolean().optional(),
+  }).optional(),
 });
 
 const eventMap: Record<string, AnalyticsEventType> = {
@@ -44,6 +55,64 @@ function getDailyMetricIncrement(type: AnalyticsEventType) {
   };
 }
 
+function shouldIgnorePath(path: string) {
+  const normalized = path.split('?')[0] || '/';
+  return (
+    normalized.startsWith('/admin') ||
+    normalized.startsWith('/api') ||
+    normalized.startsWith('/_next') ||
+    normalized === '/sitemap.xml' ||
+    normalized === '/robots.txt' ||
+    normalized === '/favicon.ico' ||
+    /\.(?:avif|css|gif|ico|jpg|jpeg|js|json|map|png|svg|txt|webmanifest|webp|woff|woff2)$/i.test(normalized)
+  );
+}
+
+function textHeader(headersList: Headers, key: string) {
+  return headersList.get(key)?.trim() || null;
+}
+
+function parseUserAgent(userAgent: string | null) {
+  const ua = userAgent ?? '';
+  const match = (pattern: RegExp) => ua.match(pattern)?.[1];
+  const browserMatch =
+    match(/OPR\/([\d.]+)/) ? ['Opera', match(/OPR\/([\d.]+)/)] :
+    match(/Edg\/([\d.]+)/) ? ['Edge', match(/Edg\/([\d.]+)/)] :
+    match(/CriOS\/([\d.]+)/) ? ['Chrome iOS', match(/CriOS\/([\d.]+)/)] :
+    match(/FxiOS\/([\d.]+)/) ? ['Firefox iOS', match(/FxiOS\/([\d.]+)/)] :
+    match(/Chrome\/([\d.]+)/) ? ['Chrome', match(/Chrome\/([\d.]+)/)] :
+    match(/Firefox\/([\d.]+)/) ? ['Firefox', match(/Firefox\/([\d.]+)/)] :
+    match(/Version\/([\d.]+).*Safari/) ? ['Safari', match(/Version\/([\d.]+).*Safari/)] :
+    ['Unknown', undefined];
+
+  const osMatch =
+    match(/Windows NT ([\d.]+)/) ? ['Windows', match(/Windows NT ([\d.]+)/)] :
+    match(/Android ([\d.]+)/) ? ['Android', match(/Android ([\d.]+)/)] :
+    match(/iPhone OS ([\d_]+)/) ? ['iOS', match(/iPhone OS ([\d_]+)/)?.replaceAll('_', '.')] :
+    match(/CPU OS ([\d_]+)/) ? ['iPadOS', match(/CPU OS ([\d_]+)/)?.replaceAll('_', '.')] :
+    match(/Mac OS X ([\d_]+)/) ? ['macOS', match(/Mac OS X ([\d_]+)/)?.replaceAll('_', '.')] :
+    ua.includes('Linux') ? ['Linux', undefined] :
+    ['Unknown', undefined];
+
+  const deviceType = /iPad|Tablet/i.test(ua) ? 'Tablet' : /Mobi|Android|iPhone/i.test(ua) ? 'Mobile' : 'Desktop';
+
+  return {
+    browser: browserMatch[0],
+    browserVersion: browserMatch[1],
+    os: osMatch[0],
+    osVersion: osMatch[1],
+    deviceType,
+  };
+}
+
+function getGeoFromHeaders(headersList: Headers) {
+  return {
+    country: textHeader(headersList, 'cf-ipcountry') ?? textHeader(headersList, 'x-vercel-ip-country'),
+    region: textHeader(headersList, 'x-vercel-ip-country-region') ?? textHeader(headersList, 'x-region'),
+    city: textHeader(headersList, 'x-vercel-ip-city') ?? textHeader(headersList, 'x-city'),
+  };
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -59,10 +128,17 @@ export async function POST(request: Request) {
     }
 
     const page = parsed.data.page || '/';
-    if (page.startsWith('/admin') || page.startsWith('/api') || page.startsWith('/_next')) {
+    if (shouldIgnorePath(page)) {
       return NextResponse.json({ ok: true });
     }
 
+    const headersList = request.headers;
+    const ipAddress = getClientIp(headersList);
+    const userAgent = textHeader(headersList, 'user-agent');
+    const ipHash = hashValue(ipAddress);
+    const userAgentHash = hashValue(userAgent);
+    const geo = getGeoFromHeaders(headersList);
+    const parsedDevice = parseUserAgent(userAgent);
     const industry = (parsed.data.industry ?? getIndustryForPath(page)) as SeoIndustry;
     const trafficChannel = (parsed.data.trafficChannel ??
       getTrafficChannel(parsed.data.referrer, parsed.data.utmMedium, parsed.data.utmSource)) as TrafficChannel;
@@ -72,10 +148,108 @@ export async function POST(request: Request) {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     const increment = getDailyMetricIncrement(type);
+    const clientContext = parsed.data.clientContext ?? {};
 
-    await prisma.$transaction([
-      prisma.analyticsEvent.create({
+    await prisma.$transaction(async (tx) => {
+      let visitorSessionId: string | null = null;
+
+      if (sessionIdHash && visitorIdHash) {
+        const existingSession = await tx.visitorSession.findUnique({
+          where: { sessionIdHash },
+          select: { id: true },
+        });
+
+        const visitorProfile = await tx.visitorProfile.upsert({
+          where: { visitorIdHash },
+          create: {
+            visitorIdHash,
+            firstSeenAt: new Date(),
+            lastSeenAt: new Date(),
+            totalSessions: existingSession ? 0 : 1,
+            totalEvents: 1,
+            latestIpAddress: ipAddress,
+            latestCountry: geo.country,
+            latestRegion: geo.region,
+            latestCity: geo.city,
+            latestDeviceType: parsedDevice.deviceType,
+            latestBrowser: parsedDevice.browser,
+            latestOs: parsedDevice.os,
+          },
+          update: {
+            lastSeenAt: new Date(),
+            totalSessions: existingSession ? undefined : { increment: 1 },
+            totalEvents: { increment: 1 },
+            latestIpAddress: ipAddress ?? undefined,
+            latestCountry: geo.country ?? undefined,
+            latestRegion: geo.region ?? undefined,
+            latestCity: geo.city ?? undefined,
+            latestDeviceType: parsedDevice.deviceType,
+            latestBrowser: parsedDevice.browser,
+            latestOs: parsedDevice.os,
+          },
+        });
+
+        const visitorSession = await tx.visitorSession.upsert({
+          where: { sessionIdHash },
+          create: {
+            sessionIdHash,
+            visitorIdHash,
+            visitorId: visitorProfile.id,
+            ipAddress,
+            userAgent,
+            country: geo.country,
+            region: geo.region,
+            city: geo.city,
+            landingPage,
+            lastPage: page,
+            referrer: parsed.data.referrer || null,
+            trafficChannel,
+            utmSource: parsed.data.utmSource || null,
+            utmMedium: parsed.data.utmMedium || null,
+            utmCampaign: parsed.data.utmCampaign || null,
+            ...parsedDevice,
+            screenWidth: clientContext.screenWidth,
+            screenHeight: clientContext.screenHeight,
+            viewportWidth: clientContext.viewportWidth,
+            viewportHeight: clientContext.viewportHeight,
+            timezone: clientContext.timezone,
+            language: clientContext.language,
+            platform: clientContext.platform,
+            touchEnabled: clientContext.touchEnabled,
+            colorScheme: clientContext.colorScheme,
+            firstSeenAt: new Date(),
+            lastSeenAt: new Date(),
+            eventCount: 1,
+          },
+          update: {
+            lastPage: page,
+            ipAddress: ipAddress ?? undefined,
+            userAgent: userAgent ?? undefined,
+            country: geo.country ?? undefined,
+            region: geo.region ?? undefined,
+            city: geo.city ?? undefined,
+            trafficChannel,
+            ...parsedDevice,
+            screenWidth: clientContext.screenWidth ?? undefined,
+            screenHeight: clientContext.screenHeight ?? undefined,
+            viewportWidth: clientContext.viewportWidth ?? undefined,
+            viewportHeight: clientContext.viewportHeight ?? undefined,
+            timezone: clientContext.timezone ?? undefined,
+            language: clientContext.language ?? undefined,
+            platform: clientContext.platform ?? undefined,
+            touchEnabled: clientContext.touchEnabled ?? undefined,
+            colorScheme: clientContext.colorScheme ?? undefined,
+            lastSeenAt: new Date(),
+            eventCount: { increment: 1 },
+          },
+        });
+
+        visitorSessionId = visitorSession.id;
+      }
+
+      await tx.analyticsEvent.create({
         data: {
+          visitorSessionId,
           type,
           page,
           landingPage,
@@ -87,10 +261,18 @@ export async function POST(request: Request) {
           utmSource: parsed.data.utmSource || null,
           utmMedium: parsed.data.utmMedium || null,
           utmCampaign: parsed.data.utmCampaign || null,
-          metadata: parsed.data.params ?? {},
+          device: parsedDevice.deviceType,
+          country: geo.country,
+          metadata: {
+            ...(parsed.data.params ?? {}),
+            clientContext,
+            ipHash,
+            userAgentHash,
+          },
         },
-      }),
-      prisma.pageMetricDaily.upsert({
+      });
+
+      await tx.pageMetricDaily.upsert({
         where: {
           date_page_industry_trafficChannel: {
             date: today,
@@ -113,8 +295,8 @@ export async function POST(request: Request) {
           formSubmits: { increment: increment.formSubmits },
           whatsappClicks: { increment: increment.whatsappClicks },
         },
-      }),
-    ]);
+      });
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {

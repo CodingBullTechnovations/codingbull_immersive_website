@@ -69,7 +69,7 @@ function formatError(error: unknown) {
 
 function getExternalStatus(saved?: Array<{ provider: string; key: string }>) {
   const hasSaved = (provider: string, key: string) => saved?.some((item) => item.provider === provider && item.key === key);
-  const hasGaId = Boolean(process.env.NEXT_PUBLIC_GA_ID || hasSaved('GA4', 'measurement_id'));
+  const hasGaId = Boolean(hasSaved('GA4', 'measurement_id') || process.env.GA4_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID);
   const hasGscSite = Boolean(process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL || hasSaved('SEARCH_CONSOLE', 'site_url'));
   const hasGoogleCreds = Boolean(
     process.env.GOOGLE_SERVICE_ACCOUNT_JSON ||
@@ -77,22 +77,22 @@ function getExternalStatus(saved?: Array<{ provider: string; key: string }>) {
     process.env.GOOGLE_REFRESH_TOKEN ||
     hasSaved('GOOGLE', 'refresh_token')
   );
-  const hasGa4Property = Boolean(process.env.GA4_PROPERTY_ID || hasSaved('GA4', 'property_id'));
+  const hasGa4Property = Boolean(hasSaved('GA4', 'property_id') || process.env.GA4_PROPERTY_ID);
 
   return {
     ga4: {
       status: hasGaId ? 'ok' as HealthStatus : 'missing_credentials' as HealthStatus,
-      detail: hasGaId ? 'GA4 measurement ID configured' : 'NEXT_PUBLIC_GA_ID is missing',
+      detail: hasGaId ? 'GA4 measurement ID configured from admin credentials or env fallback' : 'Add GA4 measurement ID in Admin Settings',
     },
     searchConsole: {
       status: hasGscSite && hasGoogleCreds ? 'ok' as HealthStatus : 'missing_credentials' as HealthStatus,
       detail: hasGscSite && hasGoogleCreds
         ? 'Search Console site and API credentials configured'
-        : 'Set GOOGLE_SEARCH_CONSOLE_SITE_URL and Google API credentials',
+        : 'Pending until live domain verification and Google OAuth setup',
     },
     ga4DataApi: {
       status: hasGa4Property && hasGoogleCreds ? 'ok' as HealthStatus : 'not_configured' as HealthStatus,
-      detail: hasGa4Property && hasGoogleCreds ? 'GA4 Data API credentials configured' : 'GA4 Data API import is not configured',
+      detail: hasGa4Property && hasGoogleCreds ? 'GA4 Data API credentials configured' : 'Add GA4 property ID and connect Google OAuth in Admin Settings',
     },
   };
 }
@@ -115,6 +115,16 @@ function emptyDashboard(databaseStatus: HealthStatus, databaseDetail: string) {
       recent: [],
     },
     traffic: { ...defaultTraffic, visitors: 0, sessions: 0, conversionRate: 0 },
+    visitorIntelligence: {
+      profiles: 0,
+      sessions: 0,
+      oldestSessionAt: null,
+      reviewDueAfterDays: 30,
+      lastReviewedAt: null,
+      dismissedUntil: null,
+      reviewDue: false,
+      nextReviewAt: null,
+    },
     seo: {
       organicClicks: 0,
       impressions: 0,
@@ -157,8 +167,8 @@ function emptyDashboard(databaseStatus: HealthStatus, databaseDetail: string) {
       databaseOk: databaseStatus === 'ok',
       hasPageViews: false,
       hasSearchData: false,
-      hasGa4: process.env.NEXT_PUBLIC_GA_ID,
-      hasSearchConsole: process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL,
+      hasGa4: Boolean(process.env.GA4_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID),
+      hasSearchConsole: Boolean(process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL),
     }),
   };
 }
@@ -193,6 +203,10 @@ export async function getAdminDashboardData() {
       analyticsLastError,
       seededSlugs,
       credentialSummaries,
+      visitorProfileCount,
+      visitorSessionCount,
+      oldestVisitorSession,
+      retentionReview,
     ] = await Promise.all([
       prisma.lead.count(),
       prisma.lead.count({ where: { status: 'NEW' } }),
@@ -277,6 +291,10 @@ export async function getAdminDashboardData() {
         prisma.insightPost.findMany({ select: { slug: true } }),
       ]),
       prisma.integrationCredential.findMany({ select: { provider: true, key: true } }),
+      prisma.visitorProfile.count(),
+      prisma.visitorSession.count(),
+      prisma.visitorSession.findFirst({ orderBy: { firstSeenAt: 'asc' }, select: { firstSeenAt: true } }),
+      prisma.analyticsRetentionReview.findFirst({ orderBy: { createdAt: 'asc' } }),
     ]);
 
     const traffic = dailyMetrics.reduce(
@@ -339,6 +357,14 @@ export async function getAdminDashboardData() {
       cmsCaseStudies: 0,
       total: item.total,
     }));
+    const reviewDays = retentionReview?.reviewDueAfterDays ?? 30;
+    const reviewBase = retentionReview?.lastReviewedAt ?? oldestVisitorSession?.firstSeenAt ?? null;
+    const nextReviewAt = reviewBase ? new Date(reviewBase.getTime() + reviewDays * 24 * 60 * 60 * 1000) : null;
+    const retentionReminderDismissed = Boolean(retentionReview?.dismissedUntil && retentionReview.dismissedUntil > new Date());
+    const retentionReviewDue = Boolean(nextReviewAt && nextReviewAt <= new Date() && !retentionReminderDismissed);
+    const hasCredential = (provider: string, key: string) => credentialSummaries.some((item) => item.provider === provider && item.key === key);
+    const hasGa4Measurement = Boolean(hasCredential('GA4', 'measurement_id') || process.env.GA4_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID);
+    const hasSearchConsole = Boolean(hasCredential('SEARCH_CONSOLE', 'site_url') || process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL);
 
     return {
       health: {
@@ -367,6 +393,16 @@ export async function getAdminDashboardData() {
         visitors,
         sessions,
         conversionRate: calculateRate(traffic.formSubmits, traffic.visits),
+      },
+      visitorIntelligence: {
+        profiles: visitorProfileCount,
+        sessions: visitorSessionCount,
+        oldestSessionAt: oldestVisitorSession?.firstSeenAt ?? null,
+        reviewDueAfterDays: reviewDays,
+        lastReviewedAt: retentionReview?.lastReviewedAt ?? null,
+        dismissedUntil: retentionReview?.dismissedUntil ?? null,
+        reviewDue: retentionReviewDue,
+        nextReviewAt,
       },
       seo: {
         organicClicks,
@@ -431,8 +467,9 @@ export async function getAdminDashboardData() {
         databaseOk: true,
         hasPageViews: traffic.visits > 0,
         hasSearchData: organicClicks > 0 || impressions > 0,
-        hasGa4: process.env.NEXT_PUBLIC_GA_ID,
-        hasSearchConsole: process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL,
+        hasGa4: hasGa4Measurement,
+        hasSearchConsole,
+        retentionReviewDue,
       }),
     };
   } catch (error) {
@@ -454,8 +491,9 @@ function buildActionQueue(input: {
   databaseOk: boolean;
   hasPageViews: boolean;
   hasSearchData: boolean;
-  hasGa4?: string;
-  hasSearchConsole?: string;
+  hasGa4?: boolean;
+  hasSearchConsole?: boolean;
+  retentionReviewDue?: boolean;
 }) {
   const actions = [];
 
@@ -468,15 +506,19 @@ function buildActionQueue(input: {
   }
 
   if (!input.hasSearchConsole) {
-    actions.push({ priority: 'High', title: 'Connect Google Search Console', detail: 'Set GOOGLE_SEARCH_CONSOLE_SITE_URL and API credentials before query/ranking imports can run.' });
+    actions.push({ priority: 'High', title: 'Connect Google Search Console after launch', detail: 'Verify the live domain, save the exact property in Admin Settings, then connect OAuth before query/ranking imports can run.' });
   }
 
   if (!input.hasGa4) {
-    actions.push({ priority: 'High', title: 'Add GA4 measurement ID', detail: 'Set NEXT_PUBLIC_GA_ID after creating the GA4 web stream.' });
+    actions.push({ priority: 'High', title: 'Add GA4 measurement ID', detail: 'Save GA4.measurement_id in Admin Settings. Env vars are only a server fallback.' });
   }
 
   if (!input.hasSearchData) {
     actions.push({ priority: 'Medium', title: 'Import Search Console performance', detail: 'Load query/page rows to identify which industry SEO is producing clicks and impressions.' });
+  }
+
+  if (input.retentionReviewDue) {
+    actions.push({ priority: 'Medium', title: 'Review first-party visitor data', detail: 'Open Visitor Intelligence and delete visitor/session data that is no longer needed.' });
   }
 
   actions.push(

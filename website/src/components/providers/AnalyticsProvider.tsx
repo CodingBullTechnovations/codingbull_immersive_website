@@ -97,5 +97,20 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
 }
 
 function shouldIgnorePath(path: string) {
-  return path.startsWith('/admin') || path.startsWith('/api') || path.startsWith('/_next');
+  const normalizedPath = path.split('?')[0] || '/';
+  return (
+    normalizedPath.startsWith('/admin') ||
+    normalizedPath.startsWith('/api') ||
+    normalizedPath.startsWith('/_next') ||
+    normalizedPath === '/sitemap.xml' ||
+    normalizedPath === '/robots.txt' ||
+    normalizedPath === '/favicon.ico' ||
+    /\.(?:avif|css|gif|ico|jpg|jpeg|js|json|map|png|svg|txt|webmanifest|webp|woff|woff2)$/i.test(normalizedPath)
+  );
+}
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
 }

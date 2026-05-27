@@ -11,15 +11,20 @@ import { siteConfig } from '@/content/site';
 import { generatePageMetadata } from '@/lib/seo';
 import { getIndustryForPath, industryLabels } from '@/lib/industry';
 import { JsonLd, generateBreadcrumbSchema, generateFAQSchema, generateServiceSchema } from '@/lib/schema';
-import { getPublishedServiceBySlug, listPublishedServiceSlugs } from '@/lib/server/public-content';
+import { getServiceBySlug, listServiceSlugStatuses } from '@/lib/server/public-content';
+import { ContentStatus } from '@prisma/client';
 
 type ServiceViewContent = ServiceContent & {
   faqs?: Array<{ question: string; answer: string }>;
 };
 
 export async function generateStaticParams() {
-  const dbServices = await listPublishedServiceSlugs();
-  const slugs = new Set([...services.map((s) => s.slug), ...dbServices.map((s) => s.slug)]);
+  const dbServices = await listServiceSlugStatuses();
+  const dbStatusBySlug = new Map(dbServices.map((item) => [item.slug, item.status]));
+  const slugs = new Set([
+    ...dbServices.filter((item) => item.status === ContentStatus.PUBLISHED).map((item) => item.slug),
+    ...services.filter((item) => !dbStatusBySlug.has(item.slug)).map((item) => item.slug),
+  ]);
   return Array.from(slugs).map((service) => ({ service }));
 }
 
@@ -35,7 +40,7 @@ function objectArray(value: unknown) {
     : [];
 }
 
-function mapDbService(service: Awaited<ReturnType<typeof getPublishedServiceBySlug>>): ServiceViewContent | null {
+function mapDbService(service: Awaited<ReturnType<typeof getServiceBySlug>>): ServiceViewContent | null {
   if (!service) return null;
 
   const hero = typeof service.hero === 'object' && service.hero !== null ? (service.hero as Record<string, unknown>) : {};
@@ -63,7 +68,10 @@ function mapDbService(service: Awaited<ReturnType<typeof getPublishedServiceBySl
 
 export async function generateMetadata({ params }: { params: Promise<{ service: string }> }): Promise<Metadata> {
   const { service } = await params;
-  const data = mapDbService(await getPublishedServiceBySlug(service)) ?? servicesBySlug[service];
+  const dbService = await getServiceBySlug(service);
+  const data = dbService
+    ? (dbService.status === ContentStatus.PUBLISHED ? mapDbService(dbService) : null)
+    : servicesBySlug[service];
   if (!data) return { title: 'Service Not Found' };
 
   return generatePageMetadata({
@@ -75,7 +83,10 @@ export async function generateMetadata({ params }: { params: Promise<{ service: 
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ service: string }> }) {
   const { service } = await params;
-  const serviceData: ServiceViewContent | undefined = mapDbService(await getPublishedServiceBySlug(service)) ?? servicesBySlug[service];
+  const dbService = await getServiceBySlug(service);
+  const serviceData: ServiceViewContent | undefined = dbService
+    ? (dbService.status === ContentStatus.PUBLISHED ? mapDbService(dbService) ?? undefined : undefined)
+    : servicesBySlug[service];
 
   if (!serviceData) {
     notFound();

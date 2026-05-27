@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BarChart3, ClipboardList, FileImage, FileText, Gauge, HelpCircle, Lock, MessageSquare, Search, Settings, Shield, Users } from 'lucide-react';
+import { BarChart3, ClipboardList, FileImage, FileText, Gauge, HelpCircle, Lock, MessageSquare, Search, Settings, Shield, UserSearch, Users } from 'lucide-react';
 import type { Session } from 'next-auth';
 import { signOutAction } from '@/app/admin/(protected)/actions';
 
@@ -13,6 +13,7 @@ const navItems = [
   { label: 'FAQs', href: '/admin/content/faqs', icon: HelpCircle },
   { label: 'Media', href: '/admin/media', icon: FileImage },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+  { label: 'Visitors', href: '/admin/analytics/visitors', icon: UserSearch },
   { label: 'SEO Health', href: '/admin/seo', icon: Search },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
   { label: 'Users', href: '/admin/users', icon: Users },

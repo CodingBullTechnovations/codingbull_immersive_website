@@ -226,5 +226,7 @@ export interface PageMetadata {
   keywords?: string[];
   canonical: string;
   ogImage?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
   noIndex?: boolean;
 }

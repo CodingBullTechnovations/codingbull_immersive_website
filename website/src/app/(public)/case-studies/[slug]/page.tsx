@@ -1,21 +1,36 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { caseStudiesBySlug, type CaseStudy } from '@/content/case-studies';
+import { caseStudies, caseStudiesBySlug, type CaseStudy } from '@/content/case-studies';
 import { PageHero } from '@/components/sections/PageHero';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { Button } from '@/components/ui/Button';
 import { generatePageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/content/site';
 import { JsonLd, generateBreadcrumbSchema, generateCreativeWorkSchema } from '@/lib/schema';
-import { getPublishedCaseStudyBySlug } from '@/lib/server/public-content';
+import { getCaseStudyBySlug, listCaseStudySlugStatuses } from '@/lib/server/public-content';
+import { ContentStatus } from '@prisma/client';
 
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const dbStudies = await listCaseStudySlugStatuses();
+  const dbStatusBySlug = new Map(dbStudies.map((item) => [item.slug, item.status]));
+  const slugs = new Set([
+    ...dbStudies.filter((item) => item.status === ContentStatus.PUBLISHED).map((item) => item.slug),
+    ...caseStudies.filter((item) => !dbStatusBySlug.has(item.slug)).map((item) => item.slug),
+  ]);
+
+  return Array.from(slugs).map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const study = mapDbCaseStudy(await getPublishedCaseStudyBySlug(slug)) ?? caseStudiesBySlug[slug];
+  const dbStudy = await getCaseStudyBySlug(slug);
+  const study = dbStudy
+    ? (dbStudy.status === ContentStatus.PUBLISHED ? mapDbCaseStudy(dbStudy) : null)
+    : caseStudiesBySlug[slug];
   if (!study) return {};
 
   return generatePageMetadata({
@@ -36,7 +51,7 @@ function pairStats(value: unknown) {
     .filter((item): item is { label: string; value: string } => Boolean(item?.label && item.value));
 }
 
-function mapDbCaseStudy(study: Awaited<ReturnType<typeof getPublishedCaseStudyBySlug>>): CaseStudy | null {
+function mapDbCaseStudy(study: Awaited<ReturnType<typeof getCaseStudyBySlug>>): CaseStudy | null {
   if (!study) return null;
   const stats = pairStats(study.metrics);
   const architecture = Array.isArray(study.architecture) ? study.architecture : [];
@@ -60,7 +75,10 @@ function mapDbCaseStudy(study: Awaited<ReturnType<typeof getPublishedCaseStudyBy
 
 export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps) {
   const { slug } = await params;
-  const study = mapDbCaseStudy(await getPublishedCaseStudyBySlug(slug)) ?? caseStudiesBySlug[slug];
+  const dbStudy = await getCaseStudyBySlug(slug);
+  const study = dbStudy
+    ? (dbStudy.status === ContentStatus.PUBLISHED ? mapDbCaseStudy(dbStudy) : null)
+    : caseStudiesBySlug[slug];
   if (!study) notFound();
 
   const caseUrl = `${siteConfig.baseUrl}/case-studies/${study.slug}`;

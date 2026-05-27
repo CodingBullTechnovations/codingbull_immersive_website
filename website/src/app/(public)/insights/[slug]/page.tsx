@@ -8,15 +8,20 @@ import { insights, insightsBySlug, type InsightPost } from '@/content/insights';
 import { siteConfig } from '@/content/site';
 import { generatePageMetadata } from '@/lib/seo';
 import { JsonLd, generateArticleSchema, generateBreadcrumbSchema } from '@/lib/schema';
-import { getPublishedInsightBySlug, listPublishedInsightSlugs } from '@/lib/server/public-content';
+import { getInsightBySlug, listInsightSlugStatuses } from '@/lib/server/public-content';
+import { ContentStatus } from '@prisma/client';
 
 export async function generateStaticParams() {
-  const dbPosts = await listPublishedInsightSlugs();
-  const slugs = new Set([...insights.map((post) => post.slug), ...dbPosts.map((post) => post.slug)]);
+  const dbPosts = await listInsightSlugStatuses();
+  const dbStatusBySlug = new Map(dbPosts.map((item) => [item.slug, item.status]));
+  const slugs = new Set([
+    ...dbPosts.filter((item) => item.status === ContentStatus.PUBLISHED).map((item) => item.slug),
+    ...insights.filter((item) => !dbStatusBySlug.has(item.slug)).map((item) => item.slug),
+  ]);
   return Array.from(slugs).map((slug) => ({ slug }));
 }
 
-function mapDbPost(post: Awaited<ReturnType<typeof getPublishedInsightBySlug>>): InsightPost | null {
+function mapDbPost(post: Awaited<ReturnType<typeof getInsightBySlug>>): InsightPost | null {
   if (!post) return null;
 
   return {
@@ -34,8 +39,10 @@ function mapDbPost(post: Awaited<ReturnType<typeof getPublishedInsightBySlug>>):
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const dbPost = await getPublishedInsightBySlug(slug);
-  const post = mapDbPost(dbPost) ?? insightsBySlug[slug];
+  const dbPost = await getInsightBySlug(slug);
+  const post = dbPost
+    ? (dbPost.status === ContentStatus.PUBLISHED ? mapDbPost(dbPost) : null)
+    : insightsBySlug[slug];
   if (!post) return { title: 'Post Not Found' };
 
   return generatePageMetadata({
@@ -47,8 +54,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function InsightPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const dbPost = await getPublishedInsightBySlug(slug);
-  const post = mapDbPost(dbPost) ?? insightsBySlug[slug];
+  const dbPost = await getInsightBySlug(slug);
+  const post = dbPost
+    ? (dbPost.status === ContentStatus.PUBLISHED ? mapDbPost(dbPost) : null)
+    : insightsBySlug[slug];
 
   if (!post) {
     notFound();

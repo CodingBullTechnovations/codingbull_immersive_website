@@ -57,6 +57,84 @@ function publishedAt(status: ContentStatus, existing?: Date | null) {
   return existing ?? new Date();
 }
 
+async function updateContentStatus(entityType: string, id: string, status: ContentStatus) {
+  switch (entityType) {
+    case 'ServicePage':
+      return prisma.servicePage.update({ where: { id }, data: { status, publishedAt: status === 'PUBLISHED' ? new Date() : null } });
+    case 'InsightPost':
+      return prisma.insightPost.update({ where: { id }, data: { status, publishedAt: status === 'PUBLISHED' ? new Date() : null } });
+    case 'CaseStudy':
+      return prisma.caseStudy.update({ where: { id }, data: { status, publishedAt: status === 'PUBLISHED' ? new Date() : null } });
+    case 'FAQ':
+      return prisma.fAQ.update({ where: { id }, data: { status } });
+    case 'Testimonial':
+      return prisma.testimonial.update({ where: { id }, data: { status } });
+    default:
+      throw new Error('Unsupported content type.');
+  }
+}
+
+function revalidateContentList(entityType: string) {
+  const paths: Record<string, string> = {
+    ServicePage: '/admin/content/services',
+    InsightPost: '/admin/content/insights',
+    CaseStudy: '/admin/content/case-studies',
+    FAQ: '/admin/content/faqs',
+    Testimonial: '/admin/content/testimonials',
+  };
+  revalidatePath(paths[entityType] ?? '/admin/content');
+}
+
+export async function archiveContentAction(formData: FormData) {
+  const session = await requireAdmin('EDITOR');
+  const entityType = z.enum(['ServicePage', 'InsightPost', 'CaseStudy', 'FAQ', 'Testimonial']).parse(value(formData, 'entityType'));
+  const id = z.string().min(5).parse(value(formData, 'id'));
+  const confirmation = value(formData, 'confirmation');
+
+  if (confirmation !== 'ARCHIVE') {
+    throw new Error('Type ARCHIVE to archive this content.');
+  }
+
+  const saved = await updateContentStatus(entityType, id, ContentStatus.ARCHIVED);
+
+  await writeAuditLog({
+    actorId: session.user.id,
+    action: 'content.archive',
+    entityType,
+    entityId: id,
+    afterSummary: { status: 'ARCHIVED' },
+  });
+
+  revalidateContentList(entityType);
+  if ('slug' in saved && typeof saved.slug === 'string') {
+    revalidatePath(`/services/${saved.slug}`);
+    revalidatePath(`/insights/${saved.slug}`);
+    revalidatePath(`/case-studies/${saved.slug}`);
+  }
+}
+
+export async function restoreContentAction(formData: FormData) {
+  const session = await requireAdmin('EDITOR');
+  const entityType = z.enum(['ServicePage', 'InsightPost', 'CaseStudy', 'FAQ', 'Testimonial']).parse(value(formData, 'entityType'));
+  const id = z.string().min(5).parse(value(formData, 'id'));
+  const saved = await updateContentStatus(entityType, id, ContentStatus.DRAFT);
+
+  await writeAuditLog({
+    actorId: session.user.id,
+    action: 'content.restore_draft',
+    entityType,
+    entityId: id,
+    afterSummary: { status: 'DRAFT' },
+  });
+
+  revalidateContentList(entityType);
+  if ('slug' in saved && typeof saved.slug === 'string') {
+    revalidatePath(`/services/${saved.slug}`);
+    revalidatePath(`/insights/${saved.slug}`);
+    revalidatePath(`/case-studies/${saved.slug}`);
+  }
+}
+
 export async function saveServicePageAction(formData: FormData) {
   const session = await requireAdmin('EDITOR');
   const id = optionalValue(formData, 'id');

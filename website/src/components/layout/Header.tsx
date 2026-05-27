@@ -57,6 +57,7 @@ export function Header() {
               sizes="(max-width: 768px) 48px, 56px"
               className="object-contain"
               priority
+              loading="eager"
             />
           </div>
           <div className="flex flex-col">

@@ -4,17 +4,12 @@ import { env } from '@/lib/env';
 import { getIndustryForPath, getTrafficChannel, normalizePath } from '@/lib/industry';
 
 // =============================================================================
-// GA4 Analytics
+// First-party analytics
 // =============================================================================
 
-/** Initialize GA4 (call once in layout) */
+/** Retained as a no-op for older imports. GA4 is owned by AnalyticsProvider. */
 export function initAnalytics() {
-  if (!env.isProduction || !env.gaId) return;
-
-  // gtag is loaded via Script component in layout
-  window.gtag?.('config', env.gaId, {
-    page_path: window.location.pathname,
-  });
+  return undefined;
 }
 
 /** Track a custom event */
@@ -34,6 +29,7 @@ export function trackEvent(
     visitorId: getVisitorId(),
     ...attribution,
     params,
+    clientContext: getClientContext(),
   };
 
   if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
@@ -47,13 +43,9 @@ export function trackEvent(
     }).catch(() => undefined);
   }
 
-  if (!env.isProduction || !env.gaId) {
-     
+  if (!env.isProduction) {
     console.debug('[Analytics]', name, params);
-    return;
   }
-
-  window.gtag?.('event', name, params);
 }
 
 export function trackPageView(page: string) {
@@ -137,16 +129,34 @@ function isDuplicatePageView(page: string) {
 }
 
 function shouldIgnorePath(path: string) {
-  return path.startsWith('/admin') || path.startsWith('/api') || path.startsWith('/_next');
+  const normalizedPath = path.split('?')[0] || '/';
+  return (
+    normalizedPath.startsWith('/admin') ||
+    normalizedPath.startsWith('/api') ||
+    normalizedPath.startsWith('/_next') ||
+    normalizedPath === '/sitemap.xml' ||
+    normalizedPath === '/robots.txt' ||
+    normalizedPath === '/favicon.ico' ||
+    /\.(?:avif|css|gif|ico|jpg|jpeg|js|json|map|png|svg|txt|webmanifest|webp|woff|woff2)$/i.test(normalizedPath)
+  );
 }
 
 function makeId() {
   return window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 }
 
-// --- Type augmentation for gtag ---
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
-  }
+function getClientContext() {
+  if (typeof window === 'undefined') return undefined;
+
+  return {
+    screenWidth: window.screen?.width,
+    screenHeight: window.screen?.height,
+    viewportWidth: window.innerWidth,
+    viewportHeight: window.innerHeight,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    language: navigator.language,
+    platform: navigator.platform,
+    colorScheme: window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    touchEnabled: navigator.maxTouchPoints > 0,
+  };
 }

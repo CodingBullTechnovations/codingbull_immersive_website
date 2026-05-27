@@ -3,6 +3,7 @@ import { Activity, AlertTriangle, BarChart3, CheckCircle2, Database, Search, Tre
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { AdminStat } from '@/components/admin/AdminStat';
 import { getAdminDashboardData } from '@/lib/server/admin-dashboard';
+import { getContentOwnershipMatrix, getContentOwnershipSummary } from '@/lib/server/content-ownership';
 import { testTrackingAction } from './actions';
 
 function formatNumber(value: number) {
@@ -39,6 +40,8 @@ function Panel({ title, children, action }: { title: string; children: React.Rea
 
 export default async function AdminDashboardPage() {
   const data = await getAdminDashboardData();
+  const ownershipSummary = getContentOwnershipSummary();
+  const ownershipMatrix = getContentOwnershipMatrix();
   const healthCards = [
     { label: 'Database', item: data.health.database, Icon: Database },
     { label: 'First-party tracking', item: data.health.firstPartyAnalytics, Icon: Activity },
@@ -154,7 +157,7 @@ export default async function AdminDashboardPage() {
             {data.channelSplit.length === 0 ? (
               <p className="text-sm text-white/40">No channel-attributed events yet.</p>
             ) : (
-              data.channelSplit.map((channel) => (
+              data.channelSplit.map((channel: { channel: string; label: string; events: number }) => (
                 <div key={channel.channel} className="flex items-center justify-between rounded-xl border border-white/10 px-4 py-3 text-sm">
                   <span className="text-white/60">{channel.label}</span>
                   <span className="text-white">{formatNumber(channel.events)}</span>
@@ -181,7 +184,15 @@ export default async function AdminDashboardPage() {
             {data.leads.recent.length === 0 ? (
               <p className="py-4 text-sm text-white/40">No leads captured yet.</p>
             ) : (
-              data.leads.recent.map((lead) => (
+              data.leads.recent.map((lead: {
+                id: string;
+                name: string;
+                company: string | null;
+                serviceInterest: string;
+                industry: string;
+                status: string;
+                score: number;
+              }) => (
                 <Link key={lead.id} href={`/admin/leads/${lead.id}`} className="grid gap-2 py-4 transition-colors hover:bg-white/[0.02] md:grid-cols-[1fr_auto]">
                   <div>
                     <p className="font-medium text-white">{lead.name}</p>
@@ -223,6 +234,46 @@ export default async function AdminDashboardPage() {
             {(data.content.seedStatus.missing.services.length > 0 || data.content.seedStatus.missing.caseStudies.length > 0 || data.content.seedStatus.missing.insights.length > 0) && (
               <p className="mt-2 text-xs text-amber-200">Run npm run db:seed:content to fill missing backend content.</p>
             )}
+          </div>
+        </Panel>
+      </section>
+
+      <section className="mt-6">
+        <Panel title="Content control matrix" action={<Link href="/admin/content/services" className="text-xs font-semibold text-teal hover:text-primary-hover">Open content admin</Link>}>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <MetricCard label="DB controlled routes" value={ownershipSummary.dbControlled} detail="Editable from admin" />
+            <MetricCard label="Mixed routes" value={ownershipSummary.mixed} detail="DB + static fallback" />
+            <MetricCard label="Code-managed routes" value={ownershipSummary.staticCode} detail="Requires engineering update" />
+          </div>
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[760px] text-left text-sm">
+              <thead className="text-[10px] uppercase tracking-[0.14em] text-white/35">
+                <tr>
+                  <th className="px-3 py-2 font-semibold">Route</th>
+                  <th className="px-3 py-2 font-semibold">Ownership</th>
+                  <th className="px-3 py-2 font-semibold">Admin editable</th>
+                  <th className="px-3 py-2 font-semibold">Admin section</th>
+                  <th className="px-3 py-2 font-semibold">Notes</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {ownershipMatrix.map((row) => (
+                  <tr key={row.route} className="text-white/60">
+                    <td className="px-3 py-3 font-medium text-white">{row.route}</td>
+                    <td className="px-3 py-3">{row.level}</td>
+                    <td className="px-3 py-3">{row.editableInAdmin ? 'Yes' : 'No'}</td>
+                    <td className="px-3 py-3">
+                      {row.adminSection ? (
+                        <Link href={row.adminSection} className="text-teal hover:text-primary-hover">{row.adminSection}</Link>
+                      ) : (
+                        <span className="text-white/35">Code only</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-3 text-xs text-white/45">{row.ownerNote}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </Panel>
       </section>

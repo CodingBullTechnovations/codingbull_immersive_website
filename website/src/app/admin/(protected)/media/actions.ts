@@ -35,3 +35,29 @@ export async function saveMediaAssetAction(formData: FormData) {
 
   revalidatePath('/admin/media');
 }
+
+export async function deleteMediaAssetAction(formData: FormData) {
+  const session = await requireAdmin('ADMIN');
+  const id = z.string().min(5).parse(String(formData.get('id') ?? '').trim());
+  const confirmation = String(formData.get('confirmation') ?? '').trim();
+
+  if (confirmation !== 'DELETE') {
+    throw new Error('Type DELETE to remove this media record.');
+  }
+
+  const media = await prisma.mediaAsset.findUnique({ where: { id } });
+  if (!media) return;
+
+  await prisma.mediaAsset.delete({ where: { id } });
+
+  await writeAuditLog({
+    actorId: session.user.id,
+    action: 'media.delete',
+    entityType: 'MediaAsset',
+    entityId: id,
+    beforeSummary: { fileName: media.fileName, url: media.url },
+    afterSummary: { deleted: true },
+  });
+
+  revalidatePath('/admin/media');
+}

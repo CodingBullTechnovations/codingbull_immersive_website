@@ -4,11 +4,18 @@ import { auth } from '@/auth';
 export default auth((request) => {
   const { pathname } = request.nextUrl;
   const isAdminPath = pathname.startsWith('/admin');
+  const isApiPath = pathname.startsWith('/api');
   const isLoginPath = pathname === '/admin/login';
   const isAuthenticated = Boolean(request.auth?.user);
 
-  if (!isAdminPath) {
+  if (!isAdminPath && !isApiPath) {
     return NextResponse.next();
+  }
+
+  if (isApiPath) {
+    const response = NextResponse.next();
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return response;
   }
 
   if (!isAuthenticated && !isLoginPath) {
@@ -31,5 +38,5 @@ export default auth((request) => {
 });
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/:path*'],
 };

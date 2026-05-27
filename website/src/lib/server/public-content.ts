@@ -17,7 +17,17 @@ export async function listPublishedServiceSlugs() {
     () =>
       prisma.servicePage.findMany({
         where: { status: ContentStatus.PUBLISHED },
-        select: { slug: true },
+        select: { slug: true, publishedAt: true, updatedAt: true },
+      }),
+    [],
+  );
+}
+
+export async function listServiceSlugStatuses() {
+  return safeQuery(
+    () =>
+      prisma.servicePage.findMany({
+        select: { slug: true, status: true, publishedAt: true, updatedAt: true },
       }),
     [],
   );
@@ -33,12 +43,32 @@ export async function getPublishedServiceBySlug(slug: string) {
   );
 }
 
+export async function getServiceBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.servicePage.findUnique({
+        where: { slug },
+      }),
+    null,
+  );
+}
+
 export async function listPublishedInsightSlugs() {
   return safeQuery(
     () =>
       prisma.insightPost.findMany({
         where: { status: ContentStatus.PUBLISHED },
-        select: { slug: true },
+        select: { slug: true, publishedAt: true, updatedAt: true },
+      }),
+    [],
+  );
+}
+
+export async function listInsightSlugStatuses() {
+  return safeQuery(
+    () =>
+      prisma.insightPost.findMany({
+        select: { slug: true, status: true, publishedAt: true, updatedAt: true },
       }),
     [],
   );
@@ -54,12 +84,32 @@ export async function getPublishedInsightBySlug(slug: string) {
   );
 }
 
+export async function getInsightBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.insightPost.findUnique({
+        where: { slug },
+      }),
+    null,
+  );
+}
+
 export async function listPublishedCaseStudySlugs() {
   return safeQuery(
     () =>
       prisma.caseStudy.findMany({
         where: { status: ContentStatus.PUBLISHED },
-        select: { slug: true },
+        select: { slug: true, publishedAt: true, updatedAt: true },
+      }),
+    [],
+  );
+}
+
+export async function listCaseStudySlugStatuses() {
+  return safeQuery(
+    () =>
+      prisma.caseStudy.findMany({
+        select: { slug: true, status: true, publishedAt: true, updatedAt: true },
       }),
     [],
   );
@@ -70,6 +120,16 @@ export async function getPublishedCaseStudyBySlug(slug: string) {
     () =>
       prisma.caseStudy.findFirst({
         where: { slug, status: ContentStatus.PUBLISHED },
+      }),
+    null,
+  );
+}
+
+export async function getCaseStudyBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.caseStudy.findUnique({
+        where: { slug },
       }),
     null,
   );

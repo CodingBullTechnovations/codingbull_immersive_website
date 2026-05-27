@@ -17,7 +17,7 @@ export function getBaseUrl() {
 
 export function getSeoIntegrationConfig() {
   return {
-    gaMeasurementId: process.env.NEXT_PUBLIC_GA_ID ?? '',
+    gaMeasurementId: process.env.GA4_MEASUREMENT_ID ?? process.env.NEXT_PUBLIC_GA_ID ?? '',
     searchConsoleSiteUrl: process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL ?? '',
     ga4PropertyId: process.env.GA4_PROPERTY_ID ?? '',
     hasGoogleServiceAccountJson: Boolean(process.env.GOOGLE_SERVICE_ACCOUNT_JSON),

@@ -144,9 +144,20 @@ export async function runSearchConsoleSync({ days = 30 }: { days?: number } = {}
     }
 
     await markSuccess(provider, rowsImported);
+    await upsertCredential({ provider: 'SEARCH_CONSOLE', key: 'site_url', value: siteUrl, status: 'VERIFIED' });
     return { ok: true, rowsImported };
   } catch (error) {
     await markError(provider, error);
+    const siteUrl = await getIntegrationValue('SEARCH_CONSOLE', 'site_url', 'GOOGLE_SEARCH_CONSOLE_SITE_URL').catch(() => '');
+    if (siteUrl) {
+      await upsertCredential({
+        provider: 'SEARCH_CONSOLE',
+        key: 'site_url',
+        value: siteUrl,
+        status: 'ERROR',
+        lastError: error instanceof Error ? error.message : 'Search Console verification failed.',
+      }).catch(() => undefined);
+    }
     throw error;
   }
 }
@@ -160,7 +171,8 @@ export async function runGa4Sync({ days = 30 }: { days?: number } = {}) {
     if (!propertyId) throw new Error('GA4 property_id is missing.');
 
     const accessToken = await getGoogleAccessToken();
-    const normalizedProperty = propertyId.startsWith('properties/') ? propertyId : `properties/${propertyId}`;
+    const normalizedPropertyId = propertyId.startsWith('properties/') ? propertyId.slice('properties/'.length) : propertyId;
+    const normalizedProperty = `properties/${normalizedPropertyId}`;
     const response = await fetch(`https://analyticsdata.googleapis.com/v1beta/${normalizedProperty}:runReport`, {
       method: 'POST',
       headers: {
@@ -232,9 +244,21 @@ export async function runGa4Sync({ days = 30 }: { days?: number } = {}) {
     }
 
     await markSuccess(provider, rowsImported);
+    await upsertCredential({ provider: 'GA4', key: 'property_id', value: normalizedPropertyId, status: 'VERIFIED' });
     return { ok: true, rowsImported };
   } catch (error) {
     await markError(provider, error);
+    const propertyId = await getIntegrationValue('GA4', 'property_id', 'GA4_PROPERTY_ID').catch(() => '');
+    if (propertyId) {
+      const normalizedPropertyId = propertyId.startsWith('properties/') ? propertyId.slice('properties/'.length) : propertyId;
+      await upsertCredential({
+        provider: 'GA4',
+        key: 'property_id',
+        value: normalizedPropertyId,
+        status: 'ERROR',
+        lastError: error instanceof Error ? error.message : 'GA4 verification failed.',
+      }).catch(() => undefined);
+    }
     throw error;
   }
 }

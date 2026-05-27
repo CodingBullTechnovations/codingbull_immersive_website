@@ -99,7 +99,12 @@ function getNotice(code: string, reason?: string, rows?: string) {
     credential_saved: {
       tone: 'success',
       title: 'Credential saved',
-      body: 'The value is encrypted in PostgreSQL and only the masked preview is shown here.',
+      body: 'The value passed local validation, is encrypted in PostgreSQL, and only the masked preview is shown here.',
+    },
+    credential_invalid: {
+      tone: 'warning',
+      title: 'Credential was not saved',
+      body: reason || 'The value did not pass validation, so the existing credential was left unchanged.',
     },
     credential_deleted: {
       tone: 'success',

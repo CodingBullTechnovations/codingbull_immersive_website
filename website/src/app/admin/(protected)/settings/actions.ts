@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { CredentialProvider } from '@prisma/client';
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/server/authz';
+import { writeAuditLog } from '@/lib/server/audit';
 import { deleteCredential, upsertCredential } from '@/lib/server/credentials';
 import { runGa4Sync, runSearchConsoleSync } from '@/lib/server/seo-sync';
 
@@ -51,7 +52,7 @@ function normalizeCredentialValue(provider: CredentialProvider, key: string, val
 }
 
 export async function saveCredentialAction(formData: FormData) {
-  await requireAdmin('ADMIN');
+  const session = await requireAdmin('ADMIN');
 
   const provider = providerSchema.parse(text(formData, 'provider'));
   const key = credentialKeySchema.parse(text(formData, 'key'));
@@ -62,11 +63,24 @@ export async function saveCredentialAction(formData: FormData) {
     redirect(`/admin/settings?integration=credential_invalid&reason=${encodeURIComponent(normalized.reason)}`);
   }
 
-  await upsertCredential({
+  const credential = await upsertCredential({
     provider,
     key,
     value: normalized.value,
     status: 'FORMAT_VALID',
+  });
+
+  await writeAuditLog({
+    actorId: session.user.id,
+    action: 'credential.save',
+    entityType: 'IntegrationCredential',
+    entityId: credential.id,
+    afterSummary: {
+      provider,
+      key,
+      status: credential.status,
+      maskedValue: credential.maskedValue,
+    },
   });
 
   revalidatePath('/admin/settings');
@@ -74,10 +88,24 @@ export async function saveCredentialAction(formData: FormData) {
 }
 
 export async function deleteCredentialAction(formData: FormData) {
-  await requireAdmin('ADMIN');
+  const session = await requireAdmin('ADMIN');
 
   const id = z.string().min(5).parse(text(formData, 'id'));
-  await deleteCredential(id);
+  const deleted = await deleteCredential(id);
+
+  await writeAuditLog({
+    actorId: session.user.id,
+    action: 'credential.delete',
+    entityType: 'IntegrationCredential',
+    entityId: id,
+    beforeSummary: {
+      provider: deleted.provider,
+      key: deleted.key,
+      status: deleted.status,
+      maskedValue: deleted.maskedValue,
+    },
+    afterSummary: { deleted: true },
+  });
 
   revalidatePath('/admin/settings');
   redirect('/admin/settings?integration=credential_deleted');

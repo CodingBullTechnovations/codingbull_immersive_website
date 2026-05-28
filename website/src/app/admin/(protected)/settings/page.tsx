@@ -318,9 +318,12 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
 
         <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">
           <p className="text-sm font-semibold text-white">Required Google Cloud redirect URIs</p>
+          <p className="mt-2 text-xs leading-5 text-white/45">
+            Use the production URL for VPS OAuth. Keep the localhost URL only for local development testing.
+          </p>
           <div className="mt-3 grid gap-2 text-xs text-white/55 md:grid-cols-2">
-            <code className="rounded-lg bg-black/30 p-3">http://localhost:3000/api/admin/integrations/google/callback</code>
             <code className="rounded-lg bg-black/30 p-3">https://www.codingbullz.com/api/admin/integrations/google/callback</code>
+            <code className="rounded-lg bg-black/30 p-3">http://localhost:3000/api/admin/integrations/google/callback</code>
           </div>
         </div>
 

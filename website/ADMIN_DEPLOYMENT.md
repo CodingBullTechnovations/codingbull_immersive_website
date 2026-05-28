@@ -55,10 +55,13 @@ Set these values in local `.env.local` and in the VPS environment. Do not commit
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD`
 - `ADMIN_NAME`
-- `NEXT_PUBLIC_GA_ID`
+
+Optional server fallbacks only; prefer saving these in `/admin/settings` because admin credentials are encrypted and can be changed without redeploying:
+
+- `GA4_MEASUREMENT_ID` or legacy `NEXT_PUBLIC_GA_ID`
 - `GOOGLE_SEARCH_CONSOLE_SITE_URL`
 - `GA4_PROPERTY_ID` if GA4 Data API imports are used
-- `GOOGLE_SERVICE_ACCOUNT_JSON` or `GOOGLE_APPLICATION_CREDENTIALS` if Search Console/GA4 server imports are used
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REFRESH_TOKEN`
 
 Example database URL shape:
 
@@ -107,7 +110,7 @@ Required Google setup:
 
 1. Verify `https://www.codingbullz.com/` in Google Search Console.
 2. Submit `https://www.codingbullz.com/sitemap.xml`.
-3. Create a GA4 web stream and set `NEXT_PUBLIC_GA_ID`.
+3. Create a GA4 web stream and save `GA4.measurement_id` in `/admin/settings`.
 4. Link GA4 with Search Console inside GA4 Admin.
 5. In `/admin/settings`, save Google OAuth client credentials, Search Console site URL, GA4 property ID, then click `Connect Google OAuth`.
 6. Use `Sync Search Console` and `Sync GA4` in admin, or schedule `npm run sync:seo` on the VPS.

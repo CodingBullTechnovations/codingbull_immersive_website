@@ -82,7 +82,16 @@ function revalidateContentList(entityType: string) {
     FAQ: '/admin/content/faqs',
     Testimonial: '/admin/content/testimonials',
   };
+  const publicPaths: Record<string, string> = {
+    ServicePage: '/services',
+    InsightPost: '/insights',
+    CaseStudy: '/case-studies',
+  };
+
   revalidatePath(paths[entityType] ?? '/admin/content');
+  if (publicPaths[entityType]) {
+    revalidatePath(publicPaths[entityType]);
+  }
 }
 
 export async function archiveContentAction(formData: FormData) {
@@ -179,7 +188,11 @@ export async function saveServicePageAction(formData: FormData) {
   });
 
   revalidatePath('/admin/content/services');
+  revalidatePath('/services');
   revalidatePath(`/services/${saved.slug}`);
+  if (existing?.slug && existing.slug !== saved.slug) {
+    revalidatePath(`/services/${existing.slug}`);
+  }
   redirect(`/admin/content/services/${saved.id}`);
 }
 
@@ -223,7 +236,11 @@ export async function saveInsightPostAction(formData: FormData) {
   });
 
   revalidatePath('/admin/content/insights');
+  revalidatePath('/insights');
   revalidatePath(`/insights/${saved.slug}`);
+  if (existing?.slug && existing.slug !== saved.slug) {
+    revalidatePath(`/insights/${existing.slug}`);
+  }
   redirect(`/admin/content/insights/${saved.id}`);
 }
 
@@ -269,7 +286,11 @@ export async function saveCaseStudyAction(formData: FormData) {
   });
 
   revalidatePath('/admin/content/case-studies');
+  revalidatePath('/case-studies');
   revalidatePath(`/case-studies/${saved.slug}`);
+  if (existing?.slug && existing.slug !== saved.slug) {
+    revalidatePath(`/case-studies/${existing.slug}`);
+  }
   redirect(`/admin/content/case-studies/${saved.id}`);
 }
 

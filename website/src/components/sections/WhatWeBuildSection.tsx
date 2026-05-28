@@ -54,7 +54,10 @@ const industrialNiches = [
   }
 ];
 
-export function WhatWeBuildSection() {
+type IndustrialNiche = (typeof industrialNiches)[number];
+
+export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: IndustrialNiche[] }) {
+  const chapterCount = niches.length + 1;
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const horizontalTrackRef = useRef<HTMLDivElement>(null);
@@ -171,10 +174,10 @@ export function WhatWeBuildSection() {
           const isMobile = window.innerWidth < 1024;
           
           // --- 1. Horizontal Tracking Math ---
-          // Container is 500vw total (Intro + 4 Cards). We translate it -400vw across progress exactly.
+          // Container is one viewport per chapter. Translate until the last chapter is centered.
           if (horizontalTrackRef.current) {
              // Use xPercent instead of vw for better mobile/Safari stability
-             gsap.set(horizontalTrackRef.current, { xPercent: -progress * 80 }); 
+             gsap.set(horizontalTrackRef.current, { xPercent: -progress * (((chapterCount - 1) / chapterCount) * 100) }); 
           }
 
           // --- 2. Master Canvas Frame Scrubbing ---
@@ -223,7 +226,7 @@ export function WhatWeBuildSection() {
           }
 
           // --- 4. Micro-Interactions on the Hovering HUD Nodes ---
-          const focusIndexFloat = progress * 4; 
+          const focusIndexFloat = progress * (chapterCount - 1); 
           
           cardRefs.current.forEach((el, index) => {
             if (!el) return;
@@ -258,7 +261,7 @@ export function WhatWeBuildSection() {
         unloadChapterImages(parseInt(key));
       });
     };
-  }, [prefersReducedMotion]);
+  }, [chapterCount, prefersReducedMotion]);
 
   // --- HTML Assembly ---
 
@@ -286,7 +289,7 @@ export function WhatWeBuildSection() {
     </div>
   );
 
-  const specializedHUDs = industrialNiches.map((niche, idx) => (
+  const specializedHUDs = niches.map((niche, idx) => (
     <div key={idx} className="w-full max-w-3xl px-4 sm:px-8 xl:px-0 mx-auto relative group">
       
       <div className="pb-8 flex flex-col gap-4">
@@ -359,7 +362,11 @@ export function WhatWeBuildSection() {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-[800vh] w-full bg-black text-white">
+    <section
+      ref={sectionRef}
+      className="relative w-full bg-black text-white"
+      style={{ height: `${Math.max(chapterCount, 2) * 160}vh` }}
+    >
       
       {/* Fixed Full-Screen Viewport Window */}
       <div className="sticky top-0 z-0 h-screen w-screen overflow-hidden bg-[#000]">
@@ -390,7 +397,11 @@ export function WhatWeBuildSection() {
         
         
         {/* 2. THE HORIZONTAL GSAP TRACK (500vw) */}
-        <div ref={horizontalTrackRef} className="absolute z-40 top-0 left-0 h-full w-[500vw] flex flex-row items-center pointer-events-none" style={{ willChange: 'transform' }}>
+        <div
+          ref={horizontalTrackRef}
+          className="absolute z-40 top-0 left-0 h-full flex flex-row items-center pointer-events-none"
+          style={{ width: `${chapterCount * 100}vw`, willChange: 'transform' }}
+        >
             
             {trackNodes.map((node, idx) => (
                 <div 

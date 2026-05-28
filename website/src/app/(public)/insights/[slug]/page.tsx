@@ -37,6 +37,16 @@ function mapDbPost(post: Awaited<ReturnType<typeof getInsightBySlug>>): InsightP
   };
 }
 
+function renderInlineStrong(text: string) {
+  return text.split(/(\*\*.*?\*\*)/g).map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+
+    return part;
+  });
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const dbPost = await getInsightBySlug(slug);
@@ -143,9 +153,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                   </div>
                 );
               }
-              // Bold text handling
-              const rendered = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-              return <p key={idx} dangerouslySetInnerHTML={{ __html: rendered }} />;
+              return <p key={idx}>{renderInlineStrong(trimmed)}</p>;
             })}
           </div>
 

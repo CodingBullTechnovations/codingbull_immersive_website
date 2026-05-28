@@ -46,7 +46,7 @@ export function ContactForm() {
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
       service: 'healthcare',
-      budget: '2000_3000',
+      budget: 'under_2000',
       timeline: 'this_month',
       country: 'India',
     },
@@ -215,10 +215,10 @@ export function ContactForm() {
                 <div className="space-y-2">
                   <FieldLabel htmlFor="contact-budget">Budget</FieldLabel>
                   <select id="contact-budget" {...register('budget')} className={selectClasses}>
+                    <option value="under_2000">$1k-$2k</option>
                     <option value="2000_3000">$2k-$3k</option>
                     <option value="3000_5000">$3k-$5k</option>
                     <option value="above_5000">$5k+</option>
-                    <option value="under_2000">Under $2k</option>
                     <option value="unknown">Not sure</option>
                   </select>
                 </div>

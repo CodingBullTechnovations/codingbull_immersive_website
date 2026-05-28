@@ -4,7 +4,8 @@ import { CTASection } from '@/components/sections/CTASection';
 import { homeContent } from '@/content/home';
 import { insights } from '@/content/insights';
 import { pageMetadata, generatePageMetadata } from '@/lib/seo';
-import { getPublishedInsightBySlug, listPublishedInsightSlugs } from '@/lib/server/public-content';
+import { getPublishedInsightBySlug, listInsightSlugStatuses } from '@/lib/server/public-content';
+import { ContentStatus } from '@prisma/client';
 
 export const metadata = generatePageMetadata(pageMetadata.insights);
 
@@ -17,8 +18,13 @@ const ACCENT_COLORS: Record<string, { border: string; bg: string; text: string }
 };
 
 export default async function InsightsPage() {
-  const dbSlugs = await listPublishedInsightSlugs();
-  const dbPosts = await Promise.all(dbSlugs.map((item) => getPublishedInsightBySlug(item.slug)));
+  const dbStatuses = await listInsightSlugStatuses();
+  const dbStatusBySlug = new Map(dbStatuses.map((item) => [item.slug, item.status]));
+  const dbPosts = await Promise.all(
+    dbStatuses
+      .filter((item) => item.status === ContentStatus.PUBLISHED)
+      .map((item) => getPublishedInsightBySlug(item.slug)),
+  );
   const publishedPosts = dbPosts.flatMap((post) =>
     post
       ? [{
@@ -32,7 +38,7 @@ export default async function InsightsPage() {
     }]
       : [],
   );
-  const posts = [...publishedPosts, ...insights.filter((post) => !publishedPosts.some((dbPost) => dbPost.slug === post.slug))];
+  const posts = [...publishedPosts, ...insights.filter((post) => !dbStatusBySlug.has(post.slug))];
 
   return (
     <>

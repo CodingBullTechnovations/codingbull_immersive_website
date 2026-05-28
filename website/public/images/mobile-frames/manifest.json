@@ -1,0 +1,1939 @@
+{
+  "generatedAt": "2026-05-28T12:38:18.905Z",
+  "sequences": [
+    {
+      "name": "hero-intro",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-001.webp",
+          "source": "/images/heroframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-002.webp",
+          "source": "/images/heroframes/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-003.webp",
+          "source": "/images/heroframes/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-004.webp",
+          "source": "/images/heroframes/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-005.webp",
+          "source": "/images/heroframes/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-006.webp",
+          "source": "/images/heroframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-007.webp",
+          "source": "/images/heroframes/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-008.webp",
+          "source": "/images/heroframes/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-009.webp",
+          "source": "/images/heroframes/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-010.webp",
+          "source": "/images/heroframes/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-011.webp",
+          "source": "/images/heroframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-012.webp",
+          "source": "/images/heroframes/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-013.webp",
+          "source": "/images/heroframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-014.webp",
+          "source": "/images/heroframes/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-015.webp",
+          "source": "/images/heroframes/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-016.webp",
+          "source": "/images/heroframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-017.webp",
+          "source": "/images/heroframes/ezgif-frame-033.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-018.webp",
+          "source": "/images/heroframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-019.webp",
+          "source": "/images/heroframes/ezgif-frame-037.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-020.webp",
+          "source": "/images/heroframes/ezgif-frame-039.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-021.webp",
+          "source": "/images/heroframes/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-022.webp",
+          "source": "/images/heroframes/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-023.webp",
+          "source": "/images/heroframes/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-024.webp",
+          "source": "/images/heroframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-025.webp",
+          "source": "/images/heroframes/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-026.webp",
+          "source": "/images/heroframes/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-027.webp",
+          "source": "/images/heroframes/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-028.webp",
+          "source": "/images/heroframes/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-029.webp",
+          "source": "/images/heroframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-030.webp",
+          "source": "/images/heroframes/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-031.webp",
+          "source": "/images/heroframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-032.webp",
+          "source": "/images/heroframes/ezgif-frame-064.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-033.webp",
+          "source": "/images/heroframes/ezgif-frame-066.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-034.webp",
+          "source": "/images/heroframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-035.webp",
+          "source": "/images/heroframes/ezgif-frame-070.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-036.webp",
+          "source": "/images/heroframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-037.webp",
+          "source": "/images/heroframes/ezgif-frame-074.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-038.webp",
+          "source": "/images/heroframes/ezgif-frame-076.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-039.webp",
+          "source": "/images/heroframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-intro/frame-040.webp",
+          "source": "/images/heroframes/ezgif-frame-080.jpg"
+        }
+      ]
+    },
+    {
+      "name": "hero-healthcare",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-001.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-002.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-003.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-004.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-005.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-006.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-007.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-008.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-009.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-010.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-011.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-012.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-013.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-014.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-015.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-016.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-017.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-033.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-018.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-019.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-037.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-020.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-039.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-021.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-022.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-023.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-024.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-025.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-026.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-027.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-028.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-029.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-030.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-031.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-032.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-064.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-033.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-066.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-034.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-035.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-070.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-036.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-037.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-074.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-038.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-076.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-039.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-healthcare/frame-040.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-080.jpg"
+        }
+      ]
+    },
+    {
+      "name": "hero-ecommerce",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 64,
+      "outputCount": 32,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-001.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-002.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-003.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-004.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-005.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-006.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-007.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-008.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-009.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-010.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-011.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-012.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-013.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-014.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-015.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-016.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-017.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-034.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-018.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-036.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-019.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-038.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-020.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-040.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-021.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-022.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-023.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-024.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-025.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-026.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-027.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-028.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-029.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-030.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-031.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-ecommerce/frame-032.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-064.jpg"
+        }
+      ]
+    },
+    {
+      "name": "hero-hrms",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-001.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-002.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-003.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-004.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-005.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-006.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-007.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-008.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-009.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-010.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-011.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-012.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-013.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-014.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-015.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-016.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-017.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-033.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-018.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-019.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-037.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-020.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-039.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-021.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-022.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-023.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-024.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-025.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-026.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-027.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-028.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-029.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-030.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-031.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-032.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-064.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-033.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-066.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-034.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-035.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-070.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-036.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-037.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-074.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-038.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-076.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-039.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-hrms/frame-040.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-080.jpg"
+        }
+      ]
+    },
+    {
+      "name": "hero-cta",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-001.webp",
+          "source": "/images/heroframes/ezgif-frame-161.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-002.webp",
+          "source": "/images/heroframes/ezgif-frame-163.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-003.webp",
+          "source": "/images/heroframes/ezgif-frame-165.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-004.webp",
+          "source": "/images/heroframes/ezgif-frame-167.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-005.webp",
+          "source": "/images/heroframes/ezgif-frame-169.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-006.webp",
+          "source": "/images/heroframes/ezgif-frame-171.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-007.webp",
+          "source": "/images/heroframes/ezgif-frame-173.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-008.webp",
+          "source": "/images/heroframes/ezgif-frame-175.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-009.webp",
+          "source": "/images/heroframes/ezgif-frame-177.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-010.webp",
+          "source": "/images/heroframes/ezgif-frame-179.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-011.webp",
+          "source": "/images/heroframes/ezgif-frame-181.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-012.webp",
+          "source": "/images/heroframes/ezgif-frame-183.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-013.webp",
+          "source": "/images/heroframes/ezgif-frame-185.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-014.webp",
+          "source": "/images/heroframes/ezgif-frame-187.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-015.webp",
+          "source": "/images/heroframes/ezgif-frame-189.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-016.webp",
+          "source": "/images/heroframes/ezgif-frame-191.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-017.webp",
+          "source": "/images/heroframes/ezgif-frame-193.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-018.webp",
+          "source": "/images/heroframes/ezgif-frame-195.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-019.webp",
+          "source": "/images/heroframes/ezgif-frame-197.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-020.webp",
+          "source": "/images/heroframes/ezgif-frame-199.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-021.webp",
+          "source": "/images/heroframes/ezgif-frame-202.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-022.webp",
+          "source": "/images/heroframes/ezgif-frame-204.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-023.webp",
+          "source": "/images/heroframes/ezgif-frame-206.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-024.webp",
+          "source": "/images/heroframes/ezgif-frame-208.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-025.webp",
+          "source": "/images/heroframes/ezgif-frame-210.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-026.webp",
+          "source": "/images/heroframes/ezgif-frame-212.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-027.webp",
+          "source": "/images/heroframes/ezgif-frame-214.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-028.webp",
+          "source": "/images/heroframes/ezgif-frame-216.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-029.webp",
+          "source": "/images/heroframes/ezgif-frame-218.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-030.webp",
+          "source": "/images/heroframes/ezgif-frame-220.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-031.webp",
+          "source": "/images/heroframes/ezgif-frame-222.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-032.webp",
+          "source": "/images/heroframes/ezgif-frame-224.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-033.webp",
+          "source": "/images/heroframes/ezgif-frame-226.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-034.webp",
+          "source": "/images/heroframes/ezgif-frame-228.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-035.webp",
+          "source": "/images/heroframes/ezgif-frame-230.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-036.webp",
+          "source": "/images/heroframes/ezgif-frame-232.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-037.webp",
+          "source": "/images/heroframes/ezgif-frame-234.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-038.webp",
+          "source": "/images/heroframes/ezgif-frame-236.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-039.webp",
+          "source": "/images/heroframes/ezgif-frame-238.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/hero-cta/frame-040.webp",
+          "source": "/images/heroframes/ezgif-frame-240.jpg"
+        }
+      ]
+    },
+    {
+      "name": "industry-semiconductor",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-001.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-002.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-003.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-004.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-005.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-006.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-007.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-008.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-009.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-010.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-011.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-012.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-013.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-014.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-015.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-016.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-017.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-033.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-018.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-019.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-037.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-020.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-039.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-021.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-022.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-023.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-024.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-025.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-026.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-027.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-028.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-029.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-030.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-031.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-032.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-064.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-033.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-066.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-034.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-035.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-070.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-036.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-037.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-074.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-038.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-076.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-039.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-semiconductor/frame-040.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-080.jpg"
+        }
+      ]
+    },
+    {
+      "name": "industry-healthcare",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-001.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-002.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-003.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-004.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-005.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-006.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-007.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-008.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-009.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-010.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-011.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-012.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-013.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-014.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-015.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-016.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-017.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-033.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-018.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-019.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-037.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-020.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-039.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-021.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-022.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-023.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-024.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-025.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-026.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-027.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-028.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-029.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-030.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-031.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-032.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-064.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-033.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-066.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-034.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-035.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-070.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-036.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-037.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-074.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-038.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-076.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-039.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-healthcare/frame-040.webp",
+          "source": "/images/healthcarejpgframes/ezgif-frame-080.jpg"
+        }
+      ]
+    },
+    {
+      "name": "industry-ecommerce",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 64,
+      "outputCount": 32,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-001.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-002.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-003.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-004.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-005.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-006.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-007.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-008.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-009.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-010.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-011.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-012.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-013.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-014.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-015.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-016.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-017.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-034.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-018.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-036.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-019.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-038.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-020.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-040.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-021.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-022.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-023.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-024.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-025.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-026.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-027.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-028.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-029.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-030.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-031.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-ecommerce/frame-032.webp",
+          "source": "/images/e-commercejpgFrames/ezgif-frame-064.jpg"
+        }
+      ]
+    },
+    {
+      "name": "industry-hrms",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-001.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-002.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-003.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-004.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-005.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-006.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-007.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-008.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-009.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-010.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-011.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-012.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-013.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-014.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-015.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-016.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-017.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-033.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-018.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-019.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-037.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-020.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-039.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-021.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-022.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-023.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-024.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-025.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-026.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-027.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-028.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-029.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-030.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-031.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-032.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-064.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-033.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-066.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-034.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-035.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-070.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-036.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-037.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-074.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-038.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-076.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-039.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-hrms/frame-040.webp",
+          "source": "/images/hrmsjpgframes/ezgif-frame-080.jpg"
+        }
+      ]
+    },
+    {
+      "name": "industry-custom",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 80,
+      "outputCount": 40,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-001.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-002.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-003.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-003.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-005.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-004.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-007.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-005.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-009.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-006.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-007.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-013.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-008.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-015.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-009.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-017.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-010.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-019.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-011.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-012.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-023.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-013.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-014.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-027.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-015.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-029.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-016.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-017.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-033.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-018.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-019.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-037.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-020.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-039.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-021.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-042.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-022.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-044.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-023.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-046.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-024.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-025.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-050.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-026.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-052.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-027.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-054.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-028.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-056.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-029.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-030.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-060.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-031.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-032.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-064.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-033.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-066.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-034.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-035.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-070.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-036.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-037.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-074.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-038.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-076.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-039.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/industry-custom/frame-040.webp",
+          "source": "/images/websiteandsoftwareframes/ezgif-frame-080.jpg"
+        }
+      ]
+    },
+    {
+      "name": "process-semiconductor",
+      "format": "webp",
+      "maxWidth": 900,
+      "quality": 72,
+      "sourceCount": 240,
+      "outputCount": 72,
+      "frames": [
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-001.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-001.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-002.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-004.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-003.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-008.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-004.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-011.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-005.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-014.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-006.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-018.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-007.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-021.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-008.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-025.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-009.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-028.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-010.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-031.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-011.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-035.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-012.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-038.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-013.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-041.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-014.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-045.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-015.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-048.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-016.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-051.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-017.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-055.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-018.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-058.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-019.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-062.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-020.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-065.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-021.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-068.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-022.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-072.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-023.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-075.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-024.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-078.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-025.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-082.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-026.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-085.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-027.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-089.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-028.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-092.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-029.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-095.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-030.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-099.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-031.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-102.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-032.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-105.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-033.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-109.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-034.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-112.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-035.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-115.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-036.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-119.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-037.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-122.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-038.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-126.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-039.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-129.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-040.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-132.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-041.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-136.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-042.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-139.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-043.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-142.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-044.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-146.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-045.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-149.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-046.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-152.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-047.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-156.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-048.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-159.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-049.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-163.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-050.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-166.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-051.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-169.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-052.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-173.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-053.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-176.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-054.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-179.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-055.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-183.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-056.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-186.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-057.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-190.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-058.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-193.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-059.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-196.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-060.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-200.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-061.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-203.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-062.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-206.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-063.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-210.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-064.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-213.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-065.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-216.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-066.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-220.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-067.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-223.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-068.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-227.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-069.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-230.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-070.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-233.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-071.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-237.jpg"
+        },
+        {
+          "frame": "/images/mobile-frames/process-semiconductor/frame-072.webp",
+          "source": "/images/semiconductorframes/ezgif-frame-240.jpg"
+        }
+      ]
+    }
+  ]
+}

@@ -1,14 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Button } from '@/components/ui/Button';
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { useDevicePerformanceProfile } from '@/hooks/useDevicePerformanceProfile';
+import { useCinematicFrameStage } from '@/components/animations/CinematicFrameStage';
 
 // 384 Frame Configuration
 const FRAME_PATHS = [
@@ -21,6 +17,15 @@ const FRAME_PATHS = [
 
 const TOTAL_FRAMES = 384; 
 const INDIVIDUAL_LENGTHS = [80, 80, 64, 80, 80];
+const MOBILE_FRAME_PATHS = [
+  ...Array.from({ length: 40 }, (_, i) => `/images/mobile-frames/industry-semiconductor/frame-${String(i + 1).padStart(3, '0')}.webp`),
+  ...Array.from({ length: 40 }, (_, i) => `/images/mobile-frames/industry-healthcare/frame-${String(i + 1).padStart(3, '0')}.webp`),
+  ...Array.from({ length: 32 }, (_, i) => `/images/mobile-frames/industry-ecommerce/frame-${String(i + 1).padStart(3, '0')}.webp`),
+  ...Array.from({ length: 40 }, (_, i) => `/images/mobile-frames/industry-hrms/frame-${String(i + 1).padStart(3, '0')}.webp`),
+  ...Array.from({ length: 40 }, (_, i) => `/images/mobile-frames/industry-custom/frame-${String(i + 1).padStart(3, '0')}.webp`),
+];
+const MOBILE_TOTAL_FRAMES = 192;
+const MOBILE_INDIVIDUAL_LENGTHS = [40, 40, 32, 40, 40];
 
 // Four primary commercial niches.
 const industrialNiches = [
@@ -69,86 +74,99 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
   const corePulseRef = useRef<HTMLDivElement>(null);
   const stageContainerRef = useRef<HTMLDivElement>(null);
 
-  const imageCache = useRef<Record<number, HTMLImageElement[]>>({});
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const performanceProfile = useDevicePerformanceProfile();
+  const isMobilePremium = performanceProfile === 'mobilePremium';
+  const activeFrames = isMobilePremium ? MOBILE_FRAME_PATHS : FRAME_PATHS;
+  const activeTotalFrames = isMobilePremium ? MOBILE_TOTAL_FRAMES : TOTAL_FRAMES;
+  const activeLengths = isMobilePremium ? MOBILE_INDIVIDUAL_LENGTHS : INDIVIDUAL_LENGTHS;
+
+  const updateCinematicProgress = useCallback(({ frameProgress }: { frameProgress: number }) => {
+    const progress = frameProgress;
+    const globalFrame = Math.floor(progress * (activeTotalFrames - 1));
+    let localFrame = globalFrame;
+    let activeChap = 0;
+
+    for (let i = 0; i < activeLengths.length; i += 1) {
+      if (localFrame < activeLengths[i]) {
+        activeChap = i;
+        break;
+      }
+      localFrame -= activeLengths[i];
+    }
+
+    if (horizontalTrackRef.current) {
+      gsap.set(horizontalTrackRef.current, {
+        xPercent: -progress * (((chapterCount - 1) / chapterCount) * 100),
+      });
+    }
+
+    const framesInChap = activeLengths[activeChap];
+    const transitionWindow = isMobilePremium ? 6 : 14;
+    const inTransition = activeChap < activeLengths.length - 1 && localFrame > framesInChap - transitionWindow;
+
+    if (darkOverlayRef.current && blurOverlayRef.current && corePulseRef.current && canvasRef.current) {
+      const transitionProgress = inTransition
+        ? Math.max(0, localFrame - (framesInChap - transitionWindow)) / transitionWindow
+        : 0;
+      const curve = Math.sin(transitionProgress * Math.PI);
+
+      gsap.set(darkOverlayRef.current, { opacity: curve * (isMobilePremium ? 0.32 : 0.45) });
+      gsap.set(corePulseRef.current, {
+        scale: 1 + curve * (isMobilePremium ? 0.06 : 0.1),
+        opacity: 0.35 + curve * 0.2,
+        rotate: curve * 90,
+      });
+
+      if (isMobilePremium) {
+        gsap.set(blurOverlayRef.current, { opacity: curve * 0.3 });
+        gsap.set(canvasRef.current, { scale: 1 + curve * 0.025 });
+      } else {
+        gsap.set(blurOverlayRef.current, { filter: `blur(${curve * 12}px)` });
+        gsap.set(canvasRef.current, {
+          scale: 1 + curve * 0.05,
+          filter: `contrast(${1 + curve * 0.2}) saturate(${1 - curve * 0.4})`,
+        });
+      }
+    }
+
+    const focusIndexFloat = progress * (chapterCount - 1);
+
+    cardRefs.current.forEach((el, index) => {
+      if (!el) return;
+      const dist = Math.abs(focusIndexFloat - index);
+      const activePower = Math.max(0, 1 - dist * 1.5);
+      const cardBg = el.querySelector('.hud-glass-panel');
+
+      gsap.set(el, {
+        scale: 0.9 + 0.1 * activePower,
+        rotateY: isMobilePremium ? 0 : (focusIndexFloat - index) * -8,
+        opacity: 0.2 + 0.8 * activePower,
+        ...(isMobilePremium ? {} : { filter: `blur(${6 * (1 - activePower)}px)` }),
+        pointerEvents: activePower > 0.8 ? 'auto' : 'none',
+        transformPerspective: 1200,
+      });
+
+      if (cardBg) {
+        gsap.set(cardBg, { backgroundColor: `rgba(0, 0, 0, ${0.4 + 0.3 * (1 - activePower)})` });
+      }
+    });
+  }, [activeLengths, activeTotalFrames, chapterCount, isMobilePremium]);
+
+  useCinematicFrameStage({
+    canvasRef,
+    containerRef: sectionRef,
+    frames: activeFrames,
+    profile: performanceProfile,
+    lazyStart: 'top 150%',
+    scrub: isMobilePremium ? 0.65 : 1.5,
+    preloadRadius: isMobilePremium ? 8 : undefined,
+    onProgress: updateCinematicProgress,
+  });
 
   useEffect(() => {
-    if (!sectionRef.current || !canvasRef.current || prefersReducedMotion) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const cache = imageCache.current;
-
-    // DPR-aware scaling for crispness
-    const dpr = window.devicePixelRatio || 1;
-    const displayWidth = window.innerWidth;
-    const displayHeight = window.innerHeight;
-    
-    canvas.width = displayWidth * dpr;
-    canvas.height = displayHeight * dpr;
-    ctx.scale(dpr, dpr);
-
-    const loadChapterImages = (idx: number) => {
-      if (idx < 0 || idx >= 5) return;
-      if (cache[idx]) return; 
-
-      cache[idx] = [];
-      
-      let baseOffset = 0;
-      for (let i = 0; i < idx; i++) {
-        baseOffset += INDIVIDUAL_LENGTHS[i];
-      }
-      
-      for (let i = 0; i < INDIVIDUAL_LENGTHS[idx]; i++) {
-        const img = new Image();
-        img.src = FRAME_PATHS[baseOffset + i];
-        cache[idx][i] = img;
-        
-        img.decode().catch(() => {});
-        if (idx === 0 && i === 0) {
-          img.onload = () => {
-             const progress = ScrollTrigger.getById('horizontal360Engine')?.progress || 0;
-             if(Math.round(progress) === 0) {
-                 renderToCanvas(img);
-             }
-          };
-        }
-      }
-    };
-
-    const unloadChapterImages = (idx: number) => {
-      if (idx < 0 || idx >= 5) return;
-      if (!cache[idx]) return;
-      cache[idx].forEach(img => { if (img) img.src = ''; });
-      delete cache[idx];
-    };
-
-    const renderToCanvas = (img: HTMLImageElement) => {
-      const hRatio = displayWidth / img.width;
-      const vRatio = displayHeight / img.height;
-      const ratio = Math.max(hRatio, vRatio); // Object-cover calculation
-      const cx = (displayWidth - img.width * ratio) / 2;
-      const cy = (displayHeight - img.height * ratio) / 2;
-
-      ctx.clearRect(0, 0, displayWidth, displayHeight);
-      ctx.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
-    };
-
-    // Lazy load: only start loading when section is entering viewport
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top 150%',
-      onEnter: () => {
-        loadChapterImages(0);
-        loadChapterImages(1);
-      },
-      once: true
-    });
-
     // Spatial Pointer listener (Holographic effect)
     const handleMouseMove = (e: MouseEvent) => {
-      if(window.innerWidth < 1024 || !stageContainerRef.current) return;
+      if(performanceProfile !== 'desktop' || !stageContainerRef.current) return;
       const x = (e.clientX / window.innerWidth - 0.5) * 8; // gentle 8deg pivot
       const y = (e.clientY / window.innerHeight - 0.5) * -8;
       gsap.to(stageContainerRef.current, {
@@ -161,107 +179,10 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
     };
     window.addEventListener('mousemove', handleMouseMove);
 
-    const matchMedia = gsap.matchMedia();
-    matchMedia.add("(min-width: 320px)", () => {
-      ScrollTrigger.create({
-        id: 'horizontal360Engine',
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 1.5,
-        onUpdate: (self) => {
-          const progress = self.progress; // 0 to 1
-          const isMobile = window.innerWidth < 1024;
-          
-          // --- 1. Horizontal Tracking Math ---
-          // Container is one viewport per chapter. Translate until the last chapter is centered.
-          if (horizontalTrackRef.current) {
-             // Use xPercent instead of vw for better mobile/Safari stability
-             gsap.set(horizontalTrackRef.current, { xPercent: -progress * (((chapterCount - 1) / chapterCount) * 100) }); 
-          }
-
-          // --- 2. Master Canvas Frame Scrubbing ---
-          const cFrameGlobal = Math.floor(progress * (TOTAL_FRAMES - 1));
-          let localFrame = cFrameGlobal;
-          let activeChap = 0;
-          for (let i = 0; i < 5; i++) {
-            if (localFrame < INDIVIDUAL_LENGTHS[i]) {
-              activeChap = i;
-              break;
-            }
-            localFrame -= INDIVIDUAL_LENGTHS[i];
-          }
-
-          loadChapterImages(activeChap);
-          loadChapterImages(activeChap + 1);
-          
-          if (isMobile) {
-            unloadChapterImages(activeChap - 2);
-            unloadChapterImages(activeChap + 2);
-          } else {
-            unloadChapterImages(activeChap - 3);
-            unloadChapterImages(activeChap + 3);
-          }
-
-          const activeImg = cache[activeChap]?.[localFrame];
-          if (activeImg && activeImg.complete && activeImg.naturalHeight > 0) {
-            renderToCanvas(activeImg);
-          }
-
-          // --- 3. Cinematic Reconfiguration Transitions ---
-          const framesInChap = INDIVIDUAL_LENGTHS[activeChap];
-          const TRANSITION_WINDOW = 14; 
-          const inTransition = activeChap < 4 && localFrame > framesInChap - TRANSITION_WINDOW;
-          
-          if (darkOverlayRef.current && blurOverlayRef.current && corePulseRef.current && canvasRef.current) {
-             const tProgress = inTransition ? Math.max(0, localFrame - (framesInChap - TRANSITION_WINDOW)) / TRANSITION_WINDOW : 0;
-             const curve = Math.sin(tProgress * Math.PI); 
-
-             gsap.set(darkOverlayRef.current, { opacity: curve * 0.45 });
-             gsap.set(blurOverlayRef.current, { filter: `blur(${curve * 12}px)` });
-             gsap.set(corePulseRef.current, { scale: 1 + (curve * 0.1), opacity: 0.35 + (curve * 0.2), rotate: curve * 90 });
-             
-             // Lens Distortion Effect
-             gsap.set(canvasRef.current, { scale: 1 + (curve * 0.05), filter: `contrast(${1 + curve * 0.2}) saturate(${1 - curve * 0.4})` });
-          }
-
-          // --- 4. Micro-Interactions on the Hovering HUD Nodes ---
-          const focusIndexFloat = progress * (chapterCount - 1); 
-          
-          cardRefs.current.forEach((el, index) => {
-            if (!el) return;
-            const dist = Math.abs(focusIndexFloat - index);
-            const activePower = Math.max(0, 1 - dist * 1.5); // Math distance power
-            const cardBg = el.querySelector('.hud-glass-panel');
-
-            // Scale and perspective physics as they slide past the camera center
-            gsap.set(el, {
-              scale: 0.90 + (0.10 * activePower),
-              rotateY: (focusIndexFloat - index) * -8, // Slight 3D tilt as they pass horizontally
-              opacity: 0.20 + (0.80 * activePower),
-              filter: `blur(${6 * (1 - activePower)}px)`,
-              pointerEvents: activePower > 0.8 ? 'auto' : 'none',
-              transformPerspective: 1200,
-              ease: 'power1.out',
-            });
-            
-            // Intensify glass brightness when squarely in center
-            if (cardBg) {
-               gsap.set(cardBg, { backgroundColor: `rgba(0, 0, 0, ${0.4 + (0.3 * (1 - activePower))})` });
-            }
-          });
-        }
-      });
-    });
-
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      ScrollTrigger.getById('horizontal360Engine')?.kill();
-      Object.keys(cache).forEach(key => {
-        unloadChapterImages(parseInt(key));
-      });
     };
-  }, [chapterCount, prefersReducedMotion]);
+  }, [performanceProfile]);
 
   // --- HTML Assembly ---
 
@@ -346,7 +267,7 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
 
   const trackNodes = [sectionIntro, ...specializedHUDs];
 
-  if (prefersReducedMotion) {
+  if (performanceProfile === 'reducedMotion') {
     return (
       <section className="relative w-full bg-black py-24 px-6 space-y-32">
         {sectionIntro}
@@ -387,11 +308,11 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
             </div>
             
             {/* Massive Fullscreen Frame Render */}
-            <canvas ref={canvasRef} className="relative z-10 w-full h-full object-cover origin-center opacity-80" style={{ willChange: 'transform, filter' }} />
+            <canvas ref={canvasRef} className="relative z-10 w-full h-full object-cover origin-center opacity-80" style={{ willChange: isMobilePremium ? 'transform' : 'transform, filter' }} />
         </div>
 
         {/* Universal Cinematic Overlays */}
-        <div ref={blurOverlayRef} className="absolute z-20 inset-0 w-full h-full backdrop-blur-[0px] pointer-events-none" style={{ willChange: 'backdrop-filter' }} />
+        <div ref={blurOverlayRef} className="absolute z-20 inset-0 w-full h-full bg-teal/10 opacity-0 pointer-events-none" style={{ willChange: isMobilePremium ? 'opacity' : 'filter' }} />
         <div ref={darkOverlayRef} className="absolute z-20 inset-0 w-full h-full bg-black/60 opacity-0 pointer-events-none" style={{ willChange: 'opacity' }} />
         <div className="absolute inset-0 z-30 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.95)_100%)] pointer-events-none mix-blend-multiply" />
         

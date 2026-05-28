@@ -2,17 +2,17 @@
 
 import { ReactNode, useEffect } from 'react'
 import Lenis from 'lenis'
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { useDevicePerformanceProfile } from '@/hooks/useDevicePerformanceProfile'
 
 export default function SmoothScrolling({
   children,
 }: {
   children: ReactNode
 }) {
-  const prefersReducedMotion = usePrefersReducedMotion()
+  const performanceProfile = useDevicePerformanceProfile()
 
   useEffect(() => {
-    if (prefersReducedMotion) return
+    if (performanceProfile !== 'desktop') return
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -35,7 +35,7 @@ export default function SmoothScrolling({
     return () => {
       lenis.destroy()
     }
-  }, [prefersReducedMotion])
+  }, [performanceProfile])
 
   return <>{children}</>
 }

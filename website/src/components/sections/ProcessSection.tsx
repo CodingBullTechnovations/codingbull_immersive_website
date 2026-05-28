@@ -1,16 +1,20 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { ProcessStep } from '@/types/content';
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useDevicePerformanceProfile } from '@/hooks/useDevicePerformanceProfile';
+import { useCinematicFrameStage } from '@/components/animations/CinematicFrameStage';
 
 gsap.registerPlugin(ScrollTrigger);
 
 // Module-level constant — never recreated between renders (fixes useEffect deps bug)
 const SEMICONDUCTOR_FRAMES = Array.from({ length: 240 }, (_, i) => 
   `/images/semiconductorframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
+);
+const MOBILE_SEMICONDUCTOR_FRAMES = Array.from({ length: 72 }, (_, i) =>
+  `/images/mobile-frames/process-semiconductor/frame-${String(i + 1).padStart(3, '0')}.webp`
 );
 
 interface ProcessSectionProps {
@@ -21,91 +25,22 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const performanceProfile = useDevicePerformanceProfile();
+  const activeFrames = performanceProfile === 'mobilePremium' ? MOBILE_SEMICONDUCTOR_FRAMES : SEMICONDUCTOR_FRAMES;
+  const { isReady: imagesLoaded } = useCinematicFrameStage({
+    canvasRef,
+    containerRef,
+    frames: activeFrames,
+    profile: performanceProfile,
+    lazyStart: 'top 120%',
+    scrub: performanceProfile === 'mobilePremium' ? 0.45 : 0.5,
+    preloadRadius: performanceProfile === 'mobilePremium' ? 10 : undefined,
+  });
 
   useEffect(() => {
-    if (!containerRef.current || !canvasRef.current || SEMICONDUCTOR_FRAMES.length === 0) return;
-
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
-    // DPR-aware scaling
-    const dpr = window.devicePixelRatio || 1;
-    const displayWidth = window.innerWidth;
-    const displayHeight = window.innerHeight;
-    canvas.width = displayWidth * dpr;
-    canvas.height = displayHeight * dpr;
-    context.scale(dpr, dpr);
-
-    const loadedImages: HTMLImageElement[] = [];
-    let loadedCount = 0;
-    let hasStartedLoading = false;
-
-    function renderFrame(img: HTMLImageElement) {
-      if (!context || !canvas) return;
-      const hRatio = displayWidth / img.width;
-      const vRatio = displayHeight / img.height;
-      const ratio = Math.max(hRatio, vRatio);
-      const cx = (displayWidth - img.width * ratio) / 2;
-      const cy = (displayHeight - img.height * ratio) / 2;
-
-      context.clearRect(0, 0, displayWidth, displayHeight);
-      context.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
-    }
-
-    function startLoading() {
-      if (hasStartedLoading) return;
-      hasStartedLoading = true;
-
-      SEMICONDUCTOR_FRAMES.forEach((src: string, index: number) => {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => {
-          loadedCount++;
-          if (index === 0 && context) renderFrame(img);
-          if (loadedCount === SEMICONDUCTOR_FRAMES.length) setImagesLoaded(true);
-        };
-        loadedImages.push(img);
-      });
-    }
+    if (!containerRef.current || performanceProfile === 'reducedMotion') return;
 
     const ctx = gsap.context(() => {
-      const playhead = { frame: 0 };
-      
-      if (prefersReducedMotion) {
-        // Just render a stable starting frame
-        if (loadedImages[0]) renderFrame(loadedImages[0]);
-        return;
-      }
-
-      // Lazy loading trigger: start loading frames when section is near
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top 120%',
-        onEnter: startLoading,
-        once: true,
-      });
-
-      // Map the 240 frames accurately to the scroll distance of the entire section
-      gsap.to(playhead, {
-        frame: SEMICONDUCTOR_FRAMES.length - 1,
-        snap: 'frame',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.5,
-        },
-        onUpdate: () => {
-          if (loadedImages[playhead.frame]) {
-            renderFrame(loadedImages[playhead.frame]);
-          }
-        },
-      });
-
       // Simple fade-in animation for each card
       textRefs.current.forEach((el) => {
         if (!el) return;
@@ -130,9 +65,8 @@ export function ProcessSection({ steps }: ProcessSectionProps) {
 
     return () => {
       ctx.revert();
-      loadedImages.forEach(img => { img.src = ''; });
     };
-  }, [prefersReducedMotion, steps]);
+  }, [performanceProfile, steps]);
 
   return (
     <section ref={containerRef} className="relative w-full bg-black">

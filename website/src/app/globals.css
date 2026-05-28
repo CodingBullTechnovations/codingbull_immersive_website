@@ -63,6 +63,12 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (hover: none), (pointer: coarse), (max-width: 1023px) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   background-color: var(--color-navy-deep);
   color: var(--color-text-primary);

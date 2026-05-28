@@ -1,15 +1,20 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Button } from '@/components/ui/Button';
+import { useDevicePerformanceProfile } from '@/hooks/useDevicePerformanceProfile';
+import { useCinematicFrameStage } from '@/components/animations/CinematicFrameStage';
 
 gsap.registerPlugin(ScrollTrigger);
 
 // Module-level constant
 const SEMICONDUCTOR_FRAMES = Array.from({ length: 240 }, (_, i) =>
   `/images/semiconductorframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
+);
+const MOBILE_SEMICONDUCTOR_FRAMES = Array.from({ length: 72 }, (_, i) =>
+  `/images/mobile-frames/process-semiconductor/frame-${String(i + 1).padStart(3, '0')}.webp`
 );
 
 interface CaseStudy {
@@ -28,74 +33,24 @@ export function CaseStudyScrollShowcase({ studies }: CaseStudyScrollShowcaseProp
   const containerRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const performanceProfile = useDevicePerformanceProfile();
+  const activeFrames = performanceProfile === 'mobilePremium' ? MOBILE_SEMICONDUCTOR_FRAMES : SEMICONDUCTOR_FRAMES;
+  const { isReady: imagesLoaded } = useCinematicFrameStage({
+    canvasRef,
+    containerRef,
+    frames: activeFrames,
+    profile: performanceProfile,
+    start: 'top bottom',
+    end: 'bottom top',
+    lazyStart: 'top 120%',
+    scrub: performanceProfile === 'mobilePremium' ? 0.35 : 0.3,
+    preloadRadius: performanceProfile === 'mobilePremium' ? 10 : undefined,
+  });
 
   useEffect(() => {
-    if (!containerRef.current || !canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
-    // DPR-aware scaling
-    const dpr = window.devicePixelRatio || 1;
-    // Physical size
-    const displayWidth = window.innerWidth;
-    const displayHeight = window.innerHeight;
-    
-    // Canvas resolution
-    canvas.width = displayWidth * dpr;
-    canvas.height = displayHeight * dpr;
-    
-    // Scale context back to CSS pixels
-    context.scale(dpr, dpr);
-
-    const loadedImages: HTMLImageElement[] = [];
-    let loadedCount = 0;
-
-    function renderFrame(img: HTMLImageElement) {
-      if (!context || !canvas) return;
-      
-      const hRatio = displayWidth / img.width;
-      const vRatio = displayHeight / img.height;
-      const ratio = Math.max(hRatio, vRatio);
-      const cx = (displayWidth - img.width * ratio) / 2;
-      const cy = (displayHeight - img.height * ratio) / 2;
-      
-      context.clearRect(0, 0, displayWidth, displayHeight);
-      context.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
-    }
-
-    SEMICONDUCTOR_FRAMES.forEach((src: string, index: number) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        loadedCount++;
-        if (index === 0 && context) renderFrame(img);
-        if (loadedCount === SEMICONDUCTOR_FRAMES.length) setImagesLoaded(true);
-      };
-      loadedImages.push(img);
-    });
+    if (!containerRef.current || performanceProfile === 'reducedMotion') return;
 
     const ctx = gsap.context(() => {
-      const playhead = { frame: 0 };
-
-      // Scrub semiconductor frames across the full section scroll — NO pin
-      gsap.to(playhead, {
-        frame: SEMICONDUCTOR_FRAMES.length - 1,
-        snap: 'frame',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.3,
-        },
-        onUpdate: () => {
-          if (loadedImages[playhead.frame]) renderFrame(loadedImages[playhead.frame]);
-        },
-      });
-
       // Fade-in cards as they enter viewport
       cardRefs.current.forEach((el) => {
         if (!el) return;
@@ -120,9 +75,8 @@ export function CaseStudyScrollShowcase({ studies }: CaseStudyScrollShowcaseProp
 
     return () => {
       ctx.revert();
-      loadedImages.forEach((img) => { img.src = ''; });
     };
-  }, []);
+  }, [performanceProfile]);
 
   return (
     <section ref={containerRef} className="relative w-full bg-black">

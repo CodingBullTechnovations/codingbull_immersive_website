@@ -68,7 +68,7 @@ export function Preloader() {
   return (
     <div
       ref={containerRef}
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black text-white transition-opacity duration-500 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      className={`fixed inset-0 z-[100] hidden md:flex flex-col items-center justify-center bg-black text-white transition-opacity duration-500 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
     >
       <div className="relative w-32 h-32 mb-8 animate-pulse">
         <Image src="/images/logo/logo.png" alt="CodingBull" fill sizes="128px" className="object-contain" priority />

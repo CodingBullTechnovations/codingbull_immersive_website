@@ -1,117 +1,65 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useDevicePerformanceProfile } from '@/hooks/useDevicePerformanceProfile';
+import { useCinematicFrameStage } from '@/components/animations/CinematicFrameStage';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface MultiFrameHeroProps {
   frames: string[];
+  mobileFrames?: string[];
   children?: React.ReactNode;
   textSections?: React.ReactNode[];
   weights?: number[];
+  mobileWeights?: number[];
   scrollHeight?: string; // e.g. '500vh', '800vh' to control animation speed
 }
 
-export function MultiFrameHero({ frames, children, textSections, weights, scrollHeight = '500vh' }: MultiFrameHeroProps) {
+export function MultiFrameHero({
+  frames,
+  mobileFrames,
+  children,
+  textSections,
+  weights,
+  mobileWeights,
+  scrollHeight = '500vh',
+}: MultiFrameHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textContainerRef = useRef<HTMLDivElement>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const performanceProfile = useDevicePerformanceProfile();
+  const activeFrames = performanceProfile === 'mobilePremium' && mobileFrames?.length ? mobileFrames : frames;
+  const activeWeights = performanceProfile === 'mobilePremium' && mobileWeights?.length ? mobileWeights : weights;
+  const { isReady: imagesLoaded } = useCinematicFrameStage({
+    canvasRef,
+    containerRef,
+    frames: activeFrames,
+    profile: performanceProfile,
+    scrub: performanceProfile === 'mobilePremium' ? 0.65 : 1.5,
+    preloadRadius: performanceProfile === 'mobilePremium' ? 10 : undefined,
+  });
 
   useEffect(() => {
-    if (!containerRef.current || !canvasRef.current || frames.length === 0) return;
-
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
-    // DPR-aware scaling for sharpness
-    const dpr = window.devicePixelRatio || 1;
-    const displayWidth = window.innerWidth;
-    const displayHeight = window.innerHeight;
-
-    canvas.width = displayWidth * dpr;
-    canvas.height = displayHeight * dpr;
-    context.scale(dpr, dpr);
-
-    const loadedImages: HTMLImageElement[] = [];
-    let loadedCount = 0;
-
-    frames.forEach((src, index) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        loadedCount++;
-        if (index === 0 && context) {
-          renderFrame(img);
-        }
-        if (loadedCount === frames.length) {
-          setImagesLoaded(true);
-        }
-      };
-      loadedImages.push(img);
-    });
-
-    function renderFrame(img: HTMLImageElement) {
-      if (!context || !canvas) return;
-      const hRatio = displayWidth / img.width;
-      const vRatio = displayHeight / img.height;
-      const ratio = Math.max(hRatio, vRatio);
-      const centerShift_x = (displayWidth - img.width * ratio) / 2;
-      const centerShift_y = (displayHeight - img.height * ratio) / 2;
-
-      context.clearRect(0, 0, displayWidth, displayHeight);
-      context.drawImage(
-        img,
-        0, 0, img.width, img.height,
-        centerShift_x, centerShift_y, img.width * ratio, img.height * ratio
-      );
-    }
+    if (!containerRef.current) return;
+    const isMobilePremium = performanceProfile === 'mobilePremium';
 
     const ctx = gsap.context(() => {
-      const playhead = { frame: 0 };
-
-      if (prefersReducedMotion) {
-        // If reduced motion is preferred, just render the first frame and skip scrub
-        if (loadedImages[0]) renderFrame(loadedImages[0]);
-        return;
-      }
-
-      // NO pin: true — uses natural scroll height
-      gsap.to(playhead, {
-        frame: frames.length - 1,
-        snap: 'frame',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1.5,
-        },
-        onUpdate: () => {
-          if (loadedImages[playhead.frame]) {
-            renderFrame(loadedImages[playhead.frame]);
-          }
-        },
-      });
-
       // Parallax zoom on canvas
-      if (canvasRef.current) {
+      if (canvasRef.current && performanceProfile !== 'reducedMotion') {
         gsap.fromTo(canvasRef.current,
           { scale: 1 },
           {
-            scale: 1.12,
+            scale: isMobilePremium ? 1.06 : 1.12,
             ease: 'none',
             scrollTrigger: {
               trigger: containerRef.current,
               start: 'top top',
               end: 'bottom bottom',
-              scrub: 1.5,
+              scrub: isMobilePremium ? 0.65 : 1.5,
             },
           }
         );
@@ -120,8 +68,8 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
       // Text section cross-fading
       if (textSections && textSections.length > 0) {
         const numSections = textSections.length;
-        const activeWeights = weights && weights.length === numSections ? weights : Array(numSections).fill(1);
-        const totalWeight = activeWeights.reduce((acc: number, w: number) => acc + w, 0);
+        const timelineWeights = activeWeights && activeWeights.length === numSections ? activeWeights : Array(numSections).fill(1);
+        const totalWeight = timelineWeights.reduce((acc: number, w: number) => acc + w, 0);
 
         // Initialize states
         textRefs.current.forEach((el, i) => {
@@ -130,12 +78,17 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
 
           if (i === 0) {
             gsap.set(el, { opacity: 1, pointerEvents: 'auto' });
-            gsap.set(items, { opacity: 1, filter: 'blur(0px)', scale: 1, rotateX: 0, z: 0 });
+            gsap.set(items, { opacity: 1, filter: 'blur(0px)', scale: 1, rotateX: 0, z: 0, y: 0 });
           } else {
             gsap.set(el, { opacity: 0, pointerEvents: 'none' });
-            gsap.set(items, { opacity: 0, filter: 'blur(15px)', scale: 0.5, rotateX: 45, z: -500 });
+            gsap.set(items, isMobilePremium
+              ? { opacity: 0, scale: 0.94, y: 24 }
+              : { opacity: 0, filter: 'blur(15px)', scale: 0.5, rotateX: 45, z: -500 }
+            );
           }
         });
+
+        if (performanceProfile === 'reducedMotion') return;
 
         // Build a timeline NOT attached to pin — uses the container's natural scroll height
         const tl = gsap.timeline({
@@ -143,7 +96,7 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
             trigger: containerRef.current,
             start: 'top top',
             end: 'bottom bottom',
-            scrub: 1.5,
+            scrub: isMobilePremium ? 0.65 : 1.5,
           },
         });
 
@@ -151,9 +104,9 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
           if (!el) return;
           const items = el.querySelectorAll('.hero-anim-item');
 
-          const weightBefore = activeWeights.slice(0, i).reduce((acc: number, w: number) => acc + w, 0);
+          const weightBefore = timelineWeights.slice(0, i).reduce((acc: number, w: number) => acc + w, 0);
           const startTime = weightBefore / totalWeight;
-          const sectionDuration = activeWeights[i] / totalWeight;
+          const sectionDuration = timelineWeights[i] / totalWeight;
           // Slight overlap ensures 1 section fades out right as the other triggers
           const endTime = startTime + sectionDuration;
 
@@ -164,22 +117,18 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
             tl.to(items, {
               opacity: 1,
               scale: 1,
-              rotateX: 0,
-              z: 0,
-              filter: 'blur(0px)',
+              ...(isMobilePremium ? { y: 0 } : { rotateX: 0, z: 0, filter: 'blur(0px)' }),
               stagger: 0.05,
               duration: sectionDuration * 0.45,
-              ease: 'back.out(1.5)'
+              ease: isMobilePremium ? 'power3.out' : 'back.out(1.5)'
             }, startTime);
           }
 
           if (i !== numSections - 1) {
             tl.to(items, {
               opacity: 0,
-              scale: 1.5,
-              rotateX: -45,
-              z: 500,
-              filter: 'blur(20px)',
+              scale: isMobilePremium ? 1.04 : 1.5,
+              ...(isMobilePremium ? { y: -20 } : { rotateX: -45, z: 500, filter: 'blur(20px)' }),
               stagger: 0.03,
               duration: sectionDuration * 0.35,
               ease: 'power3.inOut'
@@ -208,9 +157,8 @@ export function MultiFrameHero({ frames, children, textSections, weights, scroll
 
     return () => {
       ctx.revert();
-      loadedImages.forEach(img => { img.src = ''; });
     };
-  }, [frames, prefersReducedMotion, textSections, weights]);
+  }, [activeWeights, performanceProfile, textSections]);
 
   return (
     // Height: scrollHeight creates the scroll distance dynamically (def: 500vh)

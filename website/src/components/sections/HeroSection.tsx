@@ -14,26 +14,41 @@ export function HeroSection({ content }: HeroSectionProps) {
   const introFrames = Array.from({ length: 80 }, (_, i) => 
     `/images/heroframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
   );
+  const mobileIntroFrames = Array.from({ length: 40 }, (_, i) =>
+    `/images/mobile-frames/hero-intro/frame-${String(i + 1).padStart(3, '0')}.webp`
+  );
 
   // Section 2: Healthcare (80 frames)
   const healthcareFrames = Array.from({ length: 80 }, (_, i) => 
     `/images/healthcarejpgframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
+  );
+  const mobileHealthcareFrames = Array.from({ length: 40 }, (_, i) =>
+    `/images/mobile-frames/hero-healthcare/frame-${String(i + 1).padStart(3, '0')}.webp`
   );
 
   // Section 3: E-Commerce (64 frames)
   const ecomFrames = Array.from({ length: 64 }, (_, i) => 
     `/images/e-commercejpgFrames/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
   );
+  const mobileEcomFrames = Array.from({ length: 32 }, (_, i) =>
+    `/images/mobile-frames/hero-ecommerce/frame-${String(i + 1).padStart(3, '0')}.webp`
+  );
 
   // Section 4: Enterprise HRMS (80 frames)
   const hrmsFrames = Array.from({ length: 80 }, (_, i) => 
     `/images/hrmsjpgframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
+  );
+  const mobileHrmsFrames = Array.from({ length: 40 }, (_, i) =>
+    `/images/mobile-frames/hero-hrms/frame-${String(i + 1).padStart(3, '0')}.webp`
   );
 
   // Section 5: CTA (80 frames)
   // Using the final frames of the original hero sequence
   const ctaFrames = Array.from({ length: 80 }, (_, i) => 
     `/images/heroframes/ezgif-frame-${String(161 + i).padStart(3, '0')}.jpg`
+  );
+  const mobileCtaFrames = Array.from({ length: 40 }, (_, i) =>
+    `/images/mobile-frames/hero-cta/frame-${String(i + 1).padStart(3, '0')}.webp`
   );
 
   // Combine into a 384-frame master sequence
@@ -43,6 +58,13 @@ export function HeroSection({ content }: HeroSectionProps) {
     ...ecomFrames,
     ...hrmsFrames,
     ...ctaFrames,
+  ];
+  const mobileFrames = [
+    ...mobileIntroFrames,
+    ...mobileHealthcareFrames,
+    ...mobileEcomFrames,
+    ...mobileHrmsFrames,
+    ...mobileCtaFrames,
   ];
 
   const section1 = (
@@ -155,8 +177,10 @@ export function HeroSection({ content }: HeroSectionProps) {
   return (
     <MultiFrameHero 
       frames={frames}
+      mobileFrames={mobileFrames}
       textSections={[section1, section2, section3, section4, section5]}
       weights={[80, 80, 64, 80, 80]} // Dynamically synced strictly to array lengths
+      mobileWeights={[40, 40, 32, 40, 40]}
       scrollHeight="800vh" // Drastically slows down the scroll based on feedback
     >
       {/* Scroll hint absolute at bottom of container */}

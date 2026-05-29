@@ -66,6 +66,8 @@ function mapDbService(service: Awaited<ReturnType<typeof getServiceBySlug>>): Se
   };
 }
 
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: { params: Promise<{ service: string }> }): Promise<Metadata> {
   const { service } = await params;
   const dbService = await getServiceBySlug(service);

@@ -9,6 +9,8 @@ import { Metadata } from 'next';
 import { getPublishedCaseStudyBySlug, listCaseStudySlugStatuses } from '@/lib/server/public-content';
 import { ContentStatus } from '@prisma/client';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = generatePageMetadata(pageMetadata.caseStudies);
 
 function architectureHighlights(value: unknown) {

@@ -68,7 +68,7 @@ export function HeroSection({ content }: HeroSectionProps) {
   ];
 
   const section1 = (
-    <div className="flex flex-col items-center justify-center h-full w-full pointer-events-auto pb-32 px-4 max-w-5xl mx-auto">
+    <div className="flex flex-col items-center justify-center h-full w-full pointer-events-auto pb-12 sm:pb-32 px-4 max-w-5xl mx-auto">
       <h1 className="hero-anim-item text-[clamp(2.5rem,6vw,5rem)] text-center font-bold font-[family-name:var(--font-outfit)] leading-[1.05] tracking-[0.1em] mb-4 uppercase text-white">
         Coding<span className="text-teal">Bull</span> <br />Technovations
       </h1>
@@ -96,7 +96,7 @@ export function HeroSection({ content }: HeroSectionProps) {
           Custom Digital Systems
         </h2>
       </div>
-      <div className="hero-anim-item w-full max-w-2xl p-8 sm:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
+      <div className="hero-anim-item w-full max-w-2xl p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
         <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
           From clinic websites to enterprise platforms — we design, build, and ship custom digital systems engineered precisely for your operational complexity.
         </p>
@@ -114,7 +114,7 @@ export function HeroSection({ content }: HeroSectionProps) {
           Built For Operations
         </h2>
       </div>
-      <div className="hero-anim-item w-full max-w-2xl p-8 sm:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
+      <div className="hero-anim-item w-full max-w-2xl p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
         <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
           We don&apos;t use generic templates. Every line of code is structured organically around how your business naturally operates, scales, and generates revenue.
         </p>
@@ -132,7 +132,7 @@ export function HeroSection({ content }: HeroSectionProps) {
           End-to-End Capabilities
         </h2>
       </div>
-      <div className="hero-anim-item w-full max-w-2xl p-8 sm:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
+      <div className="hero-anim-item w-full max-w-2xl p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
         <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
           From deep backend logic to high-performance user interfaces, we deliver comprehensive digital dominance that outpaces the market.
         </p>
@@ -142,7 +142,7 @@ export function HeroSection({ content }: HeroSectionProps) {
 
   const section5 = (
     <div className="flex flex-col items-center justify-center sm:justify-end pb-10 sm:pb-32 h-full w-full pointer-events-auto px-4">
-      <div className="hero-anim-item relative z-20 w-full max-w-4xl mx-auto p-8 sm:p-12 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] text-center shadow-[0_0_80px_-20px_rgba(20,184,166,0.2)]">
+      <div className="hero-anim-item relative z-20 w-full max-w-4xl mx-auto p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-[2rem] text-center shadow-[0_0_80px_-20px_rgba(20,184,166,0.2)]">
         
         <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold font-[family-name:var(--font-outfit)] leading-[1.05] tracking-[-0.02em] mb-8">
           <span className="text-white">Ready To Transform Your </span>

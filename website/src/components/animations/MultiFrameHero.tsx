@@ -39,7 +39,7 @@ export function MultiFrameHero({
     containerRef,
     frames: activeFrames,
     profile: performanceProfile,
-    scrub: performanceProfile === 'mobilePremium' ? 0.65 : 1.5,
+    scrub: performanceProfile === 'mobilePremium' ? true : 1.5,
     preloadRadius: performanceProfile === 'mobilePremium' ? 10 : undefined,
   });
 
@@ -59,7 +59,7 @@ export function MultiFrameHero({
               trigger: containerRef.current,
               start: 'top top',
               end: 'bottom bottom',
-              scrub: isMobilePremium ? 0.65 : 1.5,
+              scrub: isMobilePremium ? true : 1.5,
             },
           }
         );
@@ -96,7 +96,7 @@ export function MultiFrameHero({
             trigger: containerRef.current,
             start: 'top top',
             end: 'bottom bottom',
-            scrub: isMobilePremium ? 0.65 : 1.5,
+            scrub: isMobilePremium ? true : 1.5,
           },
         });
 
@@ -191,7 +191,7 @@ export function MultiFrameHero({
               <div
                 key={idx}
                 ref={el => { textRefs.current[idx] = el; }}
-                className="absolute inset-0 w-full h-full px-4 pt-32 pb-24 mx-auto max-w-[90rem] sm:px-6 lg:px-8 pointer-events-none flex flex-col items-center justify-center"
+                className="absolute inset-0 w-full h-full px-4 pt-24 pb-16 sm:pt-32 sm:pb-24 mx-auto max-w-[90rem] sm:px-6 lg:px-8 pointer-events-none flex flex-col items-center justify-center"
                 style={{ willChange: 'opacity', perspective: '1000px' }}
               >
                 {section}
@@ -201,7 +201,7 @@ export function MultiFrameHero({
         ) : (
           <div
             ref={textContainerRef}
-            className="relative z-30 flex flex-col items-start justify-center w-full h-full px-4 pt-32 pb-24 mx-auto max-w-7xl sm:px-6 lg:px-8 pointer-events-none"
+            className="relative z-30 flex flex-col items-start justify-center w-full h-full px-4 pt-24 pb-16 sm:pt-32 sm:pb-24 mx-auto max-w-7xl sm:px-6 lg:px-8 pointer-events-none"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="pointer-events-auto w-full">

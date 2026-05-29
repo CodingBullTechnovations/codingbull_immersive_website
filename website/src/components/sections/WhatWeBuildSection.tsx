@@ -158,7 +158,7 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
     frames: activeFrames,
     profile: performanceProfile,
     lazyStart: 'top 150%',
-    scrub: isMobilePremium ? 0.65 : 1.5,
+    scrub: isMobilePremium ? true : 1.5,
     preloadRadius: isMobilePremium ? 8 : undefined,
     onProgress: updateCinematicProgress,
   });
@@ -198,7 +198,7 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
           <span className="bg-gradient-to-r from-teal via-white to-teal bg-clip-text text-transparent italic pr-4">Core Industries.</span>
         </h2>
       </div>
-      <div className="w-full sm:w-[80%] max-w-2xl p-8 lg:p-12 bg-black/40 backdrop-blur-2xl border border-white/5 shadow-[0_0_80px_rgba(20,184,166,0.1)] relative overflow-hidden flex flex-col items-center">
+      <div className="w-full sm:w-[80%] max-w-2xl p-5 sm:p-8 lg:p-12 bg-black/40 backdrop-blur-2xl border border-white/5 shadow-[0_0_80px_rgba(20,184,166,0.1)] relative overflow-hidden flex flex-col items-center">
         {/* Optical Center Beams */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-primary shadow-[0_0_15px_#2dd4bf]" />
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-primary shadow-[0_0_15px_#2dd4bf]" />
@@ -213,10 +213,10 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
   const specializedHUDs = niches.map((niche, idx) => (
     <div key={idx} className="w-full max-w-3xl px-4 sm:px-8 xl:px-0 mx-auto relative group">
       
-      <div className="pb-8 flex flex-col gap-4">
+      <div className="pb-4 sm:pb-8 flex flex-col gap-2 sm:gap-4">
         {/* Massive Tactical Badge */}
         <div className="inline-flex">
-           <span className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-teal bg-teal/10 px-5 py-2.5 border border-teal/20 backdrop-blur-md shadow-[0_0_15px_rgba(20,184,166,0.15)] flex items-center gap-3">
+            <span className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-teal bg-teal/10 px-3 py-1.5 sm:px-5 sm:py-2.5 border border-teal/20 backdrop-blur-md shadow-[0_0_15px_rgba(20,184,166,0.15)] flex items-center gap-3">
              <div className="w-2 h-2 bg-teal shadow-[0_0_10px_teal] animate-pulse" />
 	             [ {String(idx + 1).padStart(2, '0')} VERTICAL: {niche.verticalId} ]
            </span>
@@ -227,7 +227,7 @@ export function WhatWeBuildSection({ niches = industrialNiches }: { niches?: Ind
       </div>
       
       {/* HUD Glass Panel */}
-      <div className="hud-glass-panel w-full p-8 lg:p-12 backdrop-blur-3xl border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.8)] flex flex-col gap-8 lg:gap-10 relative overflow-hidden group hover:border-teal/30 transition-colors duration-500 rounded-sm">
+      <div className="hud-glass-panel w-full p-5 sm:p-8 lg:p-12 backdrop-blur-3xl border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.8)] flex flex-col gap-5 sm:gap-8 lg:gap-10 relative overflow-hidden group hover:border-teal/30 transition-colors duration-500 rounded-sm">
         
         {/* Tactical Outer Crosshairs */}
         <div className="absolute top-0 left-0 w-8 h-[2px] bg-primary shadow-[0_0_15px_#2dd4bf]" />

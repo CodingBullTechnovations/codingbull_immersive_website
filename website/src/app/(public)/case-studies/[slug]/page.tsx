@@ -25,6 +25,8 @@ export async function generateStaticParams() {
   return Array.from(slugs).map((slug) => ({ slug }));
 }
 
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
   const dbStudy = await getCaseStudyBySlug(slug);

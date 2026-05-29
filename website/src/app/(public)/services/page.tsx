@@ -8,6 +8,8 @@ import { siteConfig } from '@/content/site';
 import { getPublishedServiceBySlug, listServiceSlugStatuses } from '@/lib/server/public-content';
 import { ContentStatus } from '@prisma/client';
 
+export const revalidate = 60;
+
 export const metadata = generatePageMetadata({
   title: 'Enterprise Services & Solutions',
   description: 'Explore CodingBull software development services for healthcare systems, e-commerce platforms, HRMS/payroll, and custom business systems.',

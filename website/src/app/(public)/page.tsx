@@ -13,6 +13,8 @@ import { FAQSection } from '@/components/sections/FAQSection';
 import { FounderNoteSection } from '@/components/sections/FounderNoteSection';
 import { CTASection } from '@/components/sections/CTASection';
 
+export const revalidate = 60;
+
 export default function Home() {
   return (
     <>

@@ -116,3 +116,13 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Lenis integration overrides to prevent scroll-behavior conflicts */
+html.lenis {
+  scroll-behavior: auto !important;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}

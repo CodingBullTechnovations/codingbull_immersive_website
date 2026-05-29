@@ -22,15 +22,46 @@ export function Header() {
   }, [pathname]);
 
   useEffect(() => {
+    let lastScrollHeight = document.documentElement.scrollHeight;
+
+    const updateHeight = () => {
+      lastScrollHeight = document.documentElement.scrollHeight;
+    };
+
+    // Use ResizeObserver to dynamically track document height changes (like image loads)
+    // without triggering layout reflows during scroll ticks.
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+      resizeObserver = new ResizeObserver(() => {
+        updateHeight();
+      });
+      if (document.body) {
+        resizeObserver.observe(document.body);
+      }
+    }
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 20);
       
-      // Hide header when reaching the footer to prevent visual collision
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
+      // Use cached scrollHeight to prevent layout thrashing.
+      // Use a smaller threshold (30px) so the header hides only at the very bottom
+      // and shows immediately when scrolling up.
+      const isAtBottom = window.innerHeight + scrollY >= lastScrollHeight - 30;
       setIsHidden(isAtBottom);
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    // Initial calculation
+    updateHeight();
+
+    return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Handle body scroll locking when mobile menu is open
@@ -212,15 +243,15 @@ export function Header() {
             <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,rgba(255,255,255,1)_50%)] bg-[length:100%_4px] z-0" />
 
             {/* Close Button inside Panel */}
-            <div className="absolute top-5 right-6 z-10">
+            <div className="absolute top-5 right-6 z-[30]">
               <button
-                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 text-white/70 hover:text-white hover:border-white/30 hover:shadow-[0_0_15px_rgba(255,255,255,0.15)] bg-white/5 backdrop-blur-md"
+                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 text-white hover:border-white/30 hover:shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-white/5 backdrop-blur-md"
                 onClick={() => setIsMobileOpen(false)}
                 aria-label="Close menu"
               >
                 <div className="w-5 h-5 flex flex-col justify-center items-center relative">
-                  <span className="w-4 h-[1.5px] bg-currentColor rounded-full rotate-45 absolute" />
-                  <span className="w-4 h-[1.5px] bg-currentColor rounded-full -rotate-45 absolute" />
+                  <span className="w-4 h-[1.5px] bg-white rounded-full rotate-45 absolute" />
+                  <span className="w-4 h-[1.5px] bg-white rounded-full -rotate-45 absolute" />
                 </div>
               </button>
             </div>
@@ -234,18 +265,25 @@ export function Header() {
                       <span className="font-mono text-[9px] font-bold text-teal bg-teal/5 px-2.5 py-1 border border-teal/15 w-max tracking-[0.25em] uppercase">
                         [ SECTION 0{idx + 1} // {entry.label} ]
                       </span>
-                      <div className="flex flex-col gap-1 mt-1 pl-2">
+                      <div className="flex flex-col gap-2 mt-2 pl-2">
                         {entry.items.map((item, subIdx) => (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className="group flex items-center gap-3 py-2.5 text-[15px] font-[family-name:var(--font-outfit)] text-white/70 hover:text-white transition-all duration-300 border-l border-transparent hover:border-teal/40 hover:pl-3"
+                            className="group flex flex-col gap-0.5 py-1.5 px-3 rounded-xl hover:bg-white/[0.04] transition-all duration-300 border-l border-transparent hover:border-teal/40"
                             onClick={() => setIsMobileOpen(false)}
                           >
-                            <span className="font-mono text-[11px] text-teal/40 group-hover:text-teal transition-colors">
-                              0{subIdx + 1}.
-                            </span>
-                            {item.label}
+                            <div className="flex items-center gap-2 text-[15px] font-semibold font-[family-name:var(--font-outfit)] text-white/90 group-hover:text-teal transition-colors">
+                              <span className="font-mono text-xs text-teal/50">
+                                0{subIdx + 1}.
+                              </span>
+                              {item.label}
+                            </div>
+                            {item.description && (
+                              <span className="text-[11px] text-white/40 font-light leading-normal pl-5">
+                                {item.description}
+                              </span>
+                            )}
                           </Link>
                         ))}
                       </div>
@@ -253,16 +291,16 @@ export function Header() {
                   ) : (
                     <div key={entry.label} className="flex flex-col gap-2">
                       {idx === 1 && (
-                        <span className="font-mono text-[9px] font-bold text-white/30 tracking-[0.25em] uppercase mb-1">
+                        <span className="font-mono text-[9px] font-bold text-teal bg-teal/5 px-2.5 py-1 border border-teal/15 w-max tracking-[0.25em] uppercase mb-3 block">
                           [ SECTION 02 // DIRECTORY ]
                         </span>
                       )}
                       <Link
                         href={entry.href}
-                        className="group flex items-center gap-3 py-3 text-lg font-bold font-[family-name:var(--font-outfit)] text-white/80 hover:text-white transition-all duration-300 hover:pl-2"
+                        className="group flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-white/[0.04] text-[15px] font-semibold font-[family-name:var(--font-outfit)] text-white/90 hover:text-white transition-all duration-300 border-l border-transparent hover:border-teal/40 hover:pl-4"
                         onClick={() => setIsMobileOpen(false)}
                       >
-                        <span className="text-teal/40 group-hover:text-teal group-hover:translate-x-1 transition-all">
+                        <span className="text-teal/50 group-hover:text-teal group-hover:translate-x-1 transition-all">
                           &gt;
                         </span>
                         {entry.label}

@@ -2,7 +2,11 @@
 
 import { ReactNode, useEffect } from 'react'
 import Lenis from 'lenis'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useDevicePerformanceProfile } from '@/hooks/useDevicePerformanceProfile'
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScrolling({
   children,
@@ -23,17 +27,25 @@ export default function SmoothScrolling({
       touchMultiplier: 2,
     })
 
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
+    // Update ScrollTrigger on Lenis scroll
+    lenis.on('scroll', ScrollTrigger.update)
 
-    // Force GSAP to use Lenis's ticker if GSAP is loaded
-    // We will handle GSAP scrollTrigger refresh there if needed.
-    requestAnimationFrame(raf)
+    // Bind Lenis updates to GSAP ticker to share the same requestAnimationFrame loop
+    const updateTicker = (time: number) => {
+      lenis.raf(time * 1000) // GSAP ticker provides time in seconds, Lenis expects milliseconds
+    }
+    gsap.ticker.add(updateTicker)
+    gsap.ticker.lagSmoothing(0)
+
+    // Force ScrollTrigger refresh to recalculate start/end trigger coordinates accurately
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh()
+    }, 150)
 
     return () => {
       lenis.destroy()
+      gsap.ticker.remove(updateTicker)
+      clearTimeout(timer)
     }
   }, [performanceProfile])
 

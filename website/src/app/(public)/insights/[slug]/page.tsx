@@ -12,6 +12,7 @@ import { siteConfig } from '@/content/site';
 import { generatePageMetadata } from '@/lib/seo';
 import { JsonLd, generateArticleSchema, generateBreadcrumbSchema } from '@/lib/schema';
 import { getInsightBySlug, listInsightSlugStatuses } from '@/lib/server/public-content';
+import { getInsightSidebarConfigForSlug } from '@/lib/server/sidebar-config';
 import { ContentStatus } from '@prisma/client';
 
 export async function generateStaticParams() {
@@ -157,7 +158,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function InsightPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const dbPost = await getInsightBySlug(slug);
+  const [dbPost, sidebarConfig] = await Promise.all([
+    getInsightBySlug(slug),
+    getInsightSidebarConfigForSlug(slug),
+  ]);
   const post = dbPost
     ? (dbPost.status === ContentStatus.PUBLISHED ? mapDbPost(dbPost) : null)
     : insightsBySlug[slug];
@@ -391,6 +395,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
               readingTime={post.readingTime}
               slug={post.slug}
               title={post.title}
+              config={sidebarConfig}
             />
 
           </div>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BarChart3, ClipboardList, FileImage, FileText, Gauge, HelpCircle, Lock, MessageSquare, Search, Settings, Shield, UserSearch, Users } from 'lucide-react';
+import { BarChart3, ClipboardList, FileImage, FileText, Gauge, HelpCircle, Lock, MessageSquare, Search, Settings, Shield, Sliders, UserSearch, Users } from 'lucide-react';
 import type { Session } from 'next-auth';
 import { signOutAction } from '@/app/admin/(protected)/actions';
 
@@ -16,9 +16,11 @@ const navItems = [
   { label: 'Visitors', href: '/admin/analytics/visitors', icon: UserSearch },
   { label: 'SEO Health', href: '/admin/seo', icon: Search },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
+  { label: 'Sidebar Config', href: '/admin/settings/sidebar', icon: Sliders },
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Audit Logs', href: '/admin/audit-logs', icon: Lock },
 ];
+
 
 export function AdminShell({ children, session }: { children: React.ReactNode; session: Session }) {
   return (

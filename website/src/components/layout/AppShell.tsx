@@ -8,6 +8,7 @@ import SmoothScrolling from '@/components/animations/SmoothScrolling';
 import { Preloader } from '@/components/animations/Preloader';
 import { CustomCursor } from '@/components/animations/CustomCursor';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
+import { ServiceWorkerCleanup } from '@/components/providers/ServiceWorkerCleanup';
 import { CookieConsent } from '@/components/layout/CookieConsent';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <AnalyticsProvider>
+      <ServiceWorkerCleanup />
       <Preloader />
       <CustomCursor />
       <Header />

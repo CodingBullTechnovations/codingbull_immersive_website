@@ -6,6 +6,55 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 90],
   },
+  async redirects() {
+    return [
+      {
+        source: '/healthcare-software-development',
+        destination: '/services/healthcare-software-development',
+        statusCode: 301,
+      },
+      {
+        source: '/ecommerce-development',
+        destination: '/services/ecommerce-development',
+        statusCode: 301,
+      },
+      {
+        source: '/custom-hrms-payroll-software',
+        destination: '/services/custom-hrms-payroll-software',
+        statusCode: 301,
+      },
+      {
+        source: '/custom-crm-appointment-software',
+        destination: '/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/blog',
+        destination: '/insights',
+        statusCode: 301,
+      },
+      {
+        source: '/our-projects',
+        destination: '/case-studies',
+        statusCode: 301,
+      },
+      {
+        source: '/privacy-policy',
+        destination: '/privacy',
+        statusCode: 301,
+      },
+      {
+        source: '/cookie-policy',
+        destination: '/privacy',
+        statusCode: 301,
+      },
+      {
+        source: '/contact-us',
+        destination: '/contact',
+        statusCode: 301,
+      },
+    ];
+  },
   async headers() {
     return [
       {

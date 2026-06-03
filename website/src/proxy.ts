@@ -12,6 +12,13 @@ const OLD_ROUTE_REDIRECTS: Record<string, string> = {
   '/ecommerce-development': '/services/ecommerce-development',
   '/custom-hrms-payroll-software': '/services/custom-hrms-payroll-software',
   '/custom-crm-appointment-software': '/services/custom-business-systems',
+  '/services/ui-ux-design': '/services',
+  '/services/web-development': '/services',
+  '/services/mobile-app-development': '/services',
+  '/services/ai-machine-learning': '/services/custom-business-systems',
+  '/services/cloud-solutions': '/services/custom-business-systems',
+  '/services/cybersecurity': '/services/custom-business-systems',
+  '/services/digital-marketing': '/services',
 };
 
 export default auth((request) => {

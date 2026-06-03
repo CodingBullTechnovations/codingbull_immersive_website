@@ -79,7 +79,7 @@ export function CTASection({ cta }: CTASectionProps) {
           <span className="text-white">Ready to Build </span>
           <br className="hidden sm:block" />
           <span className="text-white">Your </span>
-          <span className="bg-gradient-to-r from-teal to-white bg-clip-text text-transparent">Website</span>
+          <span className="bg-gradient-to-r from-teal to-white bg-clip-text text-transparent">Business System</span>
           <span className="text-white">?</span>
         </h2>
 

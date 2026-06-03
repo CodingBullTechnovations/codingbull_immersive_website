@@ -124,7 +124,7 @@ This makes the platform improve with evidence. A clinic may discover that automa
 
 ## Related healthcare authority
 
-For deeper technical context, read [why Django powers our healthcare backends](/insights/why-django-powers-healthcare-backends), [clinic management software modules every growing clinic needs](/insights/clinic-management-software-modules), and [patient appointment booking system architecture](/insights/patient-appointment-booking-system-architecture). These articles explain how we think about security, scheduling, records, background jobs, and real clinic workflows.
+For focused service scope, review [clinic management software development](/services/clinic-management-software-development) and [hospital management software development](/services/hospital-management-software-development). For deeper technical context, read [why Django powers our healthcare backends](/insights/why-django-powers-healthcare-backends), [clinic management software modules every growing clinic needs](/insights/clinic-management-software-modules), and [patient appointment booking system architecture](/insights/patient-appointment-booking-system-architecture). These articles explain how we think about security, scheduling, records, background jobs, and real clinic workflows.
     `.trim(),
     faqs: [
       {
@@ -249,7 +249,7 @@ That order protects revenue because buyers can search, choose, pay, and receive 
 
 ## Related e-commerce authority
 
-Read [React + Next.js for SEO-first e-commerce](/insights/react-nextjs-seo-first-ecommerce), [custom e-commerce inventory and order automation](/insights/custom-ecommerce-inventory-order-automation), and [Shopify vs custom e-commerce platform](/insights/shopify-vs-custom-ecommerce-platform) for deeper technical and business decision context.
+For inventory-specific scope, review [inventory and order management software](/services/inventory-order-management-software). Read [React + Next.js for SEO-first e-commerce](/insights/react-nextjs-seo-first-ecommerce), [custom e-commerce inventory and order automation](/insights/custom-ecommerce-inventory-order-automation), and [Shopify vs custom e-commerce platform](/insights/shopify-vs-custom-ecommerce-platform) for deeper technical and business decision context.
     `.trim(),
     faqs: [
       {
@@ -388,7 +388,7 @@ We also define which historical records must be migrated and which can remain ar
 
 ## Related HRMS authority
 
-Read [building HRMS that scales to 500+ employees](/insights/building-hrms-that-scales-500-employees), [payroll automation rules for custom HRMS platforms](/insights/payroll-automation-rules-custom-hrms), and [multi-location attendance management system design](/insights/multi-location-attendance-management-system) for deeper implementation context.
+For focused attendance and payroll scope, review [attendance and payroll management software](/services/attendance-payroll-management-software). Read [building HRMS that scales to 500+ employees](/insights/building-hrms-that-scales-500-employees), [payroll automation rules for custom HRMS platforms](/insights/payroll-automation-rules-custom-hrms), and [multi-location attendance management system design](/insights/multi-location-attendance-management-system) for deeper implementation context.
     `.trim(),
     faqs: [
       {
@@ -530,7 +530,7 @@ It also makes training, support, and future maintenance much easier.
 
 ## Related custom systems authority
 
-Read [internal CRM and workflow automation guide](/insights/internal-crm-workflow-automation-guide) and [SaaS vs custom software decision guide](/insights/saas-vs-custom-software-decision-guide) for deeper decision-making context before scoping a custom platform.
+For a focused CRM scope, review [custom CRM development](/services/custom-crm-development). Read [internal CRM and workflow automation guide](/insights/internal-crm-workflow-automation-guide) and [SaaS vs custom software decision guide](/insights/saas-vs-custom-software-decision-guide) for deeper decision-making context before scoping a custom platform.
     `.trim(),
     faqs: [
       {
@@ -544,6 +544,399 @@ Read [internal CRM and workflow automation guide](/insights/internal-crm-workflo
       {
         question: 'Can CodingBull build internal dashboards and workflow portals?',
         answer: 'Yes. CodingBull builds role-based dashboards, internal CRMs, approval portals, reporting systems, and automation layers using Next.js, React, PostgreSQL, and secure server-side architecture.',
+      },
+    ],
+  },
+  {
+    slug: 'custom-crm-development',
+    title: 'Custom CRM Development Company',
+    description: 'CodingBull builds custom CRM software for businesses that need lead tracking, customer management, follow-ups, role-based access, dashboards, and workflow automation beyond spreadsheets or ready-made CRM tools.',
+    accentColor: 'sky',
+    painPoints: [
+      'Leads and customer follow-ups scattered across WhatsApp, Excel, email, and personal notes',
+      'Ready-made CRM tools forcing the team into a sales process that does not match daily work',
+      'No clear ownership for stale leads, pending tasks, proposal status, or customer handoffs',
+      'Management reports requiring manual exports and repeated status meetings',
+    ],
+    solution: 'We design custom CRM systems around the real sales and service workflow, then build the lead pipeline, customer records, task ownership, permissions, and dashboards that help teams follow up reliably.',
+    features: [
+      { title: 'Lead and Customer Pipeline', description: 'Custom stages, owners, lead sources, customer records, notes, files, and status history built around the sales process.' },
+      { title: 'Task and Follow-up Management', description: 'Follow-up dates, reminders, ownership, overdue views, comments, and next-step visibility for sales and service teams.' },
+      { title: 'Role-Based Access', description: 'Founder, manager, sales, support, finance, and operations views can be scoped so users see only what they need.' },
+      { title: 'Reports and Dashboards', description: 'Dashboards for lead source, conversion status, overdue work, follow-up quality, proposal value, and team ownership.' },
+    ],
+    techStack: ['Next.js', 'React', 'Django', 'PostgreSQL', 'Prisma', 'Role-Based Access', 'Analytics'],
+    body: `
+## CRM problems we solve
+
+CodingBull builds custom CRM software for businesses that have outgrown spreadsheets, shared inboxes, WhatsApp follow-ups, and ready-made CRM tools. The usual problem is not that the business has no CRM. The problem is that the CRM does not match how leads, customers, proposals, support, and follow-ups actually move through the team.
+
+A custom CRM development company should start with the workflow. For Ahmedabad businesses, that often means lead source tracking, phone or WhatsApp follow-ups, proposal stages, owner visibility, branch or department ownership, and practical dashboards. For India, USA, Canada, and UAE teams, the same CRM foundation can be scoped around country-specific sales process, reporting, and data-handling expectations.
+
+## What a custom CRM can include
+
+A custom CRM can include lead capture, customer records, contact history, sales stages, proposal tracking, follow-up tasks, reminders, call notes, file attachments, customer segmentation, quotation status, renewal tracking, support handoff, and management reports. The exact module list should come from discovery, not from a generic CRM checklist.
+
+## Lead and customer pipeline
+
+The pipeline should show where every lead or customer stands, who owns the next action, what was discussed, when the next follow-up is due, and what would block conversion. Internal CRM software development is useful when the pipeline has business-specific stages that a ready-made CRM cannot model cleanly.
+
+## Task and follow-up management
+
+Follow-up leakage is one of the most common CRM failures. A workflow CRM should make overdue tasks visible, preserve notes, assign ownership, and help managers see whether leads are being handled. Notifications and calendar or WhatsApp-safe links can be scoped during implementation, but the core CRM should work even when a third-party integration is not available.
+
+## Role-based access
+
+Role-based access is important when founders, sales users, support teams, finance users, and managers need different views. A custom CRM can separate sensitive values, customer records, assignment powers, export access, and management dashboards so the system supports accountability without exposing everything to everyone.
+
+## Reports and dashboards
+
+CRM dashboards should answer operational questions: which lead sources are working, which leads are stale, which sales stages are blocked, which team members need support, which proposals are pending, and which customers need follow-up. A dashboard is only useful when it changes what the team does next.
+
+## Custom CRM vs ready-made CRM
+
+Ready-made CRM tools are useful when the sales process is standard and the team can adapt. Custom CRM software is better when the business has unique stages, custom approvals, industry-specific fields, internal handoffs, branch logic, or dashboards that cannot be built cleanly in a generic CRM. CodingBull can also scope a hybrid approach where existing tools remain in place and the custom CRM owns the workflow that makes the business different.
+
+## Development process
+
+Our CRM development process starts with lead sources, customer fields, sales stages, ownership rules, follow-up logic, reports, permissions, and integration needs. From there we define the first release around the most important operating loop: capture a lead, qualify it, assign it, follow up, report on it, and hand it off cleanly.
+
+## Best-fit businesses
+
+Custom CRM development is a strong fit for service businesses, clinics, agencies, manufacturers, B2B teams, sales-led companies, field teams, and operations teams where follow-up discipline and customer visibility directly affect revenue. Ahmedabad companies comparing CRM software Ahmedabad options should choose custom development when the process matters more than copying a standard SaaS setup.
+
+## Contact and quote
+
+To scope a custom CRM, share your lead sources, current pipeline, follow-up process, user roles, reports, and the manual work your team wants to remove. Discuss on WhatsApp or contact CodingBull to get a fixed-price quote with a clear first-release scope.
+    `.trim(),
+    faqs: [
+      {
+        question: 'What is custom CRM development?',
+        answer: 'Custom CRM development is building lead, customer, follow-up, task, role, and dashboard software around a company-specific sales or service workflow instead of forcing the team into a ready-made CRM process.',
+      },
+      {
+        question: 'Can CodingBull build CRM software for Ahmedabad businesses?',
+        answer: 'Yes. CodingBull builds CRM software Ahmedabad businesses can use for lead tracking, customer records, follow-ups, sales stages, role-based access, and reporting dashboards.',
+      },
+      {
+        question: 'When is custom CRM better than ready-made CRM?',
+        answer: 'Custom CRM is better when the business has unique stages, custom fields, internal handoffs, approval rules, branch logic, or reporting needs that ready-made CRM tools cannot support cleanly.',
+      },
+    ],
+  },
+  {
+    slug: 'clinic-management-software-development',
+    title: 'Clinic Management Software Development',
+    description: 'CodingBull builds clinic management software for appointment booking, patient records, doctor or therapist schedules, follow-up management, billing workflow readiness, reports, dashboards, roles, and audit-aware operations.',
+    accentColor: 'teal',
+    painPoints: [
+      'Appointments managed manually, causing double-booking, missed follow-ups, and unclear doctor availability',
+      'Patient records scattered across paper files, spreadsheets, and disconnected tools',
+      'Reception, doctors, therapists, billing, and owners working without one reliable clinic view',
+      'Reports prepared manually after clinic hours instead of being visible during operations',
+    ],
+    solution: 'We build clinic software around the patient journey: inquiry, appointment, intake, consultation, billing, follow-up, records, staff access, and owner dashboards.',
+    features: [
+      { title: 'Appointment Booking and Scheduling', description: 'Doctor, therapist, branch, room, service duration, cancellation, reschedule, and availability rules can be scoped into the calendar.' },
+      { title: 'Patient Records', description: 'Patient profile, visit history, notes, attachments, treatment context, package usage, and searchable records with controlled access.' },
+      { title: 'Follow-up Management', description: 'Tasks, reminders, missed-appointment views, consultation follow-ups, and patient communication readiness.' },
+      { title: 'Reports and Dashboards', description: 'Operational visibility for appointments, no-shows, follow-ups, billing status, staff output, and branch performance.' },
+    ],
+    techStack: ['Next.js', 'React', 'Django', 'PostgreSQL', 'Redis', 'Role-Based Access', 'Audit Logs'],
+    body: `
+## Clinic workflow problems we solve
+
+Clinic management software becomes valuable when reception, doctors, therapists, billing users, and owners cannot see the same operating picture. Common problems include appointment conflicts, paper patient records, missed follow-ups, unclear staff schedules, manual billing updates, and no reliable dashboard for daily clinic health.
+
+CodingBull builds clinic software development projects around the real patient journey, not only a calendar screen. The system should support how a clinic handles inquiries, bookings, patient intake, consultations, follow-ups, billing status, staff roles, and management reports.
+
+## Appointment booking and scheduling
+
+Doctor appointment software should understand working hours, doctor or therapist availability, branch timing, service duration, cancellation rules, rescheduling, walk-ins, and no-show visibility. A patient-facing booking form is useful only when the backend calendar can prevent conflicts and show staff the correct next action.
+
+## Patient records
+
+Patient management software should store structured patient details, visit history, notes, documents, treatment context, prescriptions or care notes when scoped, package usage, and controlled access. Sensitive fields should not be visible to every user by default. Patient records need to be searchable, practical, and easy for staff to update during the clinic day.
+
+## Doctor and therapist schedules
+
+Clinic teams often need branch-wise schedules, leave blocks, shift rules, room constraints, and therapist or doctor-specific availability. Custom clinic management software India and Ahmedabad clinics can use should model these rules on the server so staff cannot accidentally create conflicting appointments.
+
+## Follow-up management
+
+Follow-up is where many clinics lose revenue and patient experience. The software can create follow-up tasks after appointments, missed visits, package purchases, doctor notes, or patient inquiries. WhatsApp, SMS, email, or calendar integrations can be scoped where useful, but the core system should still show who needs follow-up, when, and why.
+
+## Billing and payment workflow possibilities
+
+Clinic billing can include consultation fees, packages, partial payments, refunds, discounts, receipts, and payment status. Payment gateway or accounting integrations can be connected during implementation if they are part of the approved scope. The first priority is usually a reliable billing workflow and clear status visibility.
+
+## Reports and dashboards
+
+Useful clinic dashboards include appointments by day, no-shows, follow-up completion, revenue status, branch utilization, staff output, patient source, and pending admin tasks. Reports should help owners and managers act faster instead of exporting spreadsheets at the end of the week.
+
+## Role-based access
+
+Reception, doctors, therapists, billing teams, branch managers, and owners need different permissions. Role-based access controls who can view patient records, edit appointments, change billing status, export data, or see management reports.
+
+## Audit and security basics
+
+Clinic software should use secure authentication, role-based access, encrypted transport, controlled backups, audit logs for sensitive changes, and clear data-retention decisions. Compliance expectations vary by country and clinic model, so they should be scoped during discovery.
+
+## Custom clinic software vs ready-made clinic software
+
+Ready-made clinic software can work when the process is simple. Custom clinic software is better when the clinic has multiple branches, therapist-specific workflows, unique packages, custom reporting, special appointment rules, or a need to connect clinic operations with CRM, website inquiries, or management dashboards.
+
+## Contact and quote
+
+To scope clinic management software Ahmedabad or India teams can use, share your appointment types, doctors or therapists, branch structure, patient record needs, billing flow, follow-up process, and reports. Discuss on WhatsApp or contact CodingBull to get a fixed-price quote with a clear first-release scope.
+    `.trim(),
+    faqs: [
+      {
+        question: 'Can CodingBull build clinic management software in Ahmedabad?',
+        answer: 'Yes. CodingBull builds clinic management software Ahmedabad clinics can use for appointments, patient records, doctor or therapist schedules, follow-ups, billing workflow, reports, and role-based access.',
+      },
+      {
+        question: 'What modules can custom clinic software include?',
+        answer: 'Custom clinic software can include appointment booking, patient records, doctor schedules, therapist schedules, follow-up tasks, billing status, reports, dashboards, roles, and audit logs.',
+      },
+      {
+        question: 'Can clinic software connect to WhatsApp or payments?',
+        answer: 'WhatsApp, SMS, email, payment, calendar, and accounting integrations can be scoped during implementation where they are useful and supported by the selected providers.',
+      },
+    ],
+  },
+  {
+    slug: 'hospital-management-software-development',
+    title: 'Hospital Management Software Development',
+    description: 'CodingBull builds hospital management software for patient registration, appointment and workflow management, departments, roles, billing and reporting, admin dashboards, audit logs, and integration-ready architecture.',
+    accentColor: 'teal',
+    painPoints: [
+      'Patient registration, appointments, billing, departments, and reports handled in disconnected systems',
+      'Hospital staff lacking role-specific access and clear workflow ownership',
+      'Manual reporting slowing down management decisions across departments',
+      'Integration plans unclear before software architecture is defined',
+    ],
+    solution: 'We scope hospital management software around patient movement, departments, roles, billing visibility, reporting, security, audit logs, and integration boundaries before development starts.',
+    features: [
+      { title: 'Patient Registration', description: 'Patient profile, identifiers, visit context, document capture, and registration workflows aligned to the hospital process.' },
+      { title: 'Departments and Roles', description: 'Department-wise workflows, staff roles, admin permissions, and controlled access for sensitive records.' },
+      { title: 'Billing and Reporting', description: 'Billing status, service records, payment workflow readiness, operational reports, and admin dashboards.' },
+      { title: 'Integration-Ready Architecture', description: 'APIs and data boundaries can be planned for labs, payments, notifications, or other systems without promising unsupported integrations.' },
+    ],
+    techStack: ['Next.js', 'React', 'Django', 'PostgreSQL', 'API Architecture', 'Audit Logs', 'Role-Based Access'],
+    body: `
+## Hospital workflow problems we solve
+
+Hospital management software development needs careful workflow discovery because hospitals involve more departments, roles, patient movement, billing scenarios, and reporting needs than a simple appointment tool. Common problems include disconnected registration, unclear appointment status, manual department handoffs, weak role control, delayed billing visibility, and reports that require repeated spreadsheet work.
+
+CodingBull scopes hospital software development around the operational model first. A hospital management software Ahmedabad or India team needs should define the patient journey, staff roles, department responsibilities, billing workflow, reporting expectations, security controls, and integration boundaries before engineering starts.
+
+## Patient registration
+
+Patient registration can include basic demographics, contact details, visit reason, documents, appointment reference, department, consultant, admission context when scoped, and identity fields required by the hospital. The registration model should be structured enough to support later reporting and workflow decisions.
+
+## Appointment and workflow management
+
+Hospital workflows can include appointment requests, department assignment, consultation flow, service requests, follow-up tasks, billing status, and admin handoffs. A custom HMS can model the status transitions that matter to the hospital instead of forcing all patient movement into one generic queue.
+
+## Departments and roles
+
+Different departments and users need different views. Reception, doctors, nurses, billing teams, administrators, department heads, and owners should not have identical access. Role-based access helps protect sensitive records and keeps each user focused on their work.
+
+## Billing and reporting
+
+Hospital billing and reporting can include service records, payment status, package or procedure workflow, invoice readiness, pending collections, department-wise revenue, patient source, and operational summaries. Payment or accounting integrations can be scoped during implementation when they are required and supported.
+
+## Admin dashboards
+
+Admin dashboards should show operational health: registrations, appointments, pending tasks, billing status, department load, follow-ups, and unresolved issues. The dashboard should support management action rather than only displaying totals.
+
+## Security and audit logs
+
+Hospital software should use secure authentication, role-based access, encrypted transport, audit logs for sensitive changes, backup planning, and controlled admin permissions. Compliance expectations depend on country, hospital model, and data category, so they should be part of discovery.
+
+## Integration-ready architecture
+
+Hospital systems may need to connect with lab software, payment providers, notification tools, document storage, accounting exports, analytics, or other systems. CodingBull does not assume every integration is available by default. We define integration boundaries, API expectations, test access, failure handling, and rollout sequence during implementation.
+
+## Custom HMS vs ready-made HMS
+
+Ready-made HMS products can work when the hospital process fits the product. Custom HMS software is useful when the hospital has unique department workflows, role rules, reporting needs, integrations, patient journeys, or admin dashboards that cannot be handled cleanly in a standard system.
+
+## Contact and quote
+
+To scope hospital management software, share your departments, patient registration process, appointment flow, billing workflow, role list, reports, and required integrations. Discuss on WhatsApp or contact CodingBull to get a fixed-price quote around the highest-priority workflow.
+    `.trim(),
+    faqs: [
+      {
+        question: 'What is hospital management software development?',
+        answer: 'Hospital management software development is building software for patient registration, appointment and workflow management, departments, roles, billing status, reporting, admin dashboards, security, and audit trails.',
+      },
+      {
+        question: 'Can CodingBull build HMS software for hospitals in Ahmedabad or India?',
+        answer: 'Yes. CodingBull can scope and build hospital management software Ahmedabad and India healthcare teams can use, with modules selected around the hospital workflow and first-release priorities.',
+      },
+      {
+        question: 'Does hospital software include integrations?',
+        answer: 'Hospital integrations can be scoped during implementation. CodingBull plans integration-ready architecture and confirms provider access, API expectations, failure handling, and rollout sequence before promising a connection.',
+      },
+    ],
+  },
+  {
+    slug: 'inventory-order-management-software',
+    title: 'Inventory and Order Management Software',
+    description: 'CodingBull builds inventory and order management software for product, SKU, stock tracking, order workflows, payment and shipping readiness, admin dashboards, reports, and e-commerce operations.',
+    accentColor: 'amber',
+    painPoints: [
+      'Stock tracked manually across spreadsheets, calls, warehouse notes, and e-commerce orders',
+      'Orders moving through payment, packing, dispatch, delivery, cancellation, and return states without one reliable view',
+      'Overselling, delayed fulfillment, and unclear low-stock visibility',
+      'Reports requiring manual reconciliation between storefront, warehouse, payment, and shipping data',
+    ],
+    solution: 'We build inventory and order software around product data, SKU rules, stock movement, order states, fulfillment workflow, reports, and e-commerce integration readiness.',
+    features: [
+      { title: 'Product and SKU Management', description: 'Products, variants, SKUs, categories, stock fields, reorder thresholds, and backend content control.' },
+      { title: 'Stock Tracking', description: 'Available, reserved, adjusted, returned, damaged, and low-stock visibility can be modeled around the business process.' },
+      { title: 'Order Workflows', description: 'Order states for created, paid, packed, dispatched, delivered, cancelled, returned, and refunded workflows.' },
+      { title: 'Reports and Admin Dashboard', description: 'Operational reports for stock health, delayed orders, order status, low stock, returns, and fulfillment bottlenecks.' },
+    ],
+    techStack: ['Next.js', 'React', 'Django', 'PostgreSQL', 'Order State Machines', 'Admin Dashboards', 'API Architecture'],
+    body: `
+## Inventory and order problems we solve
+
+Inventory management software becomes important when stock decisions are spread across spreadsheets, warehouse notes, e-commerce orders, payment status, and manual messages. The business may know that an order exists but not whether stock is reserved, packed, shipped, returned, damaged, or available for another sale.
+
+CodingBull builds inventory and order automation for companies that need a reliable operating view across products, SKUs, stock movement, order states, admin dashboards, and reports. This is useful for Ahmedabad businesses, India-based commerce teams, and international teams in the USA, Canada, and UAE that need clearer back-office control.
+
+## Product and SKU management
+
+Product and SKU management can include products, variants, categories, barcode or SKU fields, descriptions, stock rules, reorder thresholds, media, and backend-controlled content. A clean product model makes inventory, order, and e-commerce integration work easier later.
+
+## Stock tracking
+
+Stock management software should separate available stock, reserved stock, damaged stock, returned stock, warehouse adjustments, manual corrections, and low-stock alerts where needed. The system should explain why stock changed instead of only showing one final number.
+
+## Order workflows
+
+An order management system should model the actual order lifecycle: created, payment pending, payment confirmed, stock reserved, packed, dispatched, delivered, cancellation requested, cancelled, return requested, returned, and refunded. Not every business needs every state, but the states that matter should be explicit.
+
+## Payment and shipping workflow readiness
+
+Payment and shipping workflows can be connected during implementation if the selected providers support the required access. CodingBull scopes these integrations carefully. The software should still show payment status, fulfillment ownership, and shipping readiness even before advanced integrations are added.
+
+## Admin dashboard
+
+The admin dashboard should show pending orders, delayed orders, low-stock SKUs, fulfillment bottlenecks, returns, cancelled orders, and stock exceptions. Owners and managers should be able to see what needs action without asking the warehouse or sales team for manual updates.
+
+## Reports
+
+Useful reports include stock aging, low-stock list, fast-moving products, delayed fulfillment, return reasons, cancelled orders, order value by source, payment status, and warehouse movement. Reports should be planned around decisions, not only exports.
+
+## E-commerce integration positioning
+
+Inventory and order management software can connect to e-commerce platforms, custom storefronts, marketplaces, payment systems, shipping providers, accounting exports, or analytics tools when scoped. Integration-ready architecture means the data model and APIs are designed so connections can be added without rebuilding the operating core.
+
+## Custom inventory software vs spreadsheets
+
+Spreadsheets work when order volume is low and one person controls stock. Custom inventory software is better when multiple people update stock, order states change quickly, fulfillment has several steps, or e-commerce sales create overselling risk. The goal is not to replace every tool immediately. The goal is to create one reliable source for the workflow that causes the most operational pressure.
+
+## Contact and quote
+
+To scope inventory management software Ahmedabad or e-commerce teams can use, share your product structure, SKU rules, warehouse process, order states, payment flow, shipping process, reports, and current spreadsheet issues. Discuss on WhatsApp or contact CodingBull to get a fixed-price quote with practical implementation phases.
+    `.trim(),
+    faqs: [
+      {
+        question: 'What is inventory and order management software?',
+        answer: 'Inventory and order management software tracks products, SKUs, stock movement, order states, fulfillment workflow, reports, and admin dashboards so teams can manage stock and orders from one reliable system.',
+      },
+      {
+        question: 'Can CodingBull build e-commerce inventory software?',
+        answer: 'Yes. CodingBull builds ecommerce inventory software and order management systems that can support product control, SKU tracking, stock visibility, order workflows, reporting, and integration-ready architecture.',
+      },
+      {
+        question: 'Can inventory software connect with payment or shipping systems?',
+        answer: 'Payment and shipping workflows can be scoped during implementation when the selected providers support the needed access. CodingBull uses integration-ready architecture without assuming unsupported integrations.',
+      },
+    ],
+  },
+  {
+    slug: 'attendance-payroll-management-software',
+    title: 'Attendance and Payroll Management Software',
+    description: 'CodingBull builds attendance and payroll management software for attendance capture, leave management, shift rules, payroll calculation workflow, multi-location teams, approvals, reports, and HRMS-ready operations.',
+    accentColor: 'violet',
+    painPoints: [
+      'Attendance, leave, payroll, approvals, and payslips managed through manual Excel files',
+      'Multi-location teams with different shifts, holidays, late rules, and manager approvals',
+      'Payroll calculations depending on attendance corrections that are not reviewed in time',
+      'HR and finance spending too much time reconciling exceptions before salary processing',
+    ],
+    solution: 'We build attendance and payroll software around the monthly HR operating cycle: attendance capture, leave, shifts, approvals, payroll calculation, reports, and controlled payroll review.',
+    features: [
+      { title: 'Attendance Capture', description: 'Manual entry, import, device-ready, web, or GPS-ready attendance sources can be scoped based on the business model.' },
+      { title: 'Leave and Shift Rules', description: 'Leave types, holidays, shifts, late marks, overtime, half days, regularization, and branch rules.' },
+      { title: 'Payroll Calculation Workflow', description: 'Draft payroll, exception review, approvals, lock periods, payslip generation, and finance export readiness.' },
+      { title: 'Reports and HRMS Connection', description: 'Attendance reports, payroll readiness, leave balance, branch views, employee records, and HRMS module readiness.' },
+    ],
+    techStack: ['Next.js', 'React', 'Django', 'PostgreSQL', 'PDF Generation', 'Role-Based Access', 'Audit Logs'],
+    body: `
+## Attendance and payroll problems we solve
+
+Attendance management software and payroll software become important when HR depends on manual Excel files, late corrections, unclear leave balances, branch-specific policies, and repeated payroll checks. The monthly cycle becomes stressful because attendance, leave, approvals, salary rules, and payslips are not connected.
+
+CodingBull builds employee attendance and payroll software around the real monthly process: capture attendance, review exceptions, approve leave and corrections, calculate payroll, review results, generate payslips, and preserve audit history.
+
+## Attendance capture
+
+Attendance capture can be manual, imported, web-based, GPS-ready, biometric-ready, or device-ready depending on the approved scope and available systems. We do not assume a device integration is available by default. The first priority is a reliable attendance model with source tracking and correction workflow.
+
+## Leave management
+
+Leave management can include leave types, balances, accrual, carry-forward, holiday calendars, unpaid leave, approval flow, regularization, and payroll impact. HR should see pending leave and attendance exceptions before payroll is prepared.
+
+## Shift rules
+
+Shift rules can include branch timing, grace periods, late marks, overtime, half-day thresholds, weekly offs, holidays, night shifts, and department-specific policies. Multi-location attendance system design should keep branch rules configurable instead of hardcoding every exception.
+
+## Payroll calculation workflow
+
+Payroll calculation should be explainable. The system can support draft payroll, attendance review, leave review, salary components, deductions, incentives, adjustments, approvals, lock periods, payslip generation, and export readiness. Finance and HR should be able to understand how each number was produced.
+
+## Multi-location teams
+
+Multi-location teams often need branch calendars, different shifts, manager approvals, transfer history, department filters, and location-wise reports. Custom attendance and payroll software India teams can use should make these differences visible without forcing every branch into one policy.
+
+## Manager and admin approvals
+
+Approvals can cover leave, attendance correction, overtime, payroll exceptions, and final payroll locks. The system should show who owns the approval, how long it has been pending, and whether it affects payroll readiness.
+
+## Reports
+
+Reports can include attendance summary, late marks, absent employees, leave balance, overtime, payroll exceptions, branch attendance, department cost, payslip status, and unresolved approvals. Reports should reduce HR follow-up work, not create another export process.
+
+## HRMS connection
+
+Attendance and payroll software can be a focused module or part of a larger HRMS. If the business later needs employee self-service, onboarding, document management, performance reviews, or recruitment, the attendance and payroll foundation should be able to connect to those HRMS modules.
+
+## Custom attendance/payroll software vs manual Excel workflow
+
+Excel can work for very small teams. Custom attendance and payroll software is better when multiple managers approve attendance, branches have different rules, payroll formulas have exceptions, or HR needs audit history. The goal is controlled calculation, not a black box.
+
+## Contact and quote
+
+To scope attendance management software India teams can use, share your team size, locations, shifts, leave policies, attendance source, payroll formulas, approval flow, payslip needs, and current Excel pain points. Discuss on WhatsApp or contact CodingBull to get a fixed-price quote with a clear attendance-to-payroll workflow.
+    `.trim(),
+    faqs: [
+      {
+        question: 'Can CodingBull build attendance and payroll management software?',
+        answer: 'Yes. CodingBull builds attendance and payroll management software for attendance capture, leave, shifts, payroll workflow, approvals, reports, payslips, and HRMS-ready operations.',
+      },
+      {
+        question: 'Can attendance software support multi-location teams?',
+        answer: 'Yes. Multi-location attendance systems can support branch calendars, shift rules, manager approvals, department filters, attendance exceptions, and location-wise reports.',
+      },
+      {
+        question: 'Can attendance and payroll software connect to biometric devices?',
+        answer: 'Biometric or device integrations can be scoped during implementation when device access and technical requirements are available. The software should still preserve source tracking and correction workflow.',
       },
     ],
   },

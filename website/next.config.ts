@@ -69,6 +69,48 @@ const nextConfig: NextConfig = {
         statusCode: 301,
       },
       {
+        source: '/services/ui-ux-design',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services',
+        statusCode: 301,
+      },
+      {
+        source: '/services/web-development',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services',
+        statusCode: 301,
+      },
+      {
+        source: '/services/mobile-app-development',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services',
+        statusCode: 301,
+      },
+      {
+        source: '/services/ai-machine-learning',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/services/cloud-solutions',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/services/cybersecurity',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/services/digital-marketing',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services',
+        statusCode: 301,
+      },
+      {
         source: '/:path*',
         has: [{ type: 'host', value: 'codingbullz.com' }],
         destination: 'https://www.codingbullz.com/:path*',
@@ -92,6 +134,41 @@ const nextConfig: NextConfig = {
       {
         source: '/custom-crm-appointment-software',
         destination: '/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/services/ui-ux-design',
+        destination: '/services',
+        statusCode: 301,
+      },
+      {
+        source: '/services/web-development',
+        destination: '/services',
+        statusCode: 301,
+      },
+      {
+        source: '/services/mobile-app-development',
+        destination: '/services',
+        statusCode: 301,
+      },
+      {
+        source: '/services/ai-machine-learning',
+        destination: '/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/services/cloud-solutions',
+        destination: '/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/services/cybersecurity',
+        destination: '/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/services/digital-marketing',
+        destination: '/services',
         statusCode: 301,
       },
       {

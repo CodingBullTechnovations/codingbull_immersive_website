@@ -118,31 +118,31 @@ export const pageMetadata: Record<string, PageMetadata> = {
     canonical: `${siteConfig.baseUrl}/ahmedabad`,
   },
   india: {
-    title: 'CodingBull Technovations Pvt. Ltd. — Custom Software Development Company in India',
+    title: 'Custom Software Development Company in India',
     description:
-      'CodingBull Technovations Pvt. Ltd. builds healthcare software, e-commerce platforms, HRMS, payroll systems, and custom business software for Indian companies.',
-    keywords: ['software development India', 'custom software company India', 'healthcare software India', 'e-commerce development India', 'HRMS software India'],
+      'CodingBull builds custom software, websites, CRM, HRMS, e-commerce platforms, healthcare software, dashboards, and workflow automation for Indian businesses.',
+    keywords: ['custom software development company India', 'software development company India', 'healthcare software development India', 'custom CRM development India', 'HRMS software development India', 'ecommerce development India'],
     canonical: `${siteConfig.baseUrl}/india`,
   },
   usa: {
-    title: 'CodingBull Technovations Pvt. Ltd. — Custom Software Development for USA Businesses',
+    title: 'Custom Software Development for USA Businesses',
     description:
-      'Custom healthcare, e-commerce, HRMS, payroll, internal CRM, and workflow automation software for USA businesses with scoped architecture and founder-led delivery.',
-    keywords: ['custom software USA', 'offshore software development', 'healthcare software USA', 'e-commerce development USA', 'custom HRMS USA'],
+      'India-based software development partner for USA businesses needing fixed-scope websites, CRM, dashboards, e-commerce workflows, healthcare software, and internal systems.',
+    keywords: ['custom software development for USA businesses', 'offshore software development partner India USA', 'web development for USA small businesses', 'CRM development for USA businesses', 'healthcare software development partner'],
     canonical: `${siteConfig.baseUrl}/usa`,
   },
   uae: {
-    title: 'CodingBull Technovations Pvt. Ltd. — Custom Software Development for UAE Businesses',
+    title: 'Custom Software Development for UAE Businesses',
     description:
-      'Custom healthcare software, e-commerce platforms, HRMS, payroll, internal CRM, and workflow automation for UAE businesses with fixed-scope delivery.',
-    keywords: ['custom software UAE', 'software development UAE', 'healthcare software UAE', 'e-commerce development UAE', 'HRMS software UAE'],
+      'CodingBull serves UAE businesses remotely from India with websites, CRM, e-commerce, inventory and order systems, clinic software, dashboards, and business automation.',
+    keywords: ['custom software development for UAE businesses', 'web development for UAE businesses', 'CRM development UAE', 'ecommerce development UAE', 'business automation software UAE', 'inventory software UAE'],
     canonical: `${siteConfig.baseUrl}/uae`,
   },
   canada: {
-    title: 'CodingBull Technovations Pvt. Ltd. — Custom Software Development for Canadian Businesses',
+    title: 'Custom Software Development for Canadian Businesses',
     description:
-      'Custom healthcare, e-commerce, HRMS, payroll, internal CRM, and workflow automation software for Canadian businesses with secure architecture and predictable delivery.',
-    keywords: ['custom software Canada', 'software development Canada', 'healthcare software Canada', 'e-commerce development Canada', 'HRMS software Canada'],
+      'CodingBull serves Canadian businesses remotely from India with business websites, CRM, clinic systems, dashboards, e-commerce workflows, and custom software.',
+    keywords: ['custom software development for Canadian businesses', 'web development for Canadian small businesses', 'CRM development for Canada businesses', 'India software development partner for Canada', 'healthcare and clinic software for Canadian businesses'],
     canonical: `${siteConfig.baseUrl}/canada`,
   },
   privacy: {

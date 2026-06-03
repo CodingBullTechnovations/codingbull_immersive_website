@@ -23,6 +23,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/about',
     '/contact',
     '/ahmedabad',
+    '/software-development-company-ahmedabad',
+    '/web-development-company-ahmedabad',
     '/india',
     '/usa',
     '/uae',

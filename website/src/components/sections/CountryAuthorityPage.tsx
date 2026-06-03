@@ -4,9 +4,14 @@ import { Button } from '@/components/ui/Button';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { PageHero } from '@/components/sections/PageHero';
 
-interface ServiceFocus {
+interface LinkCard {
   title: string;
   href: string;
+  description: string;
+}
+
+interface MarketHighlight {
+  title: string;
   description: string;
 }
 
@@ -15,12 +20,22 @@ interface CountryAuthorityPageProps {
   subtitle: string;
   marketLabel: string;
   intro: string;
+  positioningTitle?: string;
   responseWindow: string;
-  serviceFocus: ServiceFocus[];
+  deliveryModel?: string;
+  bestFitProjects?: string;
+  marketHighlights?: MarketHighlight[];
+  serviceSectionTitle?: string;
+  serviceSectionDescription?: string;
+  serviceFocus: LinkCard[];
   buyingSignals: string[];
   proofPoints: string[];
+  caseStudyLinks?: LinkCard[];
+  caseStudySectionTitle?: string;
+  caseStudySectionDescription?: string;
   ctaLabel: string;
   ctaTrackingSource: string;
+  whatsappLabel?: string;
 }
 
 export function CountryAuthorityPage({
@@ -28,12 +43,35 @@ export function CountryAuthorityPage({
   subtitle,
   marketLabel,
   intro,
+  positioningTitle = 'Custom software built around operating reality',
   responseWindow,
+  deliveryModel = 'Remote-first engineering with written scope, weekly delivery notes, and change-control visibility.',
+  bestFitProjects = 'Healthcare, e-commerce, HRMS/payroll, internal CRM, workflow automation, dashboards, and custom business systems.',
+  marketHighlights = [
+    {
+      title: 'Founder-led discovery',
+      description: 'Direct architecture decisions before scope is finalized.',
+    },
+    {
+      title: 'Fixed milestones',
+      description: 'Delivery phases, responsibilities, and acceptance criteria are explicit.',
+    },
+    {
+      title: 'SEO-aware systems',
+      description: 'Canonical, crawlable, and schema-ready pages where public discovery matters.',
+    },
+  ],
+  serviceSectionTitle = 'Commercial software priorities for this market',
+  serviceSectionDescription,
   serviceFocus,
   buyingSignals,
   proofPoints,
+  caseStudyLinks = [],
+  caseStudySectionTitle = 'Relevant proof and project examples',
+  caseStudySectionDescription = 'Review selected work that shows how CodingBull approaches websites, healthcare workflows, operations systems, and business software foundations.',
   ctaLabel,
   ctaTrackingSource,
+  whatsappLabel = 'Discuss on WhatsApp',
 }: CountryAuthorityPageProps) {
   return (
     <>
@@ -43,14 +81,10 @@ export function CountryAuthorityPage({
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_0.85fr]">
           <div>
             <p className="text-xs uppercase tracking-[0.16em] text-teal">{marketLabel}</p>
-            <h2 className="mt-4 text-3xl font-bold text-white">Custom software built around operating reality</h2>
+            <h2 className="mt-4 text-3xl font-bold text-white">{positioningTitle}</h2>
             <p className="mt-5 text-base leading-7 text-white/60">{intro}</p>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
-              {[
-                ['Founder-led discovery', 'Direct architecture decisions before scope is finalized.'],
-                ['Fixed milestones', 'Delivery phases, responsibilities, and acceptance criteria are explicit.'],
-                ['SEO-aware systems', 'Canonical, crawlable, and schema-ready pages where public discovery matters.'],
-              ].map(([title, description]) => (
+              {marketHighlights.map(({ title, description }) => (
                 <article key={title} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
                   <ShieldCheck className="h-4 w-4 text-teal" />
                   <h3 className="mt-3 text-sm font-semibold text-white">{title}</h3>
@@ -70,11 +104,11 @@ export function CountryAuthorityPage({
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-[0.14em] text-white/40">Delivery model</dt>
-                <dd className="mt-1 text-sm leading-6 text-white/70">Remote-first engineering with written scope, weekly delivery notes, and change-control visibility.</dd>
+                <dd className="mt-1 text-sm leading-6 text-white/70">{deliveryModel}</dd>
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-[0.14em] text-white/40">Best-fit projects</dt>
-                <dd className="mt-1 text-sm leading-6 text-white/70">Healthcare, e-commerce, HRMS/payroll, internal CRM, workflow automation, dashboards, and custom business systems.</dd>
+                <dd className="mt-1 text-sm leading-6 text-white/70">{bestFitProjects}</dd>
               </div>
             </dl>
           </aside>
@@ -85,7 +119,10 @@ export function CountryAuthorityPage({
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 max-w-3xl">
             <p className="text-xs uppercase tracking-[0.16em] text-teal">Service Focus</p>
-            <h2 className="mt-4 text-3xl font-bold text-white">Commercial software priorities for this market</h2>
+            <h2 className="mt-4 text-3xl font-bold text-white">{serviceSectionTitle}</h2>
+            {serviceSectionDescription && (
+              <p className="mt-4 text-base leading-7 text-white/60">{serviceSectionDescription}</p>
+            )}
           </div>
           <div className="grid gap-5 md:grid-cols-2">
             {serviceFocus.map((service) => (
@@ -106,6 +143,34 @@ export function CountryAuthorityPage({
           </div>
         </div>
       </SectionWrapper>
+
+      {caseStudyLinks.length > 0 && (
+        <SectionWrapper className="py-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-10 max-w-3xl">
+              <p className="text-xs uppercase tracking-[0.16em] text-teal">Case Study Proof</p>
+              <h2 className="mt-4 text-3xl font-bold text-white">{caseStudySectionTitle}</h2>
+              <p className="mt-4 text-base leading-7 text-white/60">{caseStudySectionDescription}</p>
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+              {caseStudyLinks.map((caseStudy) => (
+                <Link
+                  key={caseStudy.href}
+                  href={caseStudy.href}
+                  className="group rounded-lg border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]"
+                >
+                  <h3 className="text-lg font-semibold text-white group-hover:text-teal">{caseStudy.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-white/55">{caseStudy.description}</p>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-teal">
+                    View case study
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </SectionWrapper>
+      )}
 
       <SectionWrapper className="border-y border-white/10 bg-black/30 py-16">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2">
@@ -145,6 +210,7 @@ export function CountryAuthorityPage({
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Button label={ctaLabel} href="/contact" variant="primary" size="large" trackingSource={ctaTrackingSource} />
+            <Button label={whatsappLabel} href="#whatsapp" icon="whatsapp" variant="secondary" size="large" trackingSource={`${ctaTrackingSource}_whatsapp`} />
             <Button label="Review Services" href="/services" variant="secondary" size="large" trackingSource={`${ctaTrackingSource}_services`} />
           </div>
         </div>

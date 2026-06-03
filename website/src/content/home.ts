@@ -4,7 +4,7 @@ export const homeContent: HomeContent = {
   hero: {
     headline: 'Proprietary Digital Products That Run Your Enterprise',
     subheadline:
-      'Healthcare scheduling. E-commerce architecture. Enterprise workforce management. We engineer the core software infrastructure that serious businesses depend on.',
+      'CodingBull is a custom software development company in Ahmedabad building business websites, admin panels, CRM, HRMS, e-commerce platforms, and healthcare management systems.',
     primaryCTA: {
       label: 'Get Fixed-Price Quote',
       href: '#whatsapp',

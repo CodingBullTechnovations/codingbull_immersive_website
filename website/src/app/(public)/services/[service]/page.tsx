@@ -20,6 +20,42 @@ type ServiceViewContent = ServiceContent & {
   body?: string;
 };
 
+const serviceInternalLinksBySlug: Record<string, Array<{ label: string; href: string; description: string }>> = {
+  'healthcare-software-development': [
+    {
+      label: 'Clinic Management Software Development',
+      href: '/services/clinic-management-software-development',
+      description: 'Focused appointment, patient, doctor schedule, follow-up, billing workflow, and role-based access systems for clinics.',
+    },
+    {
+      label: 'Hospital Management Software Development',
+      href: '/services/hospital-management-software-development',
+      description: 'Patient registration, department workflows, admin dashboards, billing/reporting foundations, and audit-aware architecture for hospitals.',
+    },
+  ],
+  'ecommerce-development': [
+    {
+      label: 'Inventory and Order Management Software',
+      href: '/services/inventory-order-management-software',
+      description: 'Stock tracking, SKU management, order workflows, payment/shipping readiness, and e-commerce operations automation.',
+    },
+  ],
+  'custom-hrms-payroll-software': [
+    {
+      label: 'Attendance and Payroll Management Software',
+      href: '/services/attendance-payroll-management-software',
+      description: 'Attendance capture, leave, shift rules, payroll calculation workflows, approvals, multi-location teams, and HR reporting.',
+    },
+  ],
+  'custom-business-systems': [
+    {
+      label: 'Custom CRM Development',
+      href: '/services/custom-crm-development',
+      description: 'Lead tracking, customer management, follow-ups, role-based access, workflow automation, reports, and dashboards.',
+    },
+  ],
+};
+
 export async function generateStaticParams() {
   const dbServices = await listServiceSlugStatuses();
   const dbStatusBySlug = new Map(dbServices.map((item) => [item.slug, item.status]));
@@ -103,6 +139,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const industry = getIndustryForPath(`/services/${serviceData.slug}`);
   const relatedInsights = insights.filter((post) => getIndustryForPath(`/insights/${post.slug}`) === industry).slice(0, 3);
   const relatedCaseStudies = caseStudies.filter((study) => getIndustryForPath(`/case-studies/${study.slug}`) === industry).slice(0, 2);
+  const relatedServiceLinks = serviceInternalLinksBySlug[serviceData.slug] ?? [];
 
   return (
     <>
@@ -279,6 +316,36 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               Service Guide
             </span>
             <MarkdownContent blocks={bodyBlocks} />
+          </div>
+        </section>
+      )}
+
+      {relatedServiceLinks.length > 0 && (
+        <section className="py-20 lg:py-28 relative z-10 border-t border-white/[0.05]">
+          <div className="max-w-[var(--max-w-content)] mx-auto px-6 lg:px-10">
+            <div className="mb-10 max-w-3xl">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-teal block mb-4">
+                Related Service Paths
+              </span>
+              <h2 className="text-3xl lg:text-5xl font-bold font-[family-name:var(--font-outfit)] text-white tracking-tight">
+                Useful next pages for this project type
+              </h2>
+              <p className="mt-5 text-sm leading-6 text-white/50">
+                These connected services help buyers compare adjacent workflows before requesting a fixed-scope quote.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {relatedServiceLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 transition-colors hover:border-teal/25 hover:bg-white/[0.05]"
+                >
+                  <span className="text-lg font-semibold text-white">{item.label}</span>
+                  <p className="mt-3 text-sm leading-6 text-white/50">{item.description}</p>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}

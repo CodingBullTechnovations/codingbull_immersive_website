@@ -9,6 +9,72 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/blog',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/insights',
+        statusCode: 301,
+      },
+      {
+        source: '/privacy-policy',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/privacy',
+        statusCode: 301,
+      },
+      {
+        source: '/cookie-policy',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/privacy',
+        statusCode: 301,
+      },
+      {
+        source: '/our-projects',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/case-studies',
+        statusCode: 301,
+      },
+      {
+        source: '/projects',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/case-studies',
+        statusCode: 301,
+      },
+      {
+        source: '/contact-us',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/contact',
+        statusCode: 301,
+      },
+      {
+        source: '/healthcare-software-development',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services/healthcare-software-development',
+        statusCode: 301,
+      },
+      {
+        source: '/ecommerce-development',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services/ecommerce-development',
+        statusCode: 301,
+      },
+      {
+        source: '/custom-hrms-payroll-software',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services/custom-hrms-payroll-software',
+        statusCode: 301,
+      },
+      {
+        source: '/custom-crm-appointment-software',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/services/custom-business-systems',
+        statusCode: 301,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'codingbullz.com' }],
+        destination: 'https://www.codingbullz.com/:path*',
+        statusCode: 301,
+      },
+      {
         source: '/healthcare-software-development',
         destination: '/services/healthcare-software-development',
         statusCode: 301,
@@ -35,6 +101,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/our-projects',
+        destination: '/case-studies',
+        statusCode: 301,
+      },
+      {
+        source: '/projects',
         destination: '/case-studies',
         statusCode: 301,
       },

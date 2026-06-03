@@ -18,7 +18,13 @@ export function Header() {
 
   // Close mobile menu on route/pathname change
   useEffect(() => {
-    setIsMobileOpen(false);
+    const frame = window.requestAnimationFrame(() => {
+      setIsMobileOpen(false);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+    };
   }, [pathname]);
 
   useEffect(() => {
@@ -263,7 +269,7 @@ export function Header() {
                   isNavGroup(entry) ? (
                     <div key={entry.label} className="flex flex-col gap-2">
                       <span className="font-mono text-[9px] font-bold text-teal bg-teal/5 px-2.5 py-1 border border-teal/15 w-max tracking-[0.25em] uppercase">
-                        [ SECTION 0{idx + 1} // {entry.label} ]
+                        {'[ SECTION 0'}{idx + 1}{' // '}{entry.label}{' ]'}
                       </span>
                       <div className="flex flex-col gap-2 mt-2 pl-2">
                         {entry.items.map((item, subIdx) => (
@@ -335,7 +341,7 @@ export function Header() {
                     GSTIN: <span className="text-white/60">24AAMCC7617E1ZP</span>
                   </div>
                   <div className="text-[9px] tracking-wider text-white/30 uppercase mt-1">
-                    AHMEDABAD, IN // NEW YORK, USA
+                    {'AHMEDABAD, IN // NEW YORK, USA'}
                   </div>
                 </div>
               </div>

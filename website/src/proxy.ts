@@ -1,12 +1,33 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
+const OLD_ROUTE_REDIRECTS: Record<string, string> = {
+  '/blog': '/insights',
+  '/privacy-policy': '/privacy',
+  '/cookie-policy': '/privacy',
+  '/our-projects': '/case-studies',
+  '/projects': '/case-studies',
+  '/contact-us': '/contact',
+  '/healthcare-software-development': '/services/healthcare-software-development',
+  '/ecommerce-development': '/services/ecommerce-development',
+  '/custom-hrms-payroll-software': '/services/custom-hrms-payroll-software',
+  '/custom-crm-appointment-software': '/services/custom-business-systems',
+};
+
 export default auth((request) => {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get('host')?.split(':')[0].toLowerCase();
   const isAdminPath = pathname.startsWith('/admin');
   const isApiPath = pathname.startsWith('/api');
   const isLoginPath = pathname === '/admin/login';
   const isAuthenticated = Boolean(request.auth?.user);
+
+  if (host === 'codingbullz.com') {
+    const destinationPath = OLD_ROUTE_REDIRECTS[pathname] ?? pathname;
+    const url = new URL(destinationPath, 'https://www.codingbullz.com');
+    url.search = request.nextUrl.search;
+    return NextResponse.redirect(url, 301);
+  }
 
   if (!isAdminPath && !isApiPath) {
     return NextResponse.next();
@@ -38,5 +59,5 @@ export default auth((request) => {
 });
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/:path*'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

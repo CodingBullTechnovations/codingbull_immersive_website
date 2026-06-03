@@ -311,6 +311,7 @@ model ServicePage {
   title                String
   metaTitle            String?
   metaDescription      String?
+  body                 String?
   niche                ServiceInterest
   hero                 Json
   painPoints           Json

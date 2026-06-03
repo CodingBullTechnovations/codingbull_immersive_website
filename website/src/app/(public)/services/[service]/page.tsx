@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { PageHero } from '@/components/sections/PageHero';
 import { CTASection } from '@/components/sections/CTASection';
+import { MarkdownContent, parseMarkdownToBlocks } from '@/components/sections/MarkdownContent';
 import { homeContent } from '@/content/home';
 import { caseStudies } from '@/content/case-studies';
 import { insights } from '@/content/insights';
@@ -16,6 +17,7 @@ import { ContentStatus } from '@prisma/client';
 
 type ServiceViewContent = ServiceContent & {
   faqs?: Array<{ question: string; answer: string }>;
+  body?: string;
 };
 
 export async function generateStaticParams() {
@@ -54,6 +56,7 @@ function mapDbService(service: Awaited<ReturnType<typeof getServiceBySlug>>): Se
     accentColor: 'teal',
     painPoints: stringArray(service.painPoints),
     solution: String(hero.summary ?? service.metaDescription ?? ''),
+    body: service.body ?? undefined,
     features: modules.map((module) => ({
       title: String(module.title ?? ''),
       description: String(module.description ?? ''),
@@ -77,8 +80,8 @@ export async function generateMetadata({ params }: { params: Promise<{ service: 
   if (!data) return { title: 'Service Not Found' };
 
   return generatePageMetadata({
-    title: data.title,
-    description: data.description,
+    title: dbService?.metaTitle || data.title,
+    description: dbService?.metaDescription || data.description,
     canonical: `${siteConfig.baseUrl}/services/${service}`,
   });
 }
@@ -96,6 +99,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
   const serviceUrl = `${siteConfig.baseUrl}/services/${serviceData.slug}`;
   const faqs = serviceData.faqs ?? [];
+  const bodyBlocks = serviceData.body ? parseMarkdownToBlocks(serviceData.body) : [];
   const industry = getIndustryForPath(`/services/${serviceData.slug}`);
   const relatedInsights = insights.filter((post) => getIndustryForPath(`/insights/${post.slug}`) === industry).slice(0, 3);
   const relatedCaseStudies = caseStudies.filter((study) => getIndustryForPath(`/case-studies/${study.slug}`) === industry).slice(0, 2);
@@ -264,6 +268,17 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {bodyBlocks.length > 0 && (
+        <section className="py-20 lg:py-28 relative z-10 border-t border-white/[0.05] bg-[#050508]">
+          <div className="mx-auto max-w-4xl px-6 lg:px-10">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-teal block mb-4">
+              Service Guide
+            </span>
+            <MarkdownContent blocks={bodyBlocks} />
           </div>
         </section>
       )}

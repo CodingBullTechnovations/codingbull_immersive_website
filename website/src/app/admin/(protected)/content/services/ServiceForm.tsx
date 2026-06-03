@@ -83,6 +83,10 @@ export function ServiceForm({ service }: { service?: ServicePage | null }) {
         <textarea name="faqs" rows={6} defaultValue={pairValue(service?.faqs, 'question', 'answer')} className={adminInputClass} />
       </AdminField>
 
+      <AdminField label="Service body" hint="Use markdown-style headings, paragraphs, bullets, and internal links for long-form SEO content.">
+        <textarea name="body" rows={18} defaultValue={service?.body ?? ''} className={`${adminInputClass} font-mono text-xs leading-6`} />
+      </AdminField>
+
       <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
         <h2 className="mb-5 font-semibold text-white">Advanced SEO</h2>
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">

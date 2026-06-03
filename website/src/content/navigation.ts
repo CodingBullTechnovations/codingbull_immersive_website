@@ -29,6 +29,32 @@ export const mainNav: NavEntry[] = [
   },
   { label: 'Case Studies', href: '/case-studies' },
   { label: 'About', href: '/about' },
+  {
+    label: 'Locations',
+    href: '/india',
+    items: [
+      {
+        label: 'India',
+        href: '/india',
+        description: 'Healthcare, e-commerce, HRMS, and custom systems for India',
+      },
+      {
+        label: 'USA',
+        href: '/usa',
+        description: 'Procurement-ready custom software delivery for USA teams',
+      },
+      {
+        label: 'UAE',
+        href: '/uae',
+        description: 'Fast custom software delivery for UAE operations',
+      },
+      {
+        label: 'Canada',
+        href: '/canada',
+        description: 'Secure custom software delivery for Canadian businesses',
+      },
+    ],
+  },
   { label: 'Insights', href: '/insights' },
   { label: 'Contact', href: '/contact' },
 ];

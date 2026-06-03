@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { ArrowUpRight, BookOpenCheck, Globe2 } from 'lucide-react';
 import { PageHero } from '@/components/sections/PageHero';
 import { CTASection } from '@/components/sections/CTASection';
-import { CodeBlock } from '@/components/sections/CodeBlock';
 import { InsightSidebar } from '@/components/sections/InsightSidebar';
+import { MarkdownContent, generateHeadingId, parseMarkdownToBlocks } from '@/components/sections/MarkdownContent';
 import { ReadingProgressBar } from '@/components/sections/ReadingProgressBar';
 import { homeContent } from '@/content/home';
 import { insights, insightsBySlug, type InsightPost } from '@/content/insights';
@@ -41,105 +42,42 @@ function mapDbPost(post: Awaited<ReturnType<typeof getInsightBySlug>>): InsightP
   };
 }
 
-function renderInlineStrong(text: string) {
-  return text.split(/(\*\*.*?\*\*)/g).map((part, index) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={index} className="text-white font-semibold">{part.slice(2, -2)}</strong>;
-    }
-    return part;
-  });
-}
-
-interface ContentBlock {
-  type: 'paragraph' | 'h2' | 'h3' | 'list' | 'code' | 'blockquote';
-  items?: string[];
-  lang?: string;
-  text?: string;
-}
-
-function parseMarkdownToBlocks(content: string): ContentBlock[] {
-  const lines = content.split('\n');
-  const blocks: ContentBlock[] = [];
-  let currentCodeBlock: { lang: string; lines: string[] } | null = null;
-  let currentListBlock: { items: string[] } | null = null;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    // 1. Handle code block toggle first
-    if (trimmed.startsWith('```')) {
-      if (currentListBlock) {
-        blocks.push({ type: 'list', items: currentListBlock.items });
-        currentListBlock = null;
-      }
-      if (currentCodeBlock) {
-        blocks.push({
-          type: 'code',
-          lang: currentCodeBlock.lang,
-          text: currentCodeBlock.lines.join('\n'),
-        });
-        currentCodeBlock = null;
-      } else {
-        const lang = trimmed.slice(3).trim() || 'typescript';
-        currentCodeBlock = { lang, lines: [] };
-      }
-      continue;
-    }
-
-    if (currentCodeBlock) {
-      currentCodeBlock.lines.push(line);
-      continue;
-    }
-
-    // 2. Skip empty lines during general parsing, but DO NOT close the active list block
-    if (!trimmed) {
-      continue;
-    }
-
-    // 3. Handle list items (non-empty line)
-    if (trimmed.startsWith('- ') || trimmed.match(/^\d+\.\s/)) {
-      if (!currentListBlock) {
-        currentListBlock = { items: [] };
-      }
-      currentListBlock.items.push(trimmed);
-      continue;
-    } else {
-      if (currentListBlock) {
-        blocks.push({ type: 'list', items: currentListBlock.items });
-        currentListBlock = null;
-      }
-    }
-
-    // 4. Handle other block elements
-    if (trimmed.startsWith('## ')) {
-      blocks.push({ type: 'h2', text: trimmed.slice(3) });
-    } else if (trimmed.startsWith('### ')) {
-      blocks.push({ type: 'h3', text: trimmed.slice(4) });
-    } else if (trimmed.startsWith('> ')) {
-      blocks.push({ type: 'blockquote', text: trimmed.slice(2) });
-    } else {
-      blocks.push({ type: 'paragraph', text: trimmed });
-    }
+function getPrimaryService(post: InsightPost) {
+  const key = `${post.category} ${post.title}`.toLowerCase();
+  if (key.includes('healthcare') || key.includes('clinic') || key.includes('patient') || key.includes('django')) {
+    return {
+      label: 'Healthcare Software Development',
+      href: '/services/healthcare-software-development',
+      summary: 'Clinic systems, patient records, appointment workflows, and medical software backends.',
+    };
   }
-
-  if (currentListBlock) {
-    blocks.push({ type: 'list', items: currentListBlock.items });
+  if (key.includes('e-commerce') || key.includes('shopify') || key.includes('inventory')) {
+    return {
+      label: 'E-commerce Development',
+      href: '/services/ecommerce-development',
+      summary: 'SEO-first storefronts, inventory automation, order workflows, and B2B commerce systems.',
+    };
   }
-  if (currentCodeBlock) {
-    blocks.push({
-      type: 'code',
-      lang: currentCodeBlock.lang,
-      text: currentCodeBlock.lines.join('\n'),
-    });
+  if (key.includes('hrms') || key.includes('payroll') || key.includes('attendance')) {
+    return {
+      label: 'HRMS & Payroll Software',
+      href: '/services/custom-hrms-payroll-software',
+      summary: 'Attendance, payroll rules, approvals, payslips, and workforce dashboards.',
+    };
   }
-
-  return blocks;
+  return {
+    label: 'Custom Business Systems',
+    href: '/services/custom-business-systems',
+    summary: 'Internal CRM, workflow automation, approval portals, dashboards, and custom software.',
+  };
 }
 
-function generateHeadingId(text: string) {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-}
+const COUNTRY_LINKS = [
+  { label: 'India', href: '/india' },
+  { label: 'USA', href: '/usa' },
+  { label: 'UAE', href: '/uae' },
+  { label: 'Canada', href: '/canada' },
+];
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -178,6 +116,8 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
       text: b.text || '',
       id: generateHeadingId(b.text || ''),
     }));
+  const primaryService = getPrimaryService(post);
+  const briefHeadings = headings.slice(0, 5);
 
   // Fetch all posts to determine related posts
   const dbStatuses = await listInsightSlugStatuses();
@@ -245,85 +185,70 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                 </div>
               </div>
 
-              {/* Dynamic Content Renderer */}
-              <div className="prose prose-invert prose-lg max-w-none 
-                prose-headings:font-[family-name:var(--font-outfit)] prose-headings:tracking-tight
-                prose-p:text-white/70 prose-p:leading-relaxed prose-p:font-light prose-p:mb-6 prose-p:text-base md:prose-p:text-lg
-                prose-strong:text-white prose-strong:font-semibold
-                prose-code:text-teal prose-code:bg-teal/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-                prose-a:text-teal prose-a:no-underline hover:prose-a:underline
-              ">
-                {blocks.map((block, idx) => {
-                  switch (block.type) {
-                    case 'h2': {
-                      const headingId = generateHeadingId(block.text || '');
-                      return (
-                        <h2 
-                          key={idx} 
-                          id={headingId} 
-                          className="text-2xl lg:text-3xl font-bold font-[family-name:var(--font-outfit)] text-white mt-12 mb-6 scroll-mt-24 flex items-center gap-2 group/heading"
+              <div className="mb-12 rounded-2xl border border-white/[0.06] bg-white/[0.025] p-6 lg:p-7">
+                <div className="grid gap-7 lg:grid-cols-[1.2fr_0.8fr]">
+                  <div>
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal/20 bg-teal/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-teal">
+                      <BookOpenCheck className="h-3.5 w-3.5" strokeWidth={2} />
+                      Decision Brief
+                    </div>
+                    <p className="mb-5 text-sm font-light leading-relaxed text-white/60 md:text-base">
+                      {post.excerpt}
+                    </p>
+                    {briefHeadings.length > 0 && (
+                      <div className="grid gap-2">
+                        {briefHeadings.map((heading) => (
+                          <a
+                            key={heading.id}
+                            href={`#${heading.id}`}
+                            className="group flex items-center justify-between rounded-lg border border-white/[0.04] bg-black/20 px-4 py-3 text-sm text-white/65 transition-colors hover:border-teal/20 hover:bg-teal/[0.035] hover:text-white"
+                          >
+                            <span>{heading.text}</span>
+                            <ArrowUpRight className="h-3.5 w-3.5 text-white/25 transition-colors group-hover:text-teal" strokeWidth={2} />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rounded-xl border border-white/[0.05] bg-black/20 p-5">
+                    <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white/35">
+                      Related Service
+                    </p>
+                    <Link
+                      href={primaryService.href}
+                      className="group mb-5 block rounded-lg border border-white/[0.05] bg-white/[0.02] p-4 transition-colors hover:border-teal/25 hover:bg-teal/[0.035]"
+                    >
+                      <span className="mb-2 flex items-center justify-between gap-3 text-sm font-semibold text-white">
+                        {primaryService.label}
+                        <ArrowUpRight className="h-4 w-4 text-teal/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={2} />
+                      </span>
+                      <span className="block text-xs font-light leading-relaxed text-white/45">
+                        {primaryService.summary}
+                      </span>
+                    </Link>
+
+                    <p className="mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/35">
+                      <Globe2 className="h-3.5 w-3.5 text-teal/60" strokeWidth={2} />
+                      Country Coverage
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {COUNTRY_LINKS.map((country) => (
+                        <Link
+                          key={country.href}
+                          href={country.href}
+                          className="rounded-lg border border-white/[0.05] bg-white/[0.015] px-3 py-2 text-xs font-medium text-white/55 transition-colors hover:border-teal/20 hover:bg-teal/[0.035] hover:text-white"
                         >
-                          <span className="text-teal font-mono text-lg opacity-0 group-hover/heading:opacity-60 transition-opacity">#</span>
-                          {renderInlineStrong(block.text || '')}
-                        </h2>
-                      );
-                    }
-                    case 'h3':
-                      return (
-                        <h3 key={idx} className="text-xl font-semibold text-white/95 mt-8 mb-4">
-                          {renderInlineStrong(block.text || '')}
-                        </h3>
-                      );
-                    case 'blockquote':
-                      return (
-                        <blockquote key={idx} className="border-l-2 border-teal bg-teal/[0.02] px-6 py-4 rounded-r-xl my-8 text-white/85 italic font-light">
-                          {renderInlineStrong(block.text || '')}
-                        </blockquote>
-                      );
-                    case 'list':
-                      return (
-                        <ul key={idx} className="space-y-3 my-6 pl-2">
-                          {block.items?.map((item, itemIdx) => {
-                            const isOrdered = item.match(/^\d+\.\s/);
-                            const textOnly = isOrdered ? item.replace(/^\d+\.\s/, '') : item.replace(/^- \s*/, '');
-                            return (
-                              <li key={itemIdx} className="flex items-start gap-3">
-                                {isOrdered ? (
-                                  <span className="text-teal font-mono font-bold shrink-0 mt-0.5">{item.match(/^\d+/)?.[0]}.</span>
-                                ) : (
-                                  <span className="text-teal shrink-0 mt-2.5 text-[10px]">•</span>
-                                )}
-                                <span className="text-white/70 font-light leading-relaxed">{renderInlineStrong(textOnly)}</span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      );
-                    case 'code':
-                      return (
-                        <CodeBlock 
-                          key={idx} 
-                          code={block.text || ''} 
-                          language={block.lang || 'typescript'} 
-                        />
-                      );
-                    case 'paragraph':
-                    default: {
-                      const isLead = idx === 0 || (idx === 1 && blocks[0].type !== 'paragraph');
-                      return (
-                        <p 
-                          key={idx} 
-                          className={`text-white/70 leading-relaxed font-light mb-6 ${
-                            isLead ? 'text-lg md:text-xl text-white/90 font-normal border-l-2 border-white/10 pl-4' : 'text-base md:text-lg'
-                          }`}
-                        >
-                          {renderInlineStrong(block.text || '')}
-                        </p>
-                      );
-                    }
-                  }
-                })}
+                          {country.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
+
+              {/* Dynamic Content Renderer */}
+              <MarkdownContent blocks={blocks} />
 
               {/* Author Bio Card */}
               <div className="mt-20 p-8 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-6">

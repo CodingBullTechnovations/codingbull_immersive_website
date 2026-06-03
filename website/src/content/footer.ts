@@ -26,6 +26,8 @@ export const footerContent: FooterContent = {
         { label: 'Software Company in Ahmedabad', href: '/ahmedabad' },
         { label: 'Software Development in India', href: '/india' },
         { label: 'Custom Software for USA', href: '/usa' },
+        { label: 'Custom Software for UAE', href: '/uae' },
+        { label: 'Custom Software for Canada', href: '/canada' },
       ],
     },
   ],

@@ -53,10 +53,10 @@ function seoIndustryForPath(pathname) {
 
 function keywordsForService(service) {
   const map = {
-    'healthcare-software-development': ['healthcare software development', ['clinic management software', 'patient appointment booking system'], 'Commercial investigation', 'Decision'],
-    'ecommerce-development': ['e-commerce development', ['custom e-commerce platform', 'inventory order automation'], 'Commercial investigation', 'Decision'],
-    'custom-hrms-payroll-software': ['custom HRMS software', ['payroll automation software', 'attendance management system'], 'Commercial investigation', 'Decision'],
-    'custom-business-systems': ['custom business software', ['internal CRM', 'workflow automation'], 'Commercial investigation', 'Decision'],
+    'healthcare-software-development': ['medical software development company', ['healthcare software development company', 'clinic management software', 'patient appointment booking system', 'healthcare software India USA UAE Canada'], 'Commercial investigation', 'Decision'],
+    'ecommerce-development': ['custom e-commerce software development', ['custom e-commerce platform', 'inventory order automation', 'B2B e-commerce systems', 'Shopify alternative development'], 'Commercial investigation', 'Decision'],
+    'custom-hrms-payroll-software': ['custom HRMS software development', ['payroll automation software', 'attendance management system', 'multi-location workforce software', 'custom payroll system'], 'Commercial investigation', 'Decision'],
+    'custom-business-systems': ['custom software development company', ['internal CRM', 'workflow automation', 'business process automation', 'custom business software'], 'Commercial investigation', 'Decision'],
   };
 
   return map[service.slug] ?? [service.title.toLowerCase(), [], 'Commercial investigation', 'Decision'];
@@ -70,7 +70,7 @@ function detectForceMode() {
   return process.argv.includes('--force') || process.env.SEED_FORCE === 'true' || process.env.SEED_FORCE === '1';
 }
 
-async function upsertBySlug({ prismaModel, slug, createData, updateData, force, counters }) {
+async function upsertBySlug({ prismaModel, slug, createData, updateData, force, updateExisting = false, counters }) {
   const existing = await prismaModel.findUnique({ where: { slug }, select: { id: true } });
   if (!existing) {
     await prismaModel.create({ data: createData });
@@ -78,7 +78,7 @@ async function upsertBySlug({ prismaModel, slug, createData, updateData, force, 
     return;
   }
 
-  if (!force) {
+  if (!force && !updateExisting) {
     counters.skipped += 1;
     return;
   }
@@ -129,8 +129,9 @@ export async function seedContent(prisma, options = {}) {
     const data = {
       slug: service.slug,
       title: service.title,
-      metaTitle: service.title,
+      metaTitle: `${service.title} | CodingBull Technovations Pvt. Ltd.`,
       metaDescription: service.description,
+      body: service.body ?? null,
       niche: serviceInterestForPath(pathname),
       hero: {
         headline: service.title,
@@ -157,6 +158,7 @@ export async function seedContent(prisma, options = {}) {
       createData: data,
       updateData: data,
       force,
+      updateExisting: true,
       counters: summary.services,
     });
   }
@@ -228,6 +230,7 @@ export async function seedContent(prisma, options = {}) {
       createData: data,
       updateData: data,
       force,
+      updateExisting: true,
       counters: summary.insights,
     });
   }
@@ -300,7 +303,7 @@ export async function seedContent(prisma, options = {}) {
   console.log(
     JSON.stringify(
       {
-        mode: force ? 'force_update' : 'safe_create_only',
+        mode: force ? 'force_update_all_seeded' : 'repo_managed_services_and_insights_update',
         services: summary.services,
         caseStudies: summary.caseStudies,
         insights: summary.insights,

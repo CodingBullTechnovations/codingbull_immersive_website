@@ -25,6 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/ahmedabad',
     '/india',
     '/usa',
+    '/uae',
+    '/canada',
     '/privacy',
     '/terms',
   ].map((route) => ({

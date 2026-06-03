@@ -156,6 +156,7 @@ export async function saveServicePageAction(formData: FormData) {
     title: z.string().min(3).parse(value(formData, 'title')),
     metaTitle: optionalValue(formData, 'metaTitle'),
     metaDescription: optionalValue(formData, 'metaDescription'),
+    body: optionalValue(formData, 'body'),
     niche: nicheSchema.parse(value(formData, 'niche')),
     hero: {
       headline: value(formData, 'heroHeadline'),

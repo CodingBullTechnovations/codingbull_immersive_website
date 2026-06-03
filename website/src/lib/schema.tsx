@@ -90,6 +90,8 @@ export function generateServiceSchema(service: {
     areaServed: [
       { '@type': 'Country', name: 'India' },
       { '@type': 'Country', name: 'United States' },
+      { '@type': 'Country', name: 'United Arab Emirates' },
+      { '@type': 'Country', name: 'Canada' },
     ],
   };
 }

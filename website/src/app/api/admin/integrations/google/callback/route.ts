@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { hasRole } from '@/lib/server/authz';
 import { exchangeGoogleCode } from '@/lib/server/seo-sync';
+import { getGoogleOAuthAdminSettingsUrl, getGoogleOAuthRedirectUri } from '@/lib/server/google-oauth';
 
 export const runtime = 'nodejs';
 
@@ -18,20 +19,20 @@ export async function GET(request: NextRequest) {
   const storedState = request.cookies.get('google_oauth_state')?.value;
 
   if (!code || !state || state !== storedState) {
-    return NextResponse.redirect(new URL('/admin/settings?integration=google_oauth_invalid', request.url));
+    return NextResponse.redirect(getGoogleOAuthAdminSettingsUrl(request.url, '?integration=google_oauth_invalid'));
   }
 
   try {
     await exchangeGoogleCode({
       code,
-      redirectUri: new URL('/api/admin/integrations/google/callback', request.url).toString(),
+      redirectUri: getGoogleOAuthRedirectUri(request.url),
     });
 
-    const response = NextResponse.redirect(new URL('/admin/settings?integration=google_connected', request.url));
+    const response = NextResponse.redirect(getGoogleOAuthAdminSettingsUrl(request.url, '?integration=google_connected'));
     response.cookies.delete('google_oauth_state');
     return response;
   } catch (error) {
     console.error('[google_oauth_callback_failed]', error);
-    return NextResponse.redirect(new URL('/admin/settings?integration=google_oauth_failed', request.url));
+    return NextResponse.redirect(getGoogleOAuthAdminSettingsUrl(request.url, '?integration=google_oauth_failed'));
   }
 }

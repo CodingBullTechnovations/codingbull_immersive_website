@@ -56,6 +56,14 @@ Set these values in local `.env.local` and in the VPS environment. Do not commit
 - `ADMIN_PASSWORD`
 - `ADMIN_NAME`
 
+Set `NEXT_PUBLIC_BASE_URL` exactly to the canonical production domain:
+
+```env
+NEXT_PUBLIC_BASE_URL="https://www.codingbullz.com"
+```
+
+This value is used for canonical URLs and admin integration guidance. Google OAuth production callbacks are pinned to `https://www.codingbullz.com/api/admin/integrations/google/callback`; do not use localhost in production OAuth configuration.
+
 Optional server fallbacks only; prefer saving these in `/admin/settings` because admin credentials are encrypted and can be changed without redeploying:
 
 - `GA4_MEASUREMENT_ID` or legacy `NEXT_PUBLIC_GA_ID`

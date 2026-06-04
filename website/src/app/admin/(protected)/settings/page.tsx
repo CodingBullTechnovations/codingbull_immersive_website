@@ -3,6 +3,11 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { listSettingsAdmin } from '@/lib/server/cms';
 import { listCredentialSummaries } from '@/lib/server/credentials';
 import { getSeoIntegrationConfig } from '@/lib/server/env';
+import {
+  getGoogleOAuthBaseUrl,
+  getLocalGoogleOAuthRedirectUri,
+  getProductionGoogleOAuthRedirectUri,
+} from '@/lib/server/google-oauth';
 import { saveSettingAction } from '../content/actions';
 import { deleteCredentialAction, saveCredentialAction, syncGa4Action, syncSearchConsoleAction } from './actions';
 
@@ -319,12 +324,16 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">
           <p className="text-sm font-semibold text-white">Required Google Cloud redirect URIs</p>
           <p className="mt-2 text-xs leading-5 text-white/45">
-            Use the production URL for VPS OAuth. Keep the localhost URL only for local development testing.
+            Production OAuth is generated from the canonical www URL, not the request host. Keep the localhost URL only for local development testing.
           </p>
           <div className="mt-3 grid gap-2 text-xs text-white/55 md:grid-cols-2">
-            <code className="rounded-lg bg-black/30 p-3">https://www.codingbullz.com/api/admin/integrations/google/callback</code>
-            <code className="rounded-lg bg-black/30 p-3">http://localhost:3000/api/admin/integrations/google/callback</code>
+            <code className="rounded-lg bg-black/30 p-3">{getProductionGoogleOAuthRedirectUri()}</code>
+            <code className="rounded-lg bg-black/30 p-3">{getLocalGoogleOAuthRedirectUri()}</code>
           </div>
+          <p className="mt-3 text-xs leading-5 text-white/45">
+            Safe debug: production OAuth base URL is <code>{getGoogleOAuthBaseUrl()}</code> and production redirect URI is{' '}
+            <code>{getProductionGoogleOAuthRedirectUri()}</code>.
+          </p>
         </div>
 
         <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">

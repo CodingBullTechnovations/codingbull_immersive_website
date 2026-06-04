@@ -2,10 +2,16 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { getGoogleOAuthConfig, getGoogleScopes } from '@/lib/server/seo-sync';
 import { hasRole } from '@/lib/server/authz';
+import { getGoogleOAuthAdminSettingsUrl, getGoogleOAuthRedirectUri, getGoogleOAuthStartUrl } from '@/lib/server/google-oauth';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
+  const canonicalStartUrl = getGoogleOAuthStartUrl(request.url);
+  if (process.env.NODE_ENV === 'production' && request.url !== canonicalStartUrl) {
+    return NextResponse.redirect(canonicalStartUrl);
+  }
+
   const session = await auth();
 
   if (!session?.user || !hasRole(session.user.role, 'ADMIN')) {
@@ -14,11 +20,11 @@ export async function GET(request: Request) {
 
   const { clientId } = await getGoogleOAuthConfig();
   if (!clientId) {
-    return NextResponse.redirect(new URL('/admin/settings?integration=missing_google_client_id', request.url));
+    return NextResponse.redirect(getGoogleOAuthAdminSettingsUrl(request.url, '?integration=missing_google_client_id'));
   }
 
   const state = crypto.randomUUID();
-  const redirectUri = new URL('/api/admin/integrations/google/callback', request.url).toString();
+  const redirectUri = getGoogleOAuthRedirectUri(request.url);
   const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
 
   authUrl.searchParams.set('client_id', clientId);

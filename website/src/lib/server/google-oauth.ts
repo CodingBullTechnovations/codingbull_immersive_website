@@ -5,6 +5,7 @@ const productionBaseUrl = 'https://www.codingbullz.com';
 export const googleOAuthCallbackPath = '/api/admin/integrations/google/callback';
 export const googleOAuthStartPath = '/api/admin/integrations/google/start';
 export const googleOAuthAdminSettingsPath = '/admin/settings';
+export const googleOAuthAdminLoginPath = '/admin/login';
 
 function normalizedBaseUrl() {
   const baseUrl = getBaseUrl().replace(/\/$/, '');
@@ -43,6 +44,13 @@ export function getLocalGoogleOAuthRedirectUri() {
 export function getGoogleOAuthAdminSettingsUrl(requestUrl?: string, search = '') {
   const baseUrl = process.env.NODE_ENV === 'production' ? normalizedBaseUrl() : requestOrigin(requestUrl);
   return `${baseUrl}${googleOAuthAdminSettingsPath}${search}`;
+}
+
+export function getGoogleOAuthAdminLoginUrl(requestUrl?: string) {
+  const baseUrl = process.env.NODE_ENV === 'production' ? normalizedBaseUrl() : requestOrigin(requestUrl);
+  const url = new URL(googleOAuthAdminLoginPath, baseUrl);
+  url.searchParams.set('callbackUrl', googleOAuthAdminSettingsPath);
+  return url.toString();
 }
 
 export function getGoogleOAuthBaseUrl() {

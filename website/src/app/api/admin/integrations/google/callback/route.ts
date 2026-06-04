@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { hasRole } from '@/lib/server/authz';
 import { exchangeGoogleCode } from '@/lib/server/seo-sync';
-import { getGoogleOAuthAdminSettingsUrl, getGoogleOAuthRedirectUri } from '@/lib/server/google-oauth';
+import {
+  getGoogleOAuthAdminLoginUrl,
+  getGoogleOAuthAdminSettingsUrl,
+  getGoogleOAuthRedirectUri,
+} from '@/lib/server/google-oauth';
 
 export const runtime = 'nodejs';
 
@@ -10,7 +14,7 @@ export async function GET(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user || !hasRole(session.user.role, 'ADMIN')) {
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(getGoogleOAuthAdminLoginUrl(request.url));
   }
 
   const url = new URL(request.url);

@@ -2,20 +2,19 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { getGoogleOAuthConfig, getGoogleScopes } from '@/lib/server/seo-sync';
 import { hasRole } from '@/lib/server/authz';
-import { getGoogleOAuthAdminSettingsUrl, getGoogleOAuthRedirectUri, getGoogleOAuthStartUrl } from '@/lib/server/google-oauth';
+import {
+  getGoogleOAuthAdminLoginUrl,
+  getGoogleOAuthAdminSettingsUrl,
+  getGoogleOAuthRedirectUri,
+} from '@/lib/server/google-oauth';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
-  const canonicalStartUrl = getGoogleOAuthStartUrl(request.url);
-  if (process.env.NODE_ENV === 'production' && request.url !== canonicalStartUrl) {
-    return NextResponse.redirect(canonicalStartUrl);
-  }
-
   const session = await auth();
 
   if (!session?.user || !hasRole(session.user.role, 'ADMIN')) {
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(getGoogleOAuthAdminLoginUrl(request.url));
   }
 
   const { clientId } = await getGoogleOAuthConfig();

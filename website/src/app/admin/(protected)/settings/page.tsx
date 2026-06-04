@@ -11,6 +11,7 @@ import {
 } from '@/lib/server/google-oauth';
 import { saveSettingAction } from '../content/actions';
 import { deleteCredentialAction, saveCredentialAction, syncGa4Action, syncSearchConsoleAction } from './actions';
+import { SyncSubmitButton } from './SyncSubmitButton';
 
 type CredentialSummary = Awaited<ReturnType<typeof listCredentialSummaries>>[number];
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -287,29 +288,23 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
             </a>
             <div>
               <form action={syncSearchConsoleAction}>
-                <button
-                  disabled={!canSyncSearchConsole}
-                  className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
-                    canSyncSearchConsole ? 'border-white/10 text-white/75 hover:bg-white/[0.04]' : 'cursor-not-allowed border-white/5 text-white/30'
-                  }`}
-                  type="submit"
-                >
-                  Sync Search Console
-                </button>
+                <SyncSubmitButton
+                  label="Sync Search Console"
+                  pendingLabel="Syncing Search Console..."
+                  ready={canSyncSearchConsole}
+                  reason={syncReadiness.searchConsole.reason}
+                />
               </form>
               {!canSyncSearchConsole && <p className="mt-2 max-w-[18rem] text-xs leading-5 text-amber-200/80">{syncReadiness.searchConsole.reason}</p>}
             </div>
             <div>
               <form action={syncGa4Action}>
-                <button
-                  disabled={!canSyncGa4}
-                  className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
-                    canSyncGa4 ? 'border-white/10 text-white/75 hover:bg-white/[0.04]' : 'cursor-not-allowed border-white/5 text-white/30'
-                  }`}
-                  type="submit"
-                >
-                  Sync GA4
-                </button>
+                <SyncSubmitButton
+                  label="Sync GA4"
+                  pendingLabel="Syncing GA4..."
+                  ready={canSyncGa4}
+                  reason={syncReadiness.ga4.reason}
+                />
               </form>
               {!canSyncGa4 && <p className="mt-2 max-w-[18rem] text-xs leading-5 text-amber-200/80">{syncReadiness.ga4.reason}</p>}
             </div>

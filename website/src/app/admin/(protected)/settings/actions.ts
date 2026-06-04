@@ -7,12 +7,12 @@ import { z } from 'zod';
 import { requireAdmin } from '@/lib/server/authz';
 import { writeAuditLog } from '@/lib/server/audit';
 import { deleteCredential, upsertCredential } from '@/lib/server/credentials';
+import { getGoogleSyncReadiness, normalizeGa4PropertyId, normalizeSearchConsoleSiteUrl } from '@/lib/server/google-sync-readiness';
 import { runGa4Sync, runSearchConsoleSync } from '@/lib/server/seo-sync';
 
 const providerSchema = z.nativeEnum(CredentialProvider);
 const credentialKeySchema = z.string().trim().min(2).max(80).regex(/^[a-zA-Z0-9_.-]+$/);
 const ga4MeasurementIdSchema = z.string().trim().transform((value) => value.toUpperCase()).pipe(z.string().regex(/^G-[A-Z0-9]+$/));
-const ga4PropertyIdSchema = z.string().trim().transform((value) => value.startsWith('properties/') ? value.slice('properties/'.length) : value).pipe(z.string().regex(/^\d+$/));
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? '').trim();
@@ -31,14 +31,11 @@ function normalizeCredentialValue(provider: CredentialProvider, key: string, val
   }
 
   if (provider === 'GA4' && key === 'property_id') {
-    const result = ga4PropertyIdSchema.safeParse(value);
-    if (!result.success) {
-      return {
-        ok: false as const,
-        reason: 'GA4 property ID must be numeric, for example 5393022929 or properties/5393022929.',
-      };
-    }
-    return { ok: true as const, value: result.data };
+    return normalizeGa4PropertyId(value);
+  }
+
+  if (provider === 'SEARCH_CONSOLE' && key === 'site_url') {
+    return normalizeSearchConsoleSiteUrl(value);
   }
 
   if (provider === 'GOOGLE' && key === 'refresh_token') {
@@ -116,6 +113,9 @@ export async function syncSearchConsoleAction() {
 
   let target = '/admin/settings?integration=search_console_synced';
   try {
+    const readiness = await getGoogleSyncReadiness();
+    if (!readiness.searchConsole.ready) throw new Error(readiness.searchConsole.reason);
+
     const result = await runSearchConsoleSync({ days: 30 });
     target = `/admin/settings?integration=search_console_synced&rows=${result.rowsImported}`;
   } catch (error) {
@@ -136,6 +136,9 @@ export async function syncGa4Action() {
 
   let target = '/admin/settings?integration=ga4_synced';
   try {
+    const readiness = await getGoogleSyncReadiness();
+    if (!readiness.ga4.ready) throw new Error(readiness.ga4.reason);
+
     const result = await runGa4Sync({ days: 30 });
     target = `/admin/settings?integration=ga4_synced&rows=${result.rowsImported}`;
   } catch (error) {

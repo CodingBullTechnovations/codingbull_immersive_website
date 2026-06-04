@@ -3,6 +3,7 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { listSettingsAdmin } from '@/lib/server/cms';
 import { listCredentialSummaries } from '@/lib/server/credentials';
 import { getSeoIntegrationConfig } from '@/lib/server/env';
+import { getGoogleSyncReadiness } from '@/lib/server/google-sync-readiness';
 import {
   getGoogleOAuthBaseUrl,
   getLocalGoogleOAuthRedirectUri,
@@ -161,6 +162,10 @@ function statusText(configured: boolean, source: 'database' | 'environment' | 'm
   return source === 'database' ? 'Saved in admin' : 'Using env fallback';
 }
 
+function readinessText(item: { ready: boolean; reason: string }) {
+  return `${item.ready ? 'Yes' : 'No'} - ${item.reason}`;
+}
+
 function SaveCredentialCard({ step, configured }: { step: (typeof credentialSteps)[number]; configured: boolean }) {
   return (
     <form action={saveCredentialAction} className="rounded-xl border border-white/10 bg-black/20 p-4">
@@ -219,9 +224,10 @@ function CredentialList({ credentials }: { credentials: CredentialSummary[] }) {
 }
 
 export default async function AdminSettingsPage({ searchParams }: { searchParams?: SearchParams }) {
-  const [settings, credentials, params] = await Promise.all([
+  const [settings, credentials, syncReadiness, params] = await Promise.all([
     listSettingsAdmin(),
     listCredentialSummaries(),
+    getGoogleSyncReadiness(),
     searchParams ?? Promise.resolve({} as Record<string, string | string[] | undefined>),
   ]);
   const seoConfig = getSeoIntegrationConfig();
@@ -241,8 +247,8 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
   const hasSearchConsoleSite = isConfigured('SEARCH_CONSOLE', 'site_url', seoConfig.searchConsoleSiteUrl);
   const hasGa4Property = isConfigured('GA4', 'property_id', seoConfig.ga4PropertyId);
   const canConnectGoogle = hasGoogleClient;
-  const canSyncSearchConsole = hasGoogleClient && hasGoogleToken && hasSearchConsoleSite;
-  const canSyncGa4 = hasGoogleClient && hasGoogleToken && hasGa4Property;
+  const canSyncSearchConsole = syncReadiness.searchConsole.ready;
+  const canSyncGa4 = syncReadiness.ga4.ready;
 
   return (
     <>
@@ -279,28 +285,34 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
             >
               Connect Google OAuth
             </a>
-            <form action={syncSearchConsoleAction}>
-              <button
-                disabled={!canSyncSearchConsole}
-                className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
-                  canSyncSearchConsole ? 'border-white/10 text-white/75 hover:bg-white/[0.04]' : 'cursor-not-allowed border-white/5 text-white/30'
-                }`}
-                type="submit"
-              >
-                Sync Search Console
-              </button>
-            </form>
-            <form action={syncGa4Action}>
-              <button
-                disabled={!canSyncGa4}
-                className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
-                  canSyncGa4 ? 'border-white/10 text-white/75 hover:bg-white/[0.04]' : 'cursor-not-allowed border-white/5 text-white/30'
-                }`}
-                type="submit"
-              >
-                Sync GA4
-              </button>
-            </form>
+            <div>
+              <form action={syncSearchConsoleAction}>
+                <button
+                  disabled={!canSyncSearchConsole}
+                  className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
+                    canSyncSearchConsole ? 'border-white/10 text-white/75 hover:bg-white/[0.04]' : 'cursor-not-allowed border-white/5 text-white/30'
+                  }`}
+                  type="submit"
+                >
+                  Sync Search Console
+                </button>
+              </form>
+              {!canSyncSearchConsole && <p className="mt-2 max-w-[18rem] text-xs leading-5 text-amber-200/80">{syncReadiness.searchConsole.reason}</p>}
+            </div>
+            <div>
+              <form action={syncGa4Action}>
+                <button
+                  disabled={!canSyncGa4}
+                  className={`rounded-xl border px-4 py-2 text-sm font-semibold ${
+                    canSyncGa4 ? 'border-white/10 text-white/75 hover:bg-white/[0.04]' : 'cursor-not-allowed border-white/5 text-white/30'
+                  }`}
+                  type="submit"
+                >
+                  Sync GA4
+                </button>
+              </form>
+              {!canSyncGa4 && <p className="mt-2 max-w-[18rem] text-xs leading-5 text-amber-200/80">{syncReadiness.ga4.reason}</p>}
+            </div>
           </div>
         </div>
 
@@ -319,6 +331,23 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
               </p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">
+          <p className="text-sm font-semibold text-white">Sync readiness</p>
+          <div className="mt-3 grid gap-3 text-xs leading-5 text-white/55 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              ['OAuth ready', readinessText(syncReadiness.oauth)],
+              ['Search Console ready', readinessText(syncReadiness.searchConsole)],
+              ['GA4 ready', readinessText(syncReadiness.ga4)],
+              ['GA4 measurement', `${syncReadiness.ga4Measurement.ready ? 'Yes' : 'No'} - ${syncReadiness.ga4Measurement.reason}${syncReadiness.ga4Measurement.ready ? '' : '; not required for GA4 Data API sync'}`],
+            ].map(([label, body]) => (
+              <div key={label} className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-white/35">{label}</p>
+                <p className="mt-2 text-white/60">{body}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">

@@ -1,37 +1,47 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import type { ProofMetric } from '@/types/content';
 
 function AnimatedCounter({ value, isInView }: { value: string; isInView: boolean }) {
-  const [count, setCount] = useState(0);
+  const [displayValue, setDisplayValue] = useState(value);
+  const shouldReduceMotion = useReducedMotion();
   const target = parseInt(value.replace(/[^0-9]/g, '')) || 0;
   const suffix = value.replace(/[0-9]/g, '');
 
   useEffect(() => {
-    if (isInView && target > 0) {
-      const duration = 2000;
-      const startTime = performance.now();
-
-      const update = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 4);
-
-        setCount(Math.floor(target * ease));
-
-        if (progress < 1) {
-          requestAnimationFrame(update);
-        }
-      };
-
-      requestAnimationFrame(update);
+    if (!isInView || target === 0 || shouldReduceMotion) {
+      return;
     }
-  }, [isInView, target]);
 
-  if (target === 0) return <span>{value}</span>;
-  return <span>{count}{suffix}</span>;
+    const duration = 2000;
+    const startTime = performance.now();
+    let animationFrame = 0;
+
+    const update = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 4);
+
+      setDisplayValue(`${Math.floor(target * ease)}${suffix}`);
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(update);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(update);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isInView, shouldReduceMotion, suffix, target, value]);
+
+  return (
+    <span aria-label={value}>
+      <span aria-hidden="true">{displayValue}</span>
+      <span className="sr-only">{value}</span>
+    </span>
+  );
 }
 
 interface ResultsOrProofSectionProps {
@@ -46,7 +56,7 @@ export function ResultsOrProofSection({ metrics }: ResultsOrProofSectionProps) {
     <section ref={ref} className="relative py-28 lg:py-36 px-6 lg:px-10 overflow-hidden">
       <div className="max-w-[var(--max-w-content)] mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={false}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           className="text-center mb-16"
@@ -67,7 +77,7 @@ export function ResultsOrProofSection({ metrics }: ResultsOrProofSectionProps) {
           {metrics.map((metric, index) => (
             <motion.div
               key={metric.label}
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              initial={false}
               animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
               transition={{
                 duration: 0.6,
@@ -76,7 +86,7 @@ export function ResultsOrProofSection({ metrics }: ResultsOrProofSectionProps) {
               }}
               className="group text-center rounded-2xl border border-white/[0.04] bg-white/[0.02] p-8 lg:p-10 transition-all duration-500 hover:border-teal/10 hover:bg-white/[0.04]"
             >
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-b from-teal to-teal/60 bg-clip-text text-transparent font-[family-name:var(--font-outfit)] mb-3 group-hover:from-teal group-hover:to-[#5aeacc] transition-all">
+              <div className="break-words text-xl font-bold leading-tight bg-gradient-to-b from-teal to-teal/60 bg-clip-text text-transparent font-[family-name:var(--font-outfit)] mb-3 transition-all group-hover:from-teal group-hover:to-[#5aeacc] sm:text-3xl lg:text-4xl">
                 <AnimatedCounter value={metric.value} isInView={isInView} />
               </div>
               <div className="text-sm font-medium text-white/60 mb-1">

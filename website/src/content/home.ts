@@ -23,9 +23,9 @@ export const homeContent: HomeContent = {
 
   trustStats: [
     { label: 'Founder-Led Architecture', value: 'Direct', icon: 'shield' },
-    { label: 'Products Deployed', value: '50+', icon: 'check' },
+    { label: 'Case Studies Published', value: '3', icon: 'check' },
     { label: 'Core Platforms', value: 'Healthcare · E-com · HRMS · Custom', icon: 'layers' },
-    { label: 'Adopters', value: 'India & USA', icon: 'globe' },
+    { label: 'Company Base', value: 'Ahmedabad, India', icon: 'globe' },
   ],
 
   whatWeBuild: [
@@ -109,24 +109,24 @@ export const homeContent: HomeContent = {
 
   proof: [
     {
-      value: '50+',
-      label: 'Platform Deployments',
-      description: 'Active installations across our 3 core sectors',
+      value: 'Founder-led',
+      label: 'Delivery',
+      description: 'Direct technical ownership from discovery to launch',
     },
     {
-      value: '3',
-      label: 'Proprietary Products',
-      description: 'Healthcare, E-commerce, and HRMS core systems',
+      value: 'Custom-built',
+      label: 'Systems',
+      description: 'Healthcare, e-commerce, HRMS, and custom business workflows',
     },
     {
-      value: 'Global',
-      label: 'Adoption Rate',
-      description: 'Licensing technology to India and the USA',
+      value: 'Ahmedabad',
+      label: 'Software Partner',
+      description: 'GST-registered company serving India and international buyers',
     },
     {
-      value: 'Architect-Led',
-      label: 'Integrations',
-      description: 'Direct technical oversight from setup to launch',
+      value: 'Published',
+      label: 'Case Studies',
+      description: 'Healthcare, industrial, and business workflow proof pages',
     },
   ],
 

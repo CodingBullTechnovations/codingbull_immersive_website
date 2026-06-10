@@ -96,7 +96,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
         
         {/* Reading Progress Card */}
         <div className="relative p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-teal shadow-[0_4px_30px_rgba(0,0,0,0.2)] hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
-          <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40 mb-3 font-mono">
+          <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 mb-3 font-mono">
             {'// READING PROGRESS'}
           </h4>
           <div className="flex items-center gap-4">
@@ -113,7 +113,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
         {/* Table of Contents */}
         {headings.length > 0 && (
           <div className="flex flex-col gap-4 p-6 rounded-2xl border border-white/[0.03] bg-white/[0.005] hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40 font-mono">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 font-mono">
               {'// TABLE OF CONTENTS'}
             </h4>
             <nav className="flex flex-col gap-3 font-mono text-xs uppercase tracking-wider">
@@ -202,7 +202,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
 
               {config.hudTelemetry.showConsoleFeed && (
                 <div className="mt-4 pt-3 border-t border-white/[0.04]">
-                  <span className="text-[10px] uppercase tracking-wider text-white/40 block mb-1.5">{'// LIVE CONSOLE FEED:'}</span>
+                  <span className="text-[10px] uppercase tracking-wider text-white/60 block mb-1.5">{'// LIVE CONSOLE FEED:'}</span>
                   <div className="bg-black/40 p-2.5 rounded-lg border border-white/[0.03] space-y-1.5 h-[84px] overflow-hidden flex flex-col justify-end">
                     {logs.map((log, i) => (
                       <div key={i} className="text-[10px] leading-tight truncate text-teal/70 font-mono">
@@ -231,13 +231,13 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
 
         {config.architectureSpecs.enabled && config.architectureSpecs.categories.length > 0 && (
           <div className="p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40 mb-4 font-mono">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 mb-4 font-mono">
               {config.architectureSpecs.title}
             </h4>
             <div className="space-y-4">
               {config.architectureSpecs.categories.map((category) => (
                 <div key={category.label}>
-                  <span className="text-[10px] uppercase text-white/40 font-mono block mb-1.5">{category.label}</span>
+                  <span className="text-[10px] uppercase text-white/60 font-mono block mb-1.5">{category.label}</span>
                   <div className="flex flex-wrap gap-1.5 font-mono font-semibold uppercase tracking-wider text-[10px]">
                     {category.tags.map((tag) => (
                       <span
@@ -256,7 +256,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
 
         {config.shareLinks.enabled && showShareButtons && (
           <div className="flex flex-col gap-4 p-6 rounded-2xl border border-white/[0.03] bg-white/[0.005] hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/40 font-mono">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 font-mono">
               {'// SHARE INSIGHT'}
             </h4>
             <div className="flex items-center gap-3">

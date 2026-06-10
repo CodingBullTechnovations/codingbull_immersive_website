@@ -4,7 +4,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
   images: {
-    qualities: [75, 90],
+    qualities: [60, 75, 90],
   },
   async redirects() {
     return [

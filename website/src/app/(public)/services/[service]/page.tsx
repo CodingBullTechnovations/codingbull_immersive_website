@@ -202,7 +202,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
               {/* Tech Stack */}
               {serviceData.techStack.length > 0 && <div className="mt-8">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/30 block mb-3">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 block mb-3">
                   Tech Stack
                 </span>
                 <div className="flex flex-wrap gap-2">

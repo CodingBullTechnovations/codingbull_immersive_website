@@ -204,7 +204,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                             className="group flex items-center justify-between rounded-lg border border-white/[0.04] bg-black/20 px-4 py-3 text-sm text-white/65 transition-colors hover:border-teal/20 hover:bg-teal/[0.035] hover:text-white"
                           >
                             <span>{heading.text}</span>
-                            <ArrowUpRight className="h-3.5 w-3.5 text-white/25 transition-colors group-hover:text-teal" strokeWidth={2} />
+                            <ArrowUpRight className="h-3.5 w-3.5 text-white/60 transition-colors group-hover:text-teal" strokeWidth={2} />
                           </a>
                         ))}
                       </div>
@@ -272,7 +272,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
               {/* Related Insights Grid */}
               {relatedPosts.length > 0 && (
                 <div className="mt-20 pt-10 border-t border-white/[0.05]">
-                  <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-white/40 mb-8">
+                  <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-white/60 mb-8">
                     Related Insights
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

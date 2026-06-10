@@ -130,7 +130,7 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
               {study.stats.map((stat) => (
                 <div key={stat.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-7 text-center">
                   <span className="block text-3xl font-black text-white">{stat.value}</span>
-                  <span className="mt-2 block text-[10px] uppercase tracking-widest text-white/40">{stat.label}</span>
+                  <span className="mt-2 block text-[10px] uppercase tracking-widest text-white/60">{stat.label}</span>
                 </div>
               ))}
             </div>

@@ -22,7 +22,7 @@ function FieldError({ message }: { message?: string }) {
 
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
-    <label htmlFor={htmlFor} className="text-[10px] uppercase tracking-widest font-bold text-white/40 ml-1">
+    <label htmlFor={htmlFor} className="text-[10px] uppercase tracking-widest font-bold text-white/60 ml-1">
       {children}
     </label>
   );
@@ -35,6 +35,7 @@ export function ContactForm() {
     message: string;
   } | null>(null);
   const formStarted = useRef(false);
+  const submitStatusRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
@@ -62,6 +63,12 @@ export function ContactForm() {
     setValue('utmTerm', params.get('utm_term') ?? '');
     setValue('utmContent', params.get('utm_content') ?? '');
   }, [setValue]);
+
+  useEffect(() => {
+    if (submitStatus) {
+      submitStatusRef.current?.focus();
+    }
+  }, [submitStatus]);
 
   const handleFormFocus = () => {
     if (formStarted.current) return;
@@ -95,10 +102,14 @@ export function ContactForm() {
         <AnimatePresence mode="wait">
           {submitStatus?.success ? (
             <motion.div
+              ref={submitStatusRef}
+              tabIndex={-1}
+              role="status"
+              aria-live="polite"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="py-12 text-center"
+              className="py-12 text-center focus:outline-none focus:ring-2 focus:ring-primary/70"
             >
               <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                 <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,7 +271,12 @@ export function ContactForm() {
               </div>
 
               {submitStatus && !submitStatus.success && (
-                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs text-center">
+                <div
+                  ref={submitStatusRef}
+                  tabIndex={-1}
+                  role="alert"
+                  className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs text-center focus:outline-none focus:ring-2 focus:ring-rose-400/70"
+                >
                   {submitStatus.message}
                 </div>
               )}
@@ -275,7 +291,7 @@ export function ContactForm() {
                   disabled={isSubmitting}
                   trackingSource="contact_form_submit"
                 />
-                <p className="text-center mt-6 text-[10px] text-white/30 uppercase tracking-[0.18em] font-medium">
+                <p className="text-center mt-6 text-[10px] text-white/60 uppercase tracking-[0.18em] font-medium">
                   Founder-led review for qualified projects
                 </p>
               </div>

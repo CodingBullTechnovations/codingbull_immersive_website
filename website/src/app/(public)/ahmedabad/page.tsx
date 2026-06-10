@@ -61,13 +61,13 @@ export default function AhmedabadPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10">
               <h3 className="text-xl font-bold mb-4 text-teal">Local Expertise</h3>
-              <p className="text-sm text-white/40 leading-relaxed">
+              <p className="text-sm text-white/60 leading-relaxed">
                 Ahmedabad companies often need clear scope, fast communication, WhatsApp-led inquiry flow, practical admin tools, and software that fits Indian operating realities.
               </p>
             </div>
             <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10">
               <h3 className="text-xl font-bold mb-4 text-teal">Global Standards</h3>
-              <p className="text-sm text-white/40 leading-relaxed">
+              <p className="text-sm text-white/60 leading-relaxed">
                 Our code and architecture follow international best practices, ensuring your system is ready for global scale from day one.
               </p>
             </div>

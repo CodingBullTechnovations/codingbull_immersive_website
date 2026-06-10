@@ -25,6 +25,7 @@ export function Footer() {
                 fill
                 sizes="(max-width: 768px) 150px, 200px"
                 className="object-contain opacity-90 drop-shadow-[0_0_20px_rgba(20,184,166,0.3)]"
+                quality={60}
               />
             </div>
             
@@ -47,7 +48,7 @@ export function Footer() {
           <div className="flex flex-wrap sm:flex-nowrap gap-12 sm:gap-16 lg:gap-24">
             {footerContent.columns.map((column) => (
               <div key={column.title} className="min-w-[120px]">
-                <h3 className="text-[10px] font-semibold text-white/40 mb-6 font-[family-name:var(--font-outfit)] uppercase tracking-[0.2em]">
+                <h3 className="text-[10px] font-semibold text-white/60 mb-6 font-[family-name:var(--font-outfit)] uppercase tracking-[0.2em]">
                   {column.title}
                 </h3>
                 <ul className="flex flex-col gap-4">
@@ -73,7 +74,7 @@ export function Footer() {
           <div className="flex items-center gap-4">
           </div>
 
-          <p className="text-[11px] text-white/40 font-medium tracking-wider uppercase">
+          <p className="text-[11px] text-white/60 font-medium tracking-wider uppercase">
             {footerContent.companyInfo}
           </p>
 
@@ -82,7 +83,7 @@ export function Footer() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[10px] text-white/30 hover:text-white transition-colors tracking-widest uppercase"
+                className="text-[10px] text-white/60 hover:text-white transition-colors tracking-widest uppercase"
               >
                 {link.label}
               </Link>

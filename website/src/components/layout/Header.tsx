@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,6 +14,9 @@ export function Header() {
   const [isHidden, setIsHidden] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileCloseButtonRef = useRef<HTMLButtonElement>(null);
+  const mobilePanelRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
   // Close mobile menu on route/pathname change
@@ -73,12 +76,65 @@ export function Header() {
   // Handle body scroll locking when mobile menu is open
   useEffect(() => {
     if (isMobileOpen) {
+      const menuButton = mobileMenuButtonRef.current;
       document.body.style.overflow = 'hidden';
+      const frame = window.requestAnimationFrame(() => {
+        mobileCloseButtonRef.current?.focus();
+      });
+
+      return () => {
+        window.cancelAnimationFrame(frame);
+        document.body.style.overflow = '';
+        menuButton?.focus();
+      };
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
   }, [isMobileOpen]);
+
+  const closeMobileMenu = () => {
+    setIsMobileOpen(false);
+  };
+
+  const handleMobileMenuKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeMobileMenu();
+      return;
+    }
+
+    if (event.key !== 'Tab') {
+      return;
+    }
+
+    const panel = mobilePanelRef.current;
+    if (!panel) {
+      return;
+    }
+
+    const focusableElements = Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((element) => element.offsetParent !== null);
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  };
 
   return (
     <>
@@ -103,6 +159,7 @@ export function Header() {
               className="object-contain"
               priority
               loading="eager"
+              quality={60}
             />
           </div>
           <div className="flex flex-col">
@@ -124,12 +181,26 @@ export function Header() {
                 className="relative"
                 onMouseEnter={() => setOpenDropdown(entry.label)}
                 onMouseLeave={() => setOpenDropdown(null)}
+                onFocus={() => setOpenDropdown(entry.label)}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) {
+                    setOpenDropdown(null);
+                  }
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') {
+                    event.preventDefault();
+                    setOpenDropdown(null);
+                    event.currentTarget.querySelector<HTMLAnchorElement>('a')?.focus();
+                  }
+                }}
               >
                 <Link
                   href={entry.href || '#'}
                   className="px-4 py-2 text-[13px] font-medium text-white/60 hover:text-white transition-colors duration-300 flex items-center gap-1.5 cursor-pointer rounded-lg hover:bg-white/[0.04]"
                   aria-expanded={openDropdown === entry.label}
                   aria-haspopup="true"
+                  aria-controls={`nav-dropdown-${entry.label.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   {entry.label}
                   <svg className={`w-3 h-3 transition-transform duration-200 ${openDropdown === entry.label ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
@@ -140,6 +211,7 @@ export function Header() {
                 <AnimatePresence>
                   {openDropdown === entry.label && (
                     <motion.div
+                      id={`nav-dropdown-${entry.label.toLowerCase().replace(/\s+/g, '-')}`}
                       initial={{ opacity: 0, y: 8, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.96 }}
@@ -161,7 +233,7 @@ export function Header() {
                                 {item.label}
                               </div>
                               {item.description && (
-                                <div className="text-xs text-white/40 mt-0.5 leading-relaxed">
+                                <div className="text-xs text-white/60 mt-0.5 leading-relaxed">
                                   {item.description}
                                 </div>
                               )}
@@ -197,10 +269,12 @@ export function Header() {
 
         {/* Mobile Hamburger */}
         <button
+          ref={mobileMenuButtonRef}
           className="lg:hidden relative z-[70] w-12 h-12 flex items-center justify-center cursor-pointer transition-transform duration-200 active:scale-90"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileOpen}
+          aria-controls="mobile-navigation"
         >
           <div className="w-6 flex flex-col gap-[5px]">
             <span
@@ -241,9 +315,13 @@ export function Header() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            id="mobile-navigation"
+            ref={mobilePanelRef}
             className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-[#060608]/90 backdrop-blur-3xl border-l border-white/[0.08] lg:hidden overflow-y-auto z-[120] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[1px] before:bg-gradient-to-b before:from-teal/60 before:via-teal/20 before:to-transparent"
-            role="navigation"
+            role="dialog"
+            aria-modal="true"
             aria-label="Mobile navigation"
+            onKeyDown={handleMobileMenuKeyDown}
           >
             {/* Scanline pattern layer */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,rgba(255,255,255,1)_50%)] bg-[length:100%_4px] z-0" />
@@ -251,8 +329,9 @@ export function Header() {
             {/* Close Button inside Panel */}
             <div className="absolute top-5 right-6 z-[30]">
               <button
+                ref={mobileCloseButtonRef}
                 className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 text-white hover:border-white/30 hover:shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-white/5 backdrop-blur-md"
-                onClick={() => setIsMobileOpen(false)}
+                onClick={closeMobileMenu}
                 aria-label="Close menu"
               >
                 <div className="w-5 h-5 flex flex-col justify-center items-center relative">
@@ -277,7 +356,7 @@ export function Header() {
                             key={item.href}
                             href={item.href}
                             className="group flex flex-col gap-0.5 py-1.5 px-3 rounded-xl hover:bg-white/[0.04] transition-all duration-300 border-l border-transparent hover:border-teal/40"
-                            onClick={() => setIsMobileOpen(false)}
+                            onClick={closeMobileMenu}
                           >
                             <div className="flex items-center gap-2 text-[15px] font-semibold font-[family-name:var(--font-outfit)] text-white/90 group-hover:text-teal transition-colors">
                               <span className="font-mono text-xs text-teal/50">
@@ -286,7 +365,7 @@ export function Header() {
                               {item.label}
                             </div>
                             {item.description && (
-                              <span className="text-[11px] text-white/40 font-light leading-normal pl-5">
+                              <span className="text-[11px] text-white/60 font-light leading-normal pl-5">
                                 {item.description}
                               </span>
                             )}
@@ -304,7 +383,7 @@ export function Header() {
                       <Link
                         href={entry.href}
                         className="group flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-white/[0.04] text-[15px] font-semibold font-[family-name:var(--font-outfit)] text-white/90 hover:text-white transition-all duration-300 border-l border-transparent hover:border-teal/40 hover:pl-4"
-                        onClick={() => setIsMobileOpen(false)}
+                        onClick={closeMobileMenu}
                       >
                         <span className="text-teal/50 group-hover:text-teal group-hover:translate-x-1 transition-all">
                           &gt;
@@ -329,7 +408,7 @@ export function Header() {
                 />
 
                 {/* Tactical Status Footer */}
-                <div className="flex flex-col gap-2 font-mono text-[10px] text-white/40">
+                <div className="flex flex-col gap-2 font-mono text-[10px] text-white/60">
                   <div className="flex items-center gap-2">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal opacity-75"></span>
@@ -340,7 +419,7 @@ export function Header() {
                   <div className="tracking-wide">
                     GSTIN: <span className="text-white/60">24AAMCC7617E1ZP</span>
                   </div>
-                  <div className="text-[9px] tracking-wider text-white/30 uppercase mt-1">
+                  <div className="text-[9px] tracking-wider text-white/60 uppercase mt-1">
                     {'AHMEDABAD, IN // NEW YORK, USA'}
                   </div>
                 </div>

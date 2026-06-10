@@ -83,7 +83,7 @@ export function CTASection({ cta }: CTASectionProps) {
           <span className="text-white">?</span>
         </h2>
 
-        <p className="text-base lg:text-lg text-white/40 mb-12 max-w-lg mx-auto leading-relaxed font-light">
+        <p className="text-base lg:text-lg text-white/65 mb-12 max-w-lg mx-auto leading-relaxed font-light">
           Tell us what your business needs. Get a fixed-price quote with a clear scope and timeline — no surprises, no hourly billing.
         </p>
 

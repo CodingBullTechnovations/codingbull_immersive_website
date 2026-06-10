@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect } from 'react'
+import { useEffect } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -8,11 +8,7 @@ import { useDevicePerformanceProfile } from '@/hooks/useDevicePerformanceProfile
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function SmoothScrolling({
-  children,
-}: {
-  children: ReactNode
-}) {
+export default function SmoothScrolling() {
   const performanceProfile = useDevicePerformanceProfile()
 
   useEffect(() => {
@@ -49,5 +45,5 @@ export default function SmoothScrolling({
     }
   }, [performanceProfile])
 
-  return <>{children}</>
+  return null
 }

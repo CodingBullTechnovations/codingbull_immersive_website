@@ -8,13 +8,28 @@ interface FAQSectionProps {
   items: FAQItem[];
 }
 
-function AccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: boolean; onToggle: () => void }) {
+function AccordionItem({
+  item,
+  index,
+  isOpen,
+  onToggle,
+}: {
+  item: FAQItem;
+  index: number;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const buttonId = `faq-trigger-${index}`;
+  const panelId = `faq-panel-${index}`;
+
   return (
     <div className="border-b border-white/[0.04] last:border-b-0">
       <button
+        id={buttonId}
         onClick={onToggle}
         className="w-full flex items-center justify-between py-6 text-left cursor-pointer group"
         aria-expanded={isOpen}
+        aria-controls={panelId}
       >
         <span className={`text-[15px] font-medium pr-6 transition-colors duration-300 ${isOpen ? 'text-teal' : 'text-white/70 group-hover:text-white/90'}`}>
           {item.question}
@@ -23,7 +38,7 @@ function AccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: bool
           animate={{ rotate: isOpen ? 45 : 0 }}
           transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
           className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border transition-all duration-300 ${
-            isOpen ? 'border-teal/50 bg-teal/20 text-teal shadow-[0_0_15px_rgba(20,184,166,0.3)]' : 'border-white/[0.1] bg-white/[0.03] text-white/40 group-hover:bg-white/[0.06]'
+            isOpen ? 'border-teal/50 bg-teal/20 text-teal shadow-[0_0_15px_rgba(20,184,166,0.3)]' : 'border-white/[0.1] bg-white/[0.03] text-white/60 group-hover:bg-white/[0.06]'
           }`}
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -34,6 +49,9 @@ function AccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: bool
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id={panelId}
+            role="region"
+            aria-labelledby={buttonId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -86,6 +104,7 @@ export function FAQSection({ items }: FAQSectionProps) {
             <AccordionItem
               key={index}
               item={item}
+              index={index}
               isOpen={openIndex === index}
               onToggle={() => setOpenIndex(openIndex === index ? null : index)}
             />

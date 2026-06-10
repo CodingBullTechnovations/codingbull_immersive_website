@@ -93,7 +93,7 @@ export function ResultsOrProofSection({ metrics }: ResultsOrProofSectionProps) {
                 {metric.label}
               </div>
               {metric.description && (
-                <div className="text-[11px] text-white/25 font-light">
+                <div className="text-[11px] text-white/60 font-light">
                   {metric.description}
                 </div>
               )}

@@ -1,15 +1,26 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileWhatsAppCTA } from '@/components/layout/MobileWhatsAppCTA';
-import SmoothScrolling from '@/components/animations/SmoothScrolling';
-import { Preloader } from '@/components/animations/Preloader';
-import { CustomCursor } from '@/components/animations/CustomCursor';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
 import { ServiceWorkerCleanup } from '@/components/providers/ServiceWorkerCleanup';
-import { CookieConsent } from '@/components/layout/CookieConsent';
+
+const SmoothScrolling = dynamic(() => import('@/components/animations/SmoothScrolling'), {
+  ssr: false,
+});
+
+const CustomCursor = dynamic(
+  () => import('@/components/animations/CustomCursor').then((mod) => mod.CustomCursor),
+  { ssr: false }
+);
+
+const CookieConsent = dynamic(
+  () => import('@/components/layout/CookieConsent').then((mod) => mod.CookieConsent),
+  { ssr: false }
+);
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -22,13 +33,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <AnalyticsProvider>
       <ServiceWorkerCleanup />
-      <Preloader />
-      <CustomCursor />
+      <a
+        href="#main-content"
+        className="fixed left-4 top-4 z-[300] -translate-y-24 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-black shadow-glow transition-transform focus:translate-y-0"
+      >
+        Skip to main content
+      </a>
       <Header />
-      <SmoothScrolling>
-        <main>{children}</main>
-      </SmoothScrolling>
+      <main id="main-content" tabIndex={-1}>{children}</main>
       <Footer />
+      <SmoothScrolling />
+      <CustomCursor />
       <MobileWhatsAppCTA />
       <CookieConsent />
     </AnalyticsProvider>

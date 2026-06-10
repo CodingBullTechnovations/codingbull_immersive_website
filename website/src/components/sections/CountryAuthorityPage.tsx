@@ -99,15 +99,15 @@ export function CountryAuthorityPage({
             <h3 className="mt-4 text-xl font-semibold text-white">Market delivery notes</h3>
             <dl className="mt-6 space-y-4">
               <div>
-                <dt className="text-xs uppercase tracking-[0.14em] text-white/40">Response window</dt>
+                <dt className="text-xs uppercase tracking-[0.14em] text-white/60">Response window</dt>
                 <dd className="mt-1 text-sm leading-6 text-white/70">{responseWindow}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-[0.14em] text-white/40">Delivery model</dt>
+                <dt className="text-xs uppercase tracking-[0.14em] text-white/60">Delivery model</dt>
                 <dd className="mt-1 text-sm leading-6 text-white/70">{deliveryModel}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-[0.14em] text-white/40">Best-fit projects</dt>
+                <dt className="text-xs uppercase tracking-[0.14em] text-white/60">Best-fit projects</dt>
                 <dd className="mt-1 text-sm leading-6 text-white/70">{bestFitProjects}</dd>
               </div>
             </dl>

@@ -20,7 +20,7 @@ export default function ContactPage() {
         <div className="max-w-3xl mx-auto px-6">
           {/* WhatsApp CTA */}
           <div className="text-center mb-24">
-            <p className="text-white/40 text-[11px] uppercase tracking-widest font-semibold mb-8">Fastest Architecture Scoping</p>
+            <p className="text-white/60 text-[11px] uppercase tracking-widest font-semibold mb-8">Fastest Architecture Scoping</p>
             <Button
               label="Chat on WhatsApp"
               href="#whatsapp"
@@ -30,7 +30,7 @@ export default function ContactPage() {
               size="large"
               className="shadow-[0_0_50px_-10px_rgba(20,184,166,0.4)]"
             />
-            <p className="mt-8 text-white/40 text-sm font-light max-w-sm mx-auto leading-relaxed">
+            <p className="mt-8 text-white/60 text-sm font-light max-w-sm mx-auto leading-relaxed">
               Skip the backlog. Directly discuss technical feasibility and get a ballpark quote via WhatsApp.
             </p>
           </div>
@@ -39,7 +39,7 @@ export default function ContactPage() {
           <div className="mb-32">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-white mb-4">Initialize Project Inquiry</h2>
-              <p className="text-white/40 text-sm max-w-md mx-auto leading-relaxed">
+              <p className="text-white/60 text-sm max-w-md mx-auto leading-relaxed">
                 Provide your requirements below for a detailed technical review and fixed-price quotation.
               </p>
             </div>

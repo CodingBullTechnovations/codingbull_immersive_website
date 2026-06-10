@@ -78,12 +78,12 @@ export function MultiFrameHero({
 
           if (i === 0) {
             gsap.set(el, { opacity: 1, pointerEvents: 'auto' });
-            gsap.set(items, { opacity: 1, filter: 'blur(0px)', scale: 1, rotateX: 0, z: 0, y: 0 });
+            gsap.set(items, { opacity: 1, scale: 1, rotateX: 0, z: 0, y: 0 });
           } else {
             gsap.set(el, { opacity: 0, pointerEvents: 'none' });
             gsap.set(items, isMobilePremium
               ? { opacity: 0, scale: 0.94, y: 24 }
-              : { opacity: 0, filter: 'blur(15px)', scale: 0.5, rotateX: 45, z: -500 }
+              : { opacity: 0, scale: 0.5, rotateX: 45, z: -500 }
             );
           }
         });
@@ -117,7 +117,7 @@ export function MultiFrameHero({
             tl.to(items, {
               opacity: 1,
               scale: 1,
-              ...(isMobilePremium ? { y: 0 } : { rotateX: 0, z: 0, filter: 'blur(0px)' }),
+              ...(isMobilePremium ? { y: 0 } : { rotateX: 0, z: 0 }),
               stagger: 0.05,
               duration: sectionDuration * 0.45,
               ease: isMobilePremium ? 'power3.out' : 'back.out(1.5)'
@@ -128,7 +128,7 @@ export function MultiFrameHero({
             tl.to(items, {
               opacity: 0,
               scale: isMobilePremium ? 1.04 : 1.5,
-              ...(isMobilePremium ? { y: -20 } : { rotateX: -45, z: 500, filter: 'blur(20px)' }),
+              ...(isMobilePremium ? { y: -20 } : { rotateX: -45, z: 500 }),
               stagger: 0.03,
               duration: sectionDuration * 0.35,
               ease: 'power3.inOut'

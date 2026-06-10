@@ -67,9 +67,9 @@ export function TestimonialsSection() {
           <AnimatePresence mode="wait">
             <motion.div
               key={current}
-              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
               className="rounded-2xl border border-white/[0.04] bg-white/[0.015] p-10 lg:p-14 text-center"
             >
@@ -81,7 +81,7 @@ export function TestimonialsSection() {
                 <p className="text-sm font-semibold text-white/80 font-[family-name:var(--font-outfit)]">
                   {testimonials[current].name}
                 </p>
-                <p className="text-xs text-white/25 mt-1">
+                <p className="text-xs text-white/60 mt-1">
                   {testimonials[current].role} · {testimonials[current].industry}
                 </p>
               </div>
@@ -90,18 +90,25 @@ export function TestimonialsSection() {
         </div>
 
         {/* Dots */}
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center gap-1 mt-6" role="group" aria-label="Select testimonial">
           {testimonials.map((_, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => setCurrent(index)}
-              className={`h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
-                index === current
-                  ? 'bg-copper/60 w-8'
-                  : 'bg-white/10 w-1.5 hover:bg-white/20'
-              }`}
+              className="group flex h-12 w-12 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               aria-label={`View testimonial ${index + 1}`}
-            />
+              aria-pressed={index === current}
+            >
+              <span
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  index === current
+                    ? 'w-8 bg-copper/60'
+                    : 'w-1.5 bg-white/10 group-hover:bg-white/20'
+                }`}
+                aria-hidden="true"
+              />
+            </button>
           ))}
         </div>
       </div>

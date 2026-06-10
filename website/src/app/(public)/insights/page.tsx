@@ -121,7 +121,7 @@ export default async function InsightsPage() {
                       <div className={`flex h-11 w-11 items-center justify-center rounded-xl border ${cluster.accent.border} ${cluster.accent.bg}`}>
                         <Icon className={`h-5 w-5 ${cluster.accent.text}`} strokeWidth={1.8} />
                       </div>
-                      <span className="rounded-full border border-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
+                      <span className="rounded-full border border-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
                         {cluster.count}
                       </span>
                     </div>
@@ -154,7 +154,7 @@ export default async function InsightsPage() {
                     <MapPin className="h-4 w-4 text-teal/70" strokeWidth={1.8} />
                     {country.label}
                   </span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-white/30 transition-colors group-hover:text-teal" strokeWidth={2} />
+                  <ArrowUpRight className="h-3.5 w-3.5 text-white/60 transition-colors group-hover:text-teal" strokeWidth={2} />
                 </Link>
               ))}
             </div>
@@ -191,7 +191,7 @@ export default async function InsightsPage() {
                         </div>
                         <div>
                           <p className="text-white/60 text-xs font-medium">{post.author}</p>
-                          <p className="text-white/30 text-[10px]">{post.readingTime}</p>
+                          <p className="text-white/60 text-[10px]">{post.readingTime}</p>
                         </div>
                       </div>
 

@@ -14,6 +14,7 @@ import {
   defaultSocialLinks,
   normalizeSocialLinksConfig,
   SOCIAL_LINKS_SETTING_KEY,
+  type SocialContentEmbed,
   type SocialLink,
 } from '@/lib/social-links';
 
@@ -103,24 +104,68 @@ function normalizeInstagramEmbedUrl(rawValue: string) {
   throw new Error('Use an Instagram post, reel, TV, or official embed URL. Profile feed embeds require an approved API integration.');
 }
 
+function normalizeYoutubeEmbedUrl(url: URL) {
+  const hostname = url.hostname.replace(/^www\./, '');
+
+  if (hostname === 'youtu.be') {
+    const videoId = url.pathname.split('/').filter(Boolean)[0];
+    if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  if (hostname === 'youtube.com') {
+    if (url.pathname.startsWith('/embed/')) return url.toString();
+    const videoId = url.searchParams.get('v');
+    if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  throw new Error('YouTube content must use a YouTube video, short link, or official embed URL.');
+}
+
+function normalizeOfficialEmbedUrl(rawValue: string, platform: string, fieldLabel: string) {
+  const value = normalizeHttpsUrl(rawValue, fieldLabel);
+  if (!value) return '';
+
+  const url = new URL(value);
+  const hostname = url.hostname.replace(/^www\./, '');
+
+  switch (platform) {
+    case 'instagram':
+      return normalizeInstagramEmbedUrl(value);
+    case 'linkedin':
+      if ((hostname === 'linkedin.com' || hostname === 'www.linkedin.com') && url.pathname.startsWith('/embed/')) {
+        return url.toString();
+      }
+      throw new Error('LinkedIn content must use an official LinkedIn embed URL starting with https://www.linkedin.com/embed/.');
+    case 'googleBusiness':
+      if ((hostname === 'google.com' || hostname === 'maps.google.com') && url.pathname.startsWith('/maps/embed')) {
+        return url.toString();
+      }
+      throw new Error('Google content must use an official Google Maps embed URL. Google review feeds require a separate approved API/widget integration.');
+    case 'youtube':
+      return normalizeYoutubeEmbedUrl(url);
+    case 'facebook':
+      if ((hostname === 'facebook.com' || hostname === 'www.facebook.com') && url.pathname.startsWith('/plugins/')) {
+        return url.toString();
+      }
+      throw new Error('Facebook content must use an official Facebook plugins embed URL.');
+    default:
+      throw new Error(`${fieldLabel} uses an unsupported embed platform. Add it to the approved provider list before embedding.`);
+  }
+}
+
 function socialPlatformFromForm(formData: FormData, id: string) {
   return text(formData, `social_platform_${id}`) || 'other';
 }
 
 function socialLinkFromForm(formData: FormData, fallback: SocialLink): SocialLink {
   const url = normalizeHttpsUrl(text(formData, `social_url_${fallback.id}`), `${fallback.label} URL`);
-  const enabled = checked(formData, `social_enabled_${fallback.id}`);
-
-  if (enabled && !url) {
-    throw new Error(`${fallback.label} is enabled but has no URL.`);
-  }
 
   return {
     id: fallback.id,
     platform: socialPlatformFromForm(formData, fallback.id),
     label: text(formData, `social_label_${fallback.id}`) || fallback.label,
     url,
-    enabled,
+    enabled: Boolean(url),
     showInFooter: checked(formData, `social_footer_${fallback.id}`),
     includeInSameAs: checked(formData, `social_same_as_${fallback.id}`),
     order: Number(text(formData, `social_order_${fallback.id}`)) || fallback.order,
@@ -144,14 +189,13 @@ function parseAdditionalSocialLinks(rawValue: string): SocialLink[] {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line, index) => {
-      const [labelRaw, platformRaw, urlRaw, enabledRaw = 'true', footerRaw = 'true', sameAsRaw = 'true'] = line
+      const [labelRaw, platformRaw, urlRaw, footerRaw = 'true', sameAsRaw = 'true'] = line
         .split('|')
         .map((part) => part.trim());
       const label = labelRaw || `External profile ${index + 1}`;
       const url = normalizeHttpsUrl(urlRaw || '', `${label} URL`);
-      const enabled = enabledRaw.toLowerCase() !== 'false';
 
-      if (enabled && !url) {
+      if (!url) {
         throw new Error(`${label} is enabled but has no URL.`);
       }
 
@@ -160,9 +204,64 @@ function parseAdditionalSocialLinks(rawValue: string): SocialLink[] {
         platform: platformRaw || 'other',
         label,
         url,
-        enabled,
+        enabled: Boolean(url),
         showInFooter: footerRaw.toLowerCase() !== 'false',
         includeInSameAs: sameAsRaw.toLowerCase() !== 'false',
+        order: 100 + index,
+      };
+    });
+}
+
+const defaultContentEmbeds: SocialContentEmbed[] = [
+  { id: 'instagram-content', platform: 'instagram', title: 'Latest from Instagram', embedUrl: '', enabled: false, order: 10 },
+  { id: 'linkedin-content', platform: 'linkedin', title: 'Latest from LinkedIn', embedUrl: '', enabled: false, order: 20 },
+  { id: 'google-business-content', platform: 'googleBusiness', title: 'Google Business profile', embedUrl: '', enabled: false, order: 30 },
+  { id: 'youtube-content', platform: 'youtube', title: 'YouTube feature', embedUrl: '', enabled: false, order: 40 },
+  { id: 'facebook-content', platform: 'facebook', title: 'Facebook update', embedUrl: '', enabled: false, order: 50 },
+];
+
+function contentEmbedFromForm(formData: FormData, fallback: SocialContentEmbed): SocialContentEmbed {
+  const embedUrl = normalizeOfficialEmbedUrl(
+    text(formData, `content_embed_url_${fallback.id}`),
+    fallback.platform,
+    `${fallback.title} embed URL`,
+  );
+
+  return {
+    id: fallback.id,
+    platform: fallback.platform,
+    title: text(formData, `content_title_${fallback.id}`) || fallback.title,
+    embedUrl,
+    enabled: Boolean(embedUrl) && checked(formData, `content_enabled_${fallback.id}`),
+    order: Number(text(formData, `content_order_${fallback.id}`)) || fallback.order,
+  };
+}
+
+function parseAdditionalContentEmbeds(rawValue: string): SocialContentEmbed[] {
+  if (!rawValue.trim()) return [];
+
+  return rawValue
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line, index) => {
+      const [titleRaw, platformRaw, embedUrlRaw, enabledRaw = 'true'] = line
+        .split('|')
+        .map((part) => part.trim());
+      const title = titleRaw || `Social content ${index + 1}`;
+      const platform = platformRaw || 'other';
+      const embedUrl = normalizeOfficialEmbedUrl(embedUrlRaw || '', platform, `${title} embed URL`);
+
+      if (!embedUrl) {
+        throw new Error(`${title} is enabled but has no embed URL.`);
+      }
+
+      return {
+        id: `content-custom-${slugId(title, String(index + 1))}`,
+        platform,
+        title,
+        embedUrl,
+        enabled: enabledRaw.toLowerCase() !== 'false',
         order: 100 + index,
       };
     });
@@ -285,32 +384,31 @@ export async function saveSocialLinksAction(formData: FormData) {
       ...parseAdditionalSocialLinks(text(formData, 'additionalSocialLinks')),
     ].sort((a, b) => a.order - b.order);
 
-    const instagramEmbedUrl = text(formData, 'instagramContentEmbedUrl');
-    const instagramContent = {
-      enabled: checked(formData, 'instagramContentEnabled'),
-      embedUrl: instagramEmbedUrl ? normalizeInstagramEmbedUrl(instagramEmbedUrl) : '',
-      title: text(formData, 'instagramContentTitle') || 'Latest from Instagram',
-    };
-
-    if (instagramContent.enabled && !instagramContent.embedUrl) {
-      throw new Error('Instagram content is enabled but no embed URL was provided.');
-    }
+    const contentEmbeds = [
+      ...defaultContentEmbeds.map((fallback) => contentEmbedFromForm(formData, fallback)),
+      ...parseAdditionalContentEmbeds(text(formData, 'additionalContentEmbeds')),
+    ].sort((a, b) => a.order - b.order);
 
     const parsed = normalizeSocialLinksConfig({
       links,
-      instagramContent,
+      contentEmbeds,
+      instagramContent: {
+        enabled: false,
+        embedUrl: '',
+        title: 'Latest from Instagram',
+      },
     });
 
     const saved = await prisma.siteSetting.upsert({
       where: { key: SOCIAL_LINKS_SETTING_KEY },
       update: {
         value: parsed as unknown as Prisma.InputJsonValue,
-        description: 'Backend-managed public social profiles and optional Instagram embed content.',
+        description: 'Backend-managed public social profiles and approved social content embeds.',
       },
       create: {
         key: SOCIAL_LINKS_SETTING_KEY,
         value: parsed as unknown as Prisma.InputJsonValue,
-        description: 'Backend-managed public social profiles and optional Instagram embed content.',
+        description: 'Backend-managed public social profiles and approved social content embeds.',
       },
     });
 
@@ -322,7 +420,7 @@ export async function saveSocialLinksAction(formData: FormData) {
       afterSummary: {
         key: SOCIAL_LINKS_SETTING_KEY,
         enabledLinks: parsed.links.filter((link) => link.enabled).map((link) => link.label),
-        instagramContentEnabled: parsed.instagramContent.enabled,
+        enabledContentEmbeds: parsed.contentEmbeds.filter((embed) => embed.enabled).map((embed) => embed.title),
       },
     });
 

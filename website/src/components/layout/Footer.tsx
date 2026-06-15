@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ExternalLink, MapPin } from 'lucide-react';
 import { footerContent } from '@/content/footer';
-import { enabledFooterSocialLinks, type SocialLink } from '@/lib/social-links';
+import { enabledFooterSocialLinks, enabledSocialContentEmbeds, type SocialContentEmbed, type SocialLink } from '@/lib/social-links';
 import { getPublicSocialLinksConfig } from '@/lib/server/social-links';
 
 function BrandIcon({ platform }: { platform: string }) {
@@ -57,13 +57,9 @@ function SocialLinkItem({ link }: { link: SocialLink }) {
   );
 }
 
-function InstagramContentEmbed({
-  embedUrl,
-  title,
-}: {
-  embedUrl: string;
-  title: string;
-}) {
+function SocialContentBlock({ embeds }: { embeds: SocialContentEmbed[] }) {
+  if (embeds.length === 0) return null;
+
   return (
     <div className="mb-20 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
       <div className="grid gap-0 lg:grid-cols-[0.7fr_1fr]">
@@ -72,20 +68,30 @@ function InstagramContentEmbed({
             Social Proof
           </p>
           <h3 className="mt-4 text-2xl font-light leading-tight text-white">
-            {title}
+            Live updates from our active channels.
           </h3>
           <p className="mt-4 max-w-md text-sm leading-6 text-white/50">
-            Live Instagram content is loaded only when an official Instagram embed URL is configured in admin.
+            These embeds are managed separately from footer profile icons. Only approved platform embed URLs saved in admin are shown here.
           </p>
         </div>
-        <div className="min-h-[420px] bg-black/30">
-          <iframe
-            src={embedUrl}
-            title={title}
-            loading="lazy"
-            className="h-[520px] w-full border-0"
-            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-          />
+        <div className={`grid gap-4 bg-black/30 p-4 ${embeds.length > 1 ? 'xl:grid-cols-2' : ''}`}>
+          {embeds.map((embed) => (
+            <article key={embed.id} className="overflow-hidden rounded-xl border border-white/10 bg-black/30">
+              <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+                <h4 className="text-sm font-semibold text-white">{embed.title}</h4>
+                <span className="rounded-full border border-teal/20 bg-teal/10 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-teal">
+                  {embed.platform}
+                </span>
+              </div>
+              <iframe
+                src={embed.embedUrl}
+                title={embed.title}
+                loading="lazy"
+                className="h-[520px] w-full border-0 bg-white"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+              />
+            </article>
+          ))}
         </div>
       </div>
     </div>
@@ -95,8 +101,7 @@ function InstagramContentEmbed({
 export async function Footer() {
   const socialConfig = await getPublicSocialLinksConfig();
   const footerSocialLinks = enabledFooterSocialLinks(socialConfig);
-  const instagramContent = socialConfig.instagramContent;
-  const shouldShowInstagramEmbed = instagramContent.enabled && instagramContent.embedUrl;
+  const socialContentEmbeds = enabledSocialContentEmbeds(socialConfig);
 
   return (
     <footer className="relative bg-black border-t border-white/[0.05] overflow-hidden pt-24 lg:pt-32" role="contentinfo">
@@ -164,12 +169,7 @@ export async function Footer() {
           </div>
         </div>
 
-        {shouldShowInstagramEmbed && (
-          <InstagramContentEmbed
-            embedUrl={instagramContent.embedUrl}
-            title={instagramContent.title}
-          />
-        )}
+        <SocialContentBlock embeds={socialContentEmbeds} />
 
         <div className="py-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
           {footerSocialLinks.length > 0 ? (

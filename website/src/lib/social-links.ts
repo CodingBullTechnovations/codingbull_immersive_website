@@ -27,8 +27,18 @@ export interface InstagramContentConfig {
   title: string;
 }
 
+export interface SocialContentEmbed {
+  id: string;
+  platform: SocialPlatform | string;
+  title: string;
+  embedUrl: string;
+  enabled: boolean;
+  order: number;
+}
+
 export interface SocialLinksConfig {
   links: SocialLink[];
+  contentEmbeds: SocialContentEmbed[];
   instagramContent: InstagramContentConfig;
 }
 
@@ -103,6 +113,7 @@ export const defaultSocialLinks: SocialLink[] = [
 
 export const defaultSocialLinksConfig: SocialLinksConfig = {
   links: defaultSocialLinks,
+  contentEmbeds: [],
   instagramContent: defaultInstagramContent,
 };
 
@@ -124,13 +135,14 @@ function asNumber(value: unknown, fallback = 0) {
 
 function normalizeLink(value: unknown, fallback: SocialLink): SocialLink {
   if (!isRecord(value)) return fallback;
+  const url = asString(value.url, fallback.url);
 
   return {
     id: asString(value.id, fallback.id),
     platform: asString(value.platform, fallback.platform),
     label: asString(value.label, fallback.label),
-    url: asString(value.url, fallback.url),
-    enabled: asBoolean(value.enabled, fallback.enabled),
+    url,
+    enabled: Boolean(url),
     showInFooter: asBoolean(value.showInFooter, fallback.showInFooter),
     includeInSameAs: asBoolean(value.includeInSameAs, fallback.includeInSameAs),
     order: asNumber(value.order, fallback.order),
@@ -144,6 +156,20 @@ function normalizeInstagramContent(value: unknown): InstagramContentConfig {
     enabled: asBoolean(value.enabled, defaultInstagramContent.enabled),
     embedUrl: asString(value.embedUrl, defaultInstagramContent.embedUrl),
     title: asString(value.title, defaultInstagramContent.title),
+  };
+}
+
+function normalizeContentEmbed(value: unknown, fallback: SocialContentEmbed): SocialContentEmbed {
+  if (!isRecord(value)) return fallback;
+  const embedUrl = asString(value.embedUrl, fallback.embedUrl);
+
+  return {
+    id: asString(value.id, fallback.id),
+    platform: asString(value.platform, fallback.platform),
+    title: asString(value.title, fallback.title),
+    embedUrl,
+    enabled: Boolean(embedUrl) && asBoolean(value.enabled, fallback.enabled),
+    order: asNumber(value.order, fallback.order),
   };
 }
 
@@ -171,9 +197,34 @@ export function normalizeSocialLinksConfig(value: unknown): SocialLinksConfig {
       }),
     );
 
+  const legacyInstagramContent = normalizeInstagramContent(value.instagramContent);
+  const rawContentEmbeds = Array.isArray(value.contentEmbeds) ? value.contentEmbeds : [];
+  const contentEmbeds = rawContentEmbeds.map((item, index) =>
+    normalizeContentEmbed(item, {
+      id: `content-${index + 1}`,
+      platform: 'other',
+      title: 'Social content',
+      embedUrl: '',
+      enabled: false,
+      order: 10 + index * 10,
+    }),
+  );
+
+  if (contentEmbeds.length === 0 && legacyInstagramContent.enabled && legacyInstagramContent.embedUrl) {
+    contentEmbeds.push({
+      id: 'instagram-content',
+      platform: 'instagram',
+      title: legacyInstagramContent.title,
+      embedUrl: legacyInstagramContent.embedUrl,
+      enabled: true,
+      order: 10,
+    });
+  }
+
   return {
     links: [...normalizedDefaults, ...customLinks].sort((a, b) => a.order - b.order),
-    instagramContent: normalizeInstagramContent(value.instagramContent),
+    contentEmbeds: contentEmbeds.sort((a, b) => a.order - b.order),
+    instagramContent: legacyInstagramContent,
   };
 }
 
@@ -187,4 +238,10 @@ export function sameAsSocialUrls(config: SocialLinksConfig) {
   return config.links
     .filter((link) => link.enabled && link.includeInSameAs && link.url)
     .map((link) => link.url);
+}
+
+export function enabledSocialContentEmbeds(config: SocialLinksConfig) {
+  return config.contentEmbeds
+    .filter((embed) => embed.enabled && embed.embedUrl)
+    .sort((a, b) => a.order - b.order);
 }

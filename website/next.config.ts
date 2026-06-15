@@ -263,6 +263,7 @@ const nextConfig: NextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https:",
               "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com",
+              "frame-src 'self' https://www.instagram.com https://www.linkedin.com https://www.google.com https://maps.google.com https://www.youtube.com https://www.facebook.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

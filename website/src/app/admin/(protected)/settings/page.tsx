@@ -13,6 +13,7 @@ import {
   defaultSocialLinks,
   normalizeSocialLinksConfig,
   SOCIAL_LINKS_SETTING_KEY,
+  type SocialContentEmbed,
   type SocialLinksConfig,
 } from '@/lib/social-links';
 import { saveSettingAction } from '../content/actions';
@@ -240,10 +241,6 @@ function CredentialList({ credentials }: { credentials: CredentialSummary[] }) {
   );
 }
 
-function boolText(value: boolean) {
-  return value ? 'Enabled' : 'Hidden';
-}
-
 function additionalSocialLinksText(config: SocialLinksConfig) {
   const defaultIds = new Set(defaultSocialLinks.map((link) => link.id));
 
@@ -254,9 +251,32 @@ function additionalSocialLinksText(config: SocialLinksConfig) {
         link.label,
         link.platform,
         link.url,
-        String(link.enabled),
         String(link.showInFooter),
         String(link.includeInSameAs),
+      ].join(' | '),
+    )
+    .join('\n');
+}
+
+const defaultContentEmbedRows: SocialContentEmbed[] = [
+  { id: 'instagram-content', platform: 'instagram', title: 'Latest from Instagram', embedUrl: '', enabled: false, order: 10 },
+  { id: 'linkedin-content', platform: 'linkedin', title: 'Latest from LinkedIn', embedUrl: '', enabled: false, order: 20 },
+  { id: 'google-business-content', platform: 'googleBusiness', title: 'Google Business profile', embedUrl: '', enabled: false, order: 30 },
+  { id: 'youtube-content', platform: 'youtube', title: 'YouTube feature', embedUrl: '', enabled: false, order: 40 },
+  { id: 'facebook-content', platform: 'facebook', title: 'Facebook update', embedUrl: '', enabled: false, order: 50 },
+];
+
+function additionalContentEmbedsText(config: SocialLinksConfig) {
+  const defaultIds = new Set(defaultContentEmbedRows.map((embed) => embed.id));
+
+  return config.contentEmbeds
+    .filter((embed) => !defaultIds.has(embed.id))
+    .map((embed) =>
+      [
+        embed.title,
+        embed.platform,
+        embed.embedUrl,
+        String(embed.enabled),
       ].join(' | '),
     )
     .join('\n');
@@ -265,15 +285,16 @@ function additionalSocialLinksText(config: SocialLinksConfig) {
 function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
   const linksById = new Map(config.links.map((link) => [link.id, link]));
   const rows = defaultSocialLinks.map((fallback) => linksById.get(fallback.id) ?? fallback);
-  const instagramContent = config.instagramContent;
+  const embedsById = new Map(config.contentEmbeds.map((embed) => [embed.id, embed]));
+  const contentRows = defaultContentEmbedRows.map((fallback) => embedsById.get(fallback.id) ?? fallback);
 
   return (
     <form id="social-profiles" action={saveSocialLinksAction} className="mb-8 scroll-mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
       <div className="grid gap-5 xl:grid-cols-[1fr_auto]">
         <div>
-          <h2 className="font-semibold text-white">Public social profiles</h2>
+          <h2 className="font-semibold text-white">Footer profile icons</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
-            Manage footer visibility and schema sameAs profiles here. Platform logos are generated automatically from the selected platform, so admins only need to maintain URLs and visibility. Disabled rows or rows without URLs stay hidden on the live site.
+            Add the profile URL, then choose whether it appears in the footer and organization schema. Platform logos are generated automatically from the selected platform. Rows without URLs stay hidden on the live site.
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/50">
@@ -290,7 +311,6 @@ function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
             <tr>
               <th className="px-4 py-3">Profile</th>
               <th className="px-4 py-3">URL</th>
-              <th className="px-4 py-3">Live</th>
               <th className="px-4 py-3">Footer</th>
               <th className="px-4 py-3">sameAs</th>
               <th className="px-4 py-3">Order</th>
@@ -309,12 +329,6 @@ function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
                   <AdminField label="HTTPS URL">
                     <input name={`social_url_${link.id}`} defaultValue={link.url} placeholder="https://..." className={adminInputClass} />
                   </AdminField>
-                </td>
-                <td className="px-4 py-4 align-top">
-                  <label className="inline-flex items-center gap-2 text-xs text-white/55">
-                    <input name={`social_enabled_${link.id}`} type="checkbox" defaultChecked={link.enabled} className="h-4 w-4 accent-primary" />
-                    {boolText(link.enabled)}
-                  </label>
                 </td>
                 <td className="px-4 py-4 align-top">
                   <label className="inline-flex items-center gap-2 text-xs text-white/55">
@@ -342,42 +356,109 @@ function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
         </table>
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
-        <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-          <h3 className="text-sm font-semibold text-white">Optional Instagram content embed</h3>
-          <p className="mt-2 text-xs leading-5 text-white/40">
-            Use a public Instagram post or reel URL. The server converts supported URLs to the official embed URL. A full automatic latest-feed sync needs an approved Instagram API integration.
-          </p>
-          <div className="mt-4 space-y-4">
-            <label className="inline-flex items-center gap-2 text-sm text-white/65">
-              <input name="instagramContentEnabled" type="checkbox" defaultChecked={instagramContent.enabled} className="h-4 w-4 accent-primary" />
-              Show Instagram content block in footer
-            </label>
-            <AdminField label="Content title">
-              <input name="instagramContentTitle" defaultValue={instagramContent.title} className={adminInputClass} />
-            </AdminField>
-            <AdminField label="Instagram post, reel, or embed URL" hint="Example: https://www.instagram.com/p/SHORTCODE/">
-              <input name="instagramContentEmbedUrl" defaultValue={instagramContent.embedUrl} placeholder="https://www.instagram.com/p/..." className={adminInputClass} />
-            </AdminField>
-          </div>
-        </div>
-
+      <div className="mt-5">
         <AdminField
           label="Additional profiles"
-          hint="Optional. One per line: Label | platform | https://url | enabled | footer | sameAs"
+          hint="Optional. One per line: Label | platform | https://url | footer | sameAs"
         >
           <textarea
             name="additionalSocialLinks"
-            rows={10}
+            rows={5}
             defaultValue={additionalSocialLinksText(config)}
-            placeholder="Clutch | other | https://example.com/codingbull | true | true | true"
+            placeholder="Clutch | other | https://example.com/codingbull | true | true"
             className={`${adminInputClass} font-mono text-xs`}
           />
         </AdminField>
       </div>
 
+      <div className="mt-8 border-t border-white/10 pt-6">
+        <div className="grid gap-5 xl:grid-cols-[1fr_auto]">
+          <div>
+            <h2 className="font-semibold text-white">Social content embeds</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
+              Use this for posts, reels, maps, videos, or other official embed content shown as a separate footer proof block. These are independent from profile icons above.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/50">
+            <span className="font-semibold text-teal">
+              {config.contentEmbeds.filter((embed) => embed.enabled && embed.embedUrl).length}
+            </span>{' '}
+            active embed(s)
+          </div>
+        </div>
+
+        <div className="mt-5 overflow-x-auto rounded-xl border border-white/10">
+          <table className="min-w-[980px] w-full text-left text-sm">
+            <thead className="bg-black/30 text-[10px] uppercase tracking-[0.16em] text-white/35">
+              <tr>
+                <th className="px-4 py-3">Content</th>
+                <th className="px-4 py-3">Official embed URL</th>
+                <th className="px-4 py-3">Show content</th>
+                <th className="px-4 py-3">Order</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {contentRows.map((embed) => (
+                <tr key={embed.id}>
+                  <td className="px-4 py-4 align-top">
+                    <AdminField label={String(embed.platform)}>
+                      <input name={`content_title_${embed.id}`} defaultValue={embed.title} className={adminInputClass} />
+                    </AdminField>
+                  </td>
+                  <td className="px-4 py-4 align-top">
+                    <AdminField label="HTTPS embed URL">
+                      <input name={`content_embed_url_${embed.id}`} defaultValue={embed.embedUrl} placeholder="https://..." className={adminInputClass} />
+                    </AdminField>
+                  </td>
+                  <td className="px-4 py-4 align-top">
+                    <label className="inline-flex items-center gap-2 text-xs text-white/55">
+                      <input name={`content_enabled_${embed.id}`} type="checkbox" defaultChecked={embed.enabled} className="h-4 w-4 accent-primary" />
+                      Show
+                    </label>
+                  </td>
+                  <td className="px-4 py-4 align-top">
+                    <input
+                      name={`content_order_${embed.id}`}
+                      type="number"
+                      defaultValue={embed.order}
+                      className={`${adminInputClass} max-w-24`}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+            <h3 className="text-sm font-semibold text-white">Supported embed sources</h3>
+            <ul className="mt-3 space-y-2 text-xs leading-5 text-white/45">
+              <li>Instagram: public post, reel, TV, or official embed URL.</li>
+              <li>LinkedIn: official LinkedIn embed URL starting with https://www.linkedin.com/embed/.</li>
+              <li>Google: official Google Maps embed URL. Google reviews need a separate approved API/widget integration.</li>
+              <li>YouTube: video URL, short URL, or official embed URL.</li>
+              <li>Facebook: official Facebook plugins embed URL.</li>
+            </ul>
+          </div>
+
+          <AdminField
+            label="Additional content embeds"
+            hint="Optional. One per line using an approved platform: Title | platform | https://embed-url | enabled"
+          >
+            <textarea
+              name="additionalContentEmbeds"
+              rows={10}
+              defaultValue={additionalContentEmbedsText(config)}
+              placeholder="Featured LinkedIn Post | linkedin | https://www.linkedin.com/embed/feed/update/... | true"
+              className={`${adminInputClass} font-mono text-xs`}
+            />
+          </AdminField>
+        </div>
+      </div>
+
       <div className="mt-5">
-        <AdminSubmitButton label="Save social profiles" />
+        <AdminSubmitButton label="Save social settings" />
       </div>
     </form>
   );

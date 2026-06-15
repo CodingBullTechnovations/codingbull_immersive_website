@@ -9,8 +9,14 @@ import {
   getLocalGoogleOAuthRedirectUri,
   getProductionGoogleOAuthRedirectUri,
 } from '@/lib/server/google-oauth';
+import {
+  defaultSocialLinks,
+  normalizeSocialLinksConfig,
+  SOCIAL_LINKS_SETTING_KEY,
+  type SocialLinksConfig,
+} from '@/lib/social-links';
 import { saveSettingAction } from '../content/actions';
-import { deleteCredentialAction, saveCredentialAction, syncGa4Action, syncSearchConsoleAction } from './actions';
+import { deleteCredentialAction, saveCredentialAction, saveSocialLinksAction, syncGa4Action, syncSearchConsoleAction } from './actions';
 import { SyncSubmitButton } from './SyncSubmitButton';
 
 type CredentialSummary = Awaited<ReturnType<typeof listCredentialSummaries>>[number];
@@ -153,6 +159,16 @@ function getNotice(code: string, reason?: string, rows?: string) {
       title: 'GA4 sync did not run',
       body: reason || 'Save the GA4 property ID and Google OAuth token, then retry.',
     },
+    social_saved: {
+      tone: 'success',
+      title: 'Social links saved',
+      body: 'Footer icons, organization sameAs links, and optional Instagram embed settings were updated.',
+    },
+    social_invalid: {
+      tone: 'warning',
+      title: 'Social links were not saved',
+      body: reason || 'Check the URL format and enabled profile rows.',
+    },
   };
 
   return messages[code] ?? null;
@@ -224,6 +240,149 @@ function CredentialList({ credentials }: { credentials: CredentialSummary[] }) {
   );
 }
 
+function boolText(value: boolean) {
+  return value ? 'Enabled' : 'Hidden';
+}
+
+function additionalSocialLinksText(config: SocialLinksConfig) {
+  const defaultIds = new Set(defaultSocialLinks.map((link) => link.id));
+
+  return config.links
+    .filter((link) => !defaultIds.has(link.id))
+    .map((link) =>
+      [
+        link.label,
+        link.platform,
+        link.url,
+        String(link.enabled),
+        String(link.showInFooter),
+        String(link.includeInSameAs),
+      ].join(' | '),
+    )
+    .join('\n');
+}
+
+function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
+  const linksById = new Map(config.links.map((link) => [link.id, link]));
+  const rows = defaultSocialLinks.map((fallback) => linksById.get(fallback.id) ?? fallback);
+  const instagramContent = config.instagramContent;
+
+  return (
+    <form id="social-profiles" action={saveSocialLinksAction} className="mb-8 scroll-mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+      <div className="grid gap-5 xl:grid-cols-[1fr_auto]">
+        <div>
+          <h2 className="font-semibold text-white">Public social profiles</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
+            Manage footer visibility and schema sameAs profiles here. Platform logos are generated automatically from the selected platform, so admins only need to maintain URLs and visibility. Disabled rows or rows without URLs stay hidden on the live site.
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/50">
+          <span className="font-semibold text-teal">
+            {config.links.filter((link) => link.enabled && link.url).length}
+          </span>{' '}
+          active profile(s)
+        </div>
+      </div>
+
+      <div className="mt-5 overflow-x-auto rounded-xl border border-white/10">
+        <table className="min-w-[980px] w-full text-left text-sm">
+          <thead className="bg-black/30 text-[10px] uppercase tracking-[0.16em] text-white/35">
+            <tr>
+              <th className="px-4 py-3">Profile</th>
+              <th className="px-4 py-3">URL</th>
+              <th className="px-4 py-3">Live</th>
+              <th className="px-4 py-3">Footer</th>
+              <th className="px-4 py-3">sameAs</th>
+              <th className="px-4 py-3">Order</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/10">
+            {rows.map((link) => (
+              <tr key={link.id}>
+                <td className="px-4 py-4 align-top">
+                  <input type="hidden" name={`social_platform_${link.id}`} value={link.platform} />
+                  <AdminField label={link.label}>
+                    <input name={`social_label_${link.id}`} defaultValue={link.label} className={adminInputClass} />
+                  </AdminField>
+                </td>
+                <td className="px-4 py-4 align-top">
+                  <AdminField label="HTTPS URL">
+                    <input name={`social_url_${link.id}`} defaultValue={link.url} placeholder="https://..." className={adminInputClass} />
+                  </AdminField>
+                </td>
+                <td className="px-4 py-4 align-top">
+                  <label className="inline-flex items-center gap-2 text-xs text-white/55">
+                    <input name={`social_enabled_${link.id}`} type="checkbox" defaultChecked={link.enabled} className="h-4 w-4 accent-primary" />
+                    {boolText(link.enabled)}
+                  </label>
+                </td>
+                <td className="px-4 py-4 align-top">
+                  <label className="inline-flex items-center gap-2 text-xs text-white/55">
+                    <input name={`social_footer_${link.id}`} type="checkbox" defaultChecked={link.showInFooter} className="h-4 w-4 accent-primary" />
+                    Show
+                  </label>
+                </td>
+                <td className="px-4 py-4 align-top">
+                  <label className="inline-flex items-center gap-2 text-xs text-white/55">
+                    <input name={`social_same_as_${link.id}`} type="checkbox" defaultChecked={link.includeInSameAs} className="h-4 w-4 accent-primary" />
+                    Include
+                  </label>
+                </td>
+                <td className="px-4 py-4 align-top">
+                  <input
+                    name={`social_order_${link.id}`}
+                    type="number"
+                    defaultValue={link.order}
+                    className={`${adminInputClass} max-w-24`}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+          <h3 className="text-sm font-semibold text-white">Optional Instagram content embed</h3>
+          <p className="mt-2 text-xs leading-5 text-white/40">
+            Use a public Instagram post or reel URL. The server converts supported URLs to the official embed URL. A full automatic latest-feed sync needs an approved Instagram API integration.
+          </p>
+          <div className="mt-4 space-y-4">
+            <label className="inline-flex items-center gap-2 text-sm text-white/65">
+              <input name="instagramContentEnabled" type="checkbox" defaultChecked={instagramContent.enabled} className="h-4 w-4 accent-primary" />
+              Show Instagram content block in footer
+            </label>
+            <AdminField label="Content title">
+              <input name="instagramContentTitle" defaultValue={instagramContent.title} className={adminInputClass} />
+            </AdminField>
+            <AdminField label="Instagram post, reel, or embed URL" hint="Example: https://www.instagram.com/p/SHORTCODE/">
+              <input name="instagramContentEmbedUrl" defaultValue={instagramContent.embedUrl} placeholder="https://www.instagram.com/p/..." className={adminInputClass} />
+            </AdminField>
+          </div>
+        </div>
+
+        <AdminField
+          label="Additional profiles"
+          hint="Optional. One per line: Label | platform | https://url | enabled | footer | sameAs"
+        >
+          <textarea
+            name="additionalSocialLinks"
+            rows={10}
+            defaultValue={additionalSocialLinksText(config)}
+            placeholder="Clutch | other | https://example.com/codingbull | true | true | true"
+            className={`${adminInputClass} font-mono text-xs`}
+          />
+        </AdminField>
+      </div>
+
+      <div className="mt-5">
+        <AdminSubmitButton label="Save social profiles" />
+      </div>
+    </form>
+  );
+}
+
 export default async function AdminSettingsPage({ searchParams }: { searchParams?: SearchParams }) {
   const [settings, credentials, syncReadiness, params] = await Promise.all([
     listSettingsAdmin(),
@@ -250,6 +409,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
   const canConnectGoogle = hasGoogleClient;
   const canSyncSearchConsole = syncReadiness.searchConsole.ready;
   const canSyncGa4 = syncReadiness.ga4.ready;
+  const socialConfig = normalizeSocialLinksConfig(settings.find((setting) => setting.key === SOCIAL_LINKS_SETTING_KEY)?.value);
 
   return (
     <>
@@ -268,6 +428,8 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
           <p className="mt-1 text-sm opacity-80">{notice.body}</p>
         </section>
       )}
+
+      <SocialLinksSettingsForm config={socialConfig} />
 
       <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <div className="grid gap-5 xl:grid-cols-[1fr_auto]">

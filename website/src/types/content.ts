@@ -23,6 +23,9 @@ export interface SiteConfig {
     twitter?: string;
     github?: string;
     instagram?: string;
+    facebook?: string;
+    googleBusiness?: string;
+    youtube?: string;
   };
   registration: {
     gst?: string;

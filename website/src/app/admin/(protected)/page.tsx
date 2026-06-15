@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Activity, AlertTriangle, BarChart3, CheckCircle2, Database, Search, TrendingUp } from 'lucide-react';
+import { Activity, AlertTriangle, BarChart3, CheckCircle2, Database, Search, Share2, TrendingUp } from 'lucide-react';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { AdminStat } from '@/components/admin/AdminStat';
 import { getAdminDashboardData } from '@/lib/server/admin-dashboard';
@@ -66,6 +66,10 @@ export default async function AdminDashboardPage() {
             <Link href="/admin/analytics" className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-black hover:bg-primary-hover">
               <BarChart3 className="h-4 w-4" />
               View analytics
+            </Link>
+            <Link href="/admin/settings#social-profiles" className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-white/70 hover:bg-white/[0.04] hover:text-white">
+              <Share2 className="h-4 w-4" />
+              Social links
             </Link>
           </div>
         }

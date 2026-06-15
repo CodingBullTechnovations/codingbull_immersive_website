@@ -3,8 +3,7 @@
 import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { MobileWhatsAppCTA } from '@/components/layout/MobileWhatsAppCTA';
+import { PersistentWhatsAppCTA } from '@/components/layout/PersistentWhatsAppCTA';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
 import { ServiceWorkerCleanup } from '@/components/providers/ServiceWorkerCleanup';
 
@@ -22,7 +21,13 @@ const CookieConsent = dynamic(
   { ssr: false }
 );
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  footer,
+}: {
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
 
@@ -41,10 +46,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <Header />
       <main id="main-content" tabIndex={-1}>{children}</main>
-      <Footer />
+      {footer}
       <SmoothScrolling />
       <CustomCursor />
-      <MobileWhatsAppCTA />
+      <PersistentWhatsAppCTA />
       <CookieConsent />
     </AnalyticsProvider>
   );

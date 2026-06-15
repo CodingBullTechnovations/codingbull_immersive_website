@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { generatePageMetadata } from '@/lib/seo';
 import { pageMetadata } from '@/lib/seo';
 import { AppShell } from '@/components/layout/AppShell';
+import { Footer } from '@/components/layout/Footer';
 import './globals.css';
 
 export const metadata: Metadata = generatePageMetadata(pageMetadata.home);
@@ -17,7 +18,7 @@ export default function RootLayout({
       <body
         className="font-[family-name:var(--font-inter)] antialiased bg-[#050505] text-white"
       >
-        <AppShell>{children}</AppShell>
+        <AppShell footer={<Footer />}>{children}</AppShell>
       </body>
     </html>
   );

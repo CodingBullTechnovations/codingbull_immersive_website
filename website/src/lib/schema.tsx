@@ -4,7 +4,7 @@ import { siteConfig } from '@/content/site';
 // JSON-LD Schema Generators
 // =============================================================================
 
-export function generateOrganizationSchema() {
+export function generateOrganizationSchema(sameAs?: string[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -26,7 +26,7 @@ export function generateOrganizationSchema() {
       email: siteConfig.email,
       contactType: 'sales',
     },
-    sameAs: Object.values(siteConfig.socialLinks).filter(Boolean),
+    sameAs: sameAs ?? Object.values(siteConfig.socialLinks).filter(Boolean),
   };
 }
 

@@ -10,10 +10,10 @@ import {
   getProductionGoogleOAuthRedirectUri,
 } from '@/lib/server/google-oauth';
 import {
+  defaultSocialContentEmbeds,
   defaultSocialLinks,
   normalizeSocialLinksConfig,
   SOCIAL_LINKS_SETTING_KEY,
-  type SocialContentEmbed,
   type SocialLinksConfig,
 } from '@/lib/social-links';
 import { saveSettingAction } from '../content/actions';
@@ -258,16 +258,8 @@ function additionalSocialLinksText(config: SocialLinksConfig) {
     .join('\n');
 }
 
-const defaultContentEmbedRows: SocialContentEmbed[] = [
-  { id: 'instagram-content', platform: 'instagram', title: 'Latest from Instagram', embedUrl: '', enabled: false, order: 10 },
-  { id: 'linkedin-content', platform: 'linkedin', title: 'Latest from LinkedIn', embedUrl: '', enabled: false, order: 20 },
-  { id: 'google-business-content', platform: 'googleBusiness', title: 'Google Business profile', embedUrl: '', enabled: false, order: 30 },
-  { id: 'youtube-content', platform: 'youtube', title: 'YouTube feature', embedUrl: '', enabled: false, order: 40 },
-  { id: 'facebook-content', platform: 'facebook', title: 'Facebook update', embedUrl: '', enabled: false, order: 50 },
-];
-
 function additionalContentEmbedsText(config: SocialLinksConfig) {
-  const defaultIds = new Set(defaultContentEmbedRows.map((embed) => embed.id));
+  const defaultIds = new Set(defaultSocialContentEmbeds.map((embed) => embed.id));
 
   return config.contentEmbeds
     .filter((embed) => !defaultIds.has(embed.id))
@@ -277,16 +269,35 @@ function additionalContentEmbedsText(config: SocialLinksConfig) {
         embed.platform,
         embed.embedUrl,
         String(embed.enabled),
+        String(embed.order),
       ].join(' | '),
     )
     .join('\n');
+}
+
+function platformLabel(platform: string) {
+  switch (platform) {
+    case 'googleBusiness':
+      return 'Google Business';
+    case 'linkedin':
+      return 'LinkedIn';
+    case 'youtube':
+      return 'YouTube';
+    case 'instagram':
+      return 'Instagram';
+    case 'facebook':
+      return 'Facebook';
+    default:
+      return platform;
+  }
 }
 
 function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
   const linksById = new Map(config.links.map((link) => [link.id, link]));
   const rows = defaultSocialLinks.map((fallback) => linksById.get(fallback.id) ?? fallback);
   const embedsById = new Map(config.contentEmbeds.map((embed) => [embed.id, embed]));
-  const contentRows = defaultContentEmbedRows.map((fallback) => embedsById.get(fallback.id) ?? fallback);
+  const contentRows = defaultSocialContentEmbeds.map((fallback) => embedsById.get(fallback.id) ?? fallback);
+  const additionalContentEmbeds = additionalContentEmbedsText(config);
 
   return (
     <form id="social-profiles" action={saveSocialLinksAction} className="mb-8 scroll-mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
@@ -376,7 +387,7 @@ function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
           <div>
             <h2 className="font-semibold text-white">Social content embeds</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
-              Use this for posts, reels, maps, videos, or other official embed content shown as a separate footer proof block. These are independent from profile icons above.
+              Use this for multiple posts, reels, maps, videos, or official embeds shown as a separate footer proof block. Each row is one content item, independent from profile icons above.
             </p>
           </div>
           <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/50">
@@ -391,7 +402,7 @@ function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
           <table className="min-w-[980px] w-full text-left text-sm">
             <thead className="bg-black/30 text-[10px] uppercase tracking-[0.16em] text-white/35">
               <tr>
-                <th className="px-4 py-3">Content</th>
+                <th className="px-4 py-3">Content slot</th>
                 <th className="px-4 py-3">Official embed URL</th>
                 <th className="px-4 py-3">Show content</th>
                 <th className="px-4 py-3">Order</th>
@@ -401,7 +412,7 @@ function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
               {contentRows.map((embed) => (
                 <tr key={embed.id}>
                   <td className="px-4 py-4 align-top">
-                    <AdminField label={String(embed.platform)}>
+                    <AdminField label={platformLabel(String(embed.platform))}>
                       <input name={`content_title_${embed.id}`} defaultValue={embed.title} className={adminInputClass} />
                     </AdminField>
                   </td>
@@ -442,18 +453,26 @@ function SocialLinksSettingsForm({ config }: { config: SocialLinksConfig }) {
             </ul>
           </div>
 
-          <AdminField
-            label="Additional content embeds"
-            hint="Optional. One per line using an approved platform: Title | platform | https://embed-url | enabled"
-          >
-            <textarea
-              name="additionalContentEmbeds"
-              rows={10}
-              defaultValue={additionalContentEmbedsText(config)}
-              placeholder="Featured LinkedIn Post | linkedin | https://www.linkedin.com/embed/feed/update/... | true"
-              className={`${adminInputClass} font-mono text-xs`}
-            />
-          </AdminField>
+          <div>
+            <AdminField
+              label="More content slots"
+              hint="Optional for anything beyond the pinned rows. One per line: Title | platform | https://embed-url | enabled | order"
+            >
+              <textarea
+                name="additionalContentEmbeds"
+                rows={10}
+                defaultValue={additionalContentEmbeds}
+                placeholder={[
+                  'Instagram post 4 | instagram | https://www.instagram.com/p/SHORTCODE/ | true',
+                  'LinkedIn post 4 | linkedin | https://www.linkedin.com/embed/feed/update/... | true | 130',
+                ].join('\n')}
+                className={`${adminInputClass} font-mono text-xs`}
+              />
+            </AdminField>
+            <p className="mt-2 text-xs leading-5 text-white/40">
+              Use the order number to choose exactly which content appears first. Multiple rows can use the same platform.
+            </p>
+          </div>
         </div>
       </div>
 

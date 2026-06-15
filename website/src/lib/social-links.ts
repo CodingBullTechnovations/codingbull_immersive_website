@@ -111,6 +111,21 @@ export const defaultSocialLinks: SocialLink[] = [
   },
 ];
 
+export const defaultSocialContentEmbeds: SocialContentEmbed[] = [
+  { id: 'instagram-content', platform: 'instagram', title: 'Instagram post 1', embedUrl: '', enabled: false, order: 10 },
+  { id: 'instagram-content-2', platform: 'instagram', title: 'Instagram post 2', embedUrl: '', enabled: false, order: 20 },
+  { id: 'instagram-content-3', platform: 'instagram', title: 'Instagram post 3', embedUrl: '', enabled: false, order: 30 },
+  { id: 'linkedin-content', platform: 'linkedin', title: 'LinkedIn post 1', embedUrl: '', enabled: false, order: 40 },
+  { id: 'linkedin-content-2', platform: 'linkedin', title: 'LinkedIn post 2', embedUrl: '', enabled: false, order: 50 },
+  { id: 'linkedin-content-3', platform: 'linkedin', title: 'LinkedIn post 3', embedUrl: '', enabled: false, order: 60 },
+  { id: 'google-business-content', platform: 'googleBusiness', title: 'Google Business embed 1', embedUrl: '', enabled: false, order: 70 },
+  { id: 'google-business-content-2', platform: 'googleBusiness', title: 'Google Business embed 2', embedUrl: '', enabled: false, order: 80 },
+  { id: 'youtube-content', platform: 'youtube', title: 'YouTube video 1', embedUrl: '', enabled: false, order: 90 },
+  { id: 'youtube-content-2', platform: 'youtube', title: 'YouTube video 2', embedUrl: '', enabled: false, order: 100 },
+  { id: 'facebook-content', platform: 'facebook', title: 'Facebook update 1', embedUrl: '', enabled: false, order: 110 },
+  { id: 'facebook-content-2', platform: 'facebook', title: 'Facebook update 2', embedUrl: '', enabled: false, order: 120 },
+];
+
 export const defaultSocialLinksConfig: SocialLinksConfig = {
   links: defaultSocialLinks,
   contentEmbeds: [],

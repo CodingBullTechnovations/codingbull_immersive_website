@@ -11,6 +11,7 @@ import { getGoogleSyncReadiness, normalizeGa4PropertyId, normalizeSearchConsoleS
 import { runGa4Sync, runSearchConsoleSync } from '@/lib/server/seo-sync';
 import { prisma } from '@/lib/server/prisma';
 import {
+  defaultSocialContentEmbeds,
   defaultSocialLinks,
   normalizeSocialLinksConfig,
   SOCIAL_LINKS_SETTING_KEY,
@@ -212,14 +213,6 @@ function parseAdditionalSocialLinks(rawValue: string): SocialLink[] {
     });
 }
 
-const defaultContentEmbeds: SocialContentEmbed[] = [
-  { id: 'instagram-content', platform: 'instagram', title: 'Latest from Instagram', embedUrl: '', enabled: false, order: 10 },
-  { id: 'linkedin-content', platform: 'linkedin', title: 'Latest from LinkedIn', embedUrl: '', enabled: false, order: 20 },
-  { id: 'google-business-content', platform: 'googleBusiness', title: 'Google Business profile', embedUrl: '', enabled: false, order: 30 },
-  { id: 'youtube-content', platform: 'youtube', title: 'YouTube feature', embedUrl: '', enabled: false, order: 40 },
-  { id: 'facebook-content', platform: 'facebook', title: 'Facebook update', embedUrl: '', enabled: false, order: 50 },
-];
-
 function contentEmbedFromForm(formData: FormData, fallback: SocialContentEmbed): SocialContentEmbed {
   const embedUrl = normalizeOfficialEmbedUrl(
     text(formData, `content_embed_url_${fallback.id}`),
@@ -245,7 +238,7 @@ function parseAdditionalContentEmbeds(rawValue: string): SocialContentEmbed[] {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line, index) => {
-      const [titleRaw, platformRaw, embedUrlRaw, enabledRaw = 'true'] = line
+      const [titleRaw, platformRaw, embedUrlRaw, enabledRaw = 'true', orderRaw] = line
         .split('|')
         .map((part) => part.trim());
       const title = titleRaw || `Social content ${index + 1}`;
@@ -262,7 +255,7 @@ function parseAdditionalContentEmbeds(rawValue: string): SocialContentEmbed[] {
         title,
         embedUrl,
         enabled: enabledRaw.toLowerCase() !== 'false',
-        order: 100 + index,
+        order: Number(orderRaw) || 200 + index,
       };
     });
 }
@@ -385,7 +378,7 @@ export async function saveSocialLinksAction(formData: FormData) {
     ].sort((a, b) => a.order - b.order);
 
     const contentEmbeds = [
-      ...defaultContentEmbeds.map((fallback) => contentEmbedFromForm(formData, fallback)),
+      ...defaultSocialContentEmbeds.map((fallback) => contentEmbedFromForm(formData, fallback)),
       ...parseAdditionalContentEmbeds(text(formData, 'additionalContentEmbeds')),
     ].sort((a, b) => a.order - b.order);
 

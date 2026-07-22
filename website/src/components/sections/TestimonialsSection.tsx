@@ -1,116 +1,49 @@
-'use client';
+import { getPublishedTestimonials } from '@/lib/server/public-content';
+import { Reveal } from '@/components/animations/Reveal';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
-import type { Testimonial } from '@/types/content';
+interface TestimonialsSectionProps {
+  kicker?: string;
+}
 
-const testimonials: Testimonial[] = [
-  {
-    quote:
-      'CodingBull built our entire clinic management system from scratch. The scheduling, patient intake, and follow-up workflows actually match how our clinic operates — no forced workarounds.',
-    name: 'Healthcare Client',
-    role: 'Clinic Director',
-    company: 'PhysioWays',
-    industry: 'Healthcare',
-  },
-  {
-    quote:
-      'Working with a founder who understands business processes made all the difference. Our HRMS now handles payroll, attendance, and leave management without the issues we had with our previous solution.',
-    name: 'Operations Client',
-    role: 'Operations Head',
-    company: 'Enterprise Client',
-    industry: 'HRMS',
-  },
-  {
-    quote:
-      'Fixed pricing gave us complete budget clarity. The system was delivered on time and actually does what was scoped — including the admin dashboard and reporting we needed from day one.',
-    name: 'E-commerce Client',
-    role: 'Business Owner',
-    company: 'E-commerce Platform',
-    industry: 'E-commerce',
-  },
-];
-
-export function TestimonialsSection() {
-  const [current, setCurrent] = useState(0);
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-    }, 7000);
-    return () => clearInterval(timer);
-  }, []);
+/**
+ * Attributed client signals, CMS-first: renders only PUBLISHED + APPROVED
+ * testimonials from the admin panel. Renders nothing when none exist —
+ * no anonymous or invented social proof, per the content rules.
+ */
+export async function TestimonialsSection({ kicker = 'Client signals' }: TestimonialsSectionProps) {
+  const testimonials = await getPublishedTestimonials();
+  if (testimonials.length === 0) return null;
 
   return (
-    <section ref={ref} className="relative py-28 lg:py-36 px-6 lg:px-10 overflow-hidden">
-      <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-copper/[0.02] rounded-full blur-[120px] pointer-events-none" />
-
-      <div className="max-w-[var(--max-w-narrow)] mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-          className="text-center mb-14"
-        >
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-copper/60 block mb-4">
-            Testimonials
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-outfit)] tracking-tight">
-            <span className="text-white">What Clients </span>
-            <span className="bg-gradient-to-r from-copper to-[#d4a97a] bg-clip-text text-transparent">Say</span>
+    <section className="cb-section border-t border-white/[0.08] bg-[#05070a]" aria-labelledby="testimonials-title">
+      <div className="cb-shell">
+        <Reveal className="border-b border-white/10 pb-12">
+          <p className="cb-kicker">{kicker}</p>
+          <h2 id="testimonials-title" className="cb-display mt-6 max-w-[13ch]">
+            What operators say after launch.
           </h2>
-        </motion.div>
+        </Reveal>
 
-        <div className="relative min-h-[240px]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-              className="rounded-2xl border border-white/[0.04] bg-white/[0.015] p-10 lg:p-14 text-center"
+        <Reveal mode="group" className="grid gap-px border-l border-white/10 md:grid-cols-2 xl:grid-cols-3">
+          {testimonials.map((testimonial, index) => (
+            <figure
+              key={testimonial.id}
+              data-reveal=""
+              style={{ ['--reveal-delay' as string]: `${index * 0.08}s` }}
+              className="flex flex-col justify-between border-b border-r border-white/10 bg-white/[0.008] p-7 sm:p-9"
             >
-              <div className="text-copper/20 text-6xl font-serif leading-none mb-5 select-none">&ldquo;</div>
-              <p className="text-base sm:text-lg lg:text-xl text-white/50 leading-[1.8] mb-8 font-light italic">
-                {testimonials[current].quote}
-              </p>
-              <div>
-                <p className="text-sm font-semibold text-white/80 font-[family-name:var(--font-outfit)]">
-                  {testimonials[current].name}
+              <blockquote className="text-pretty text-base leading-7 text-white/70">
+                “{testimonial.quote}”
+              </blockquote>
+              <figcaption className="mt-8 border-t border-white/10 pt-5">
+                <p className="text-sm font-semibold text-white">{testimonial.person}</p>
+                <p className="cb-mono mt-1 text-xs uppercase tracking-[0.16em] text-white/40">
+                  {[testimonial.role, testimonial.company].filter(Boolean).join(' · ')}
                 </p>
-                <p className="text-xs text-white/60 mt-1">
-                  {testimonials[current].role} · {testimonials[current].industry}
-                </p>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Dots */}
-        <div className="flex justify-center gap-1 mt-6" role="group" aria-label="Select testimonial">
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => setCurrent(index)}
-              className="group flex h-12 w-12 cursor-pointer items-center justify-center rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              aria-label={`View testimonial ${index + 1}`}
-              aria-pressed={index === current}
-            >
-              <span
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  index === current
-                    ? 'w-8 bg-copper/60'
-                    : 'w-1.5 bg-white/10 group-hover:bg-white/20'
-                }`}
-                aria-hidden="true"
-              />
-            </button>
+              </figcaption>
+            </figure>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

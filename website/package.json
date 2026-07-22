@@ -10,7 +10,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate:mobile-frames": "node scripts/generate-mobile-frames.mjs",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -21,7 +20,9 @@
     "db:smoke": "node prisma/smoke.mjs",
     "setup:db": "npm run db:generate && npm run db:deploy && npm run db:seed && npm run db:smoke",
     "setup:prod": "npm ci && npm run setup:db && npm run lint && npm run build",
-    "sync:seo": "node prisma/sync-seo.mjs"
+    "sync:seo": "node prisma/sync-seo.mjs",
+    "check:urls": "node scripts/check-urls.mjs",
+    "postbuild": "node scripts/check-urls.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -41,6 +42,7 @@
     "react-dom": "19.2.6",
     "react-hook-form": "^7.72.1",
     "resend": "^6.12.3",
+    "three": "0.184.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -49,6 +51,7 @@
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "0.184.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "prisma": "^6.19.3",

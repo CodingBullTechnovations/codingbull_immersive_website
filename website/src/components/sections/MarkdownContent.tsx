@@ -115,7 +115,7 @@ export function MarkdownContent({ blocks }: { blocks: ContentBlock[] }) {
   return (
     <div
       className="prose prose-invert prose-lg max-w-none
-        prose-headings:font-[family-name:var(--font-outfit)] prose-headings:tracking-tight
+        prose-headings:font-[family-name:var(--font-display)] prose-headings:tracking-tight
         prose-p:text-white/70 prose-p:leading-relaxed prose-p:font-light prose-p:mb-6 prose-p:text-base md:prose-p:text-lg
         prose-strong:text-white prose-strong:font-semibold
         prose-code:text-teal prose-code:bg-teal/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
@@ -129,7 +129,7 @@ export function MarkdownContent({ blocks }: { blocks: ContentBlock[] }) {
               <h2
                 key={idx}
                 id={headingId}
-                className="group/heading mt-12 mb-6 flex scroll-mt-24 items-center gap-2 font-[family-name:var(--font-outfit)] text-2xl font-bold text-white lg:text-3xl"
+                className="group/heading mt-12 mb-6 flex scroll-mt-24 items-center gap-2 font-[family-name:var(--font-display)] text-2xl font-bold text-white lg:text-3xl"
               >
                 <span className="font-mono text-lg text-teal opacity-0 transition-opacity group-hover/heading:opacity-60">#</span>
                 {renderInline(block.text || '')}
@@ -144,7 +144,7 @@ export function MarkdownContent({ blocks }: { blocks: ContentBlock[] }) {
             );
           case 'blockquote':
             return (
-              <blockquote key={idx} className="my-8 rounded-r-xl border-l-2 border-teal bg-teal/[0.02] px-6 py-4 font-light italic text-white/85">
+              <blockquote key={idx} className="my-8 -xl border-l-2 border-teal bg-teal/[0.02] px-6 py-4 font-light italic text-white/85">
                 {renderInline(block.text || '')}
               </blockquote>
             );
@@ -159,7 +159,7 @@ export function MarkdownContent({ blocks }: { blocks: ContentBlock[] }) {
                       {isOrdered ? (
                         <span className="mt-0.5 shrink-0 font-mono font-bold text-teal">{item.match(/^\d+/)?.[0]}.</span>
                       ) : (
-                        <span className="mt-2.5 shrink-0 text-[10px] text-teal">•</span>
+                        <span className="mt-2.5 shrink-0 text-xs text-teal">•</span>
                       )}
                       <span className="font-light leading-relaxed text-white/70">{renderInline(textOnly)}</span>
                     </li>

@@ -11,10 +11,13 @@ import { homeContent } from '@/content/home';
 import { insights, insightsBySlug, type InsightPost } from '@/content/insights';
 import { siteConfig } from '@/content/site';
 import { generatePageMetadata } from '@/lib/seo';
+import { getIndustryForPath } from '@/lib/industry';
 import { JsonLd, generateArticleSchema, generateBreadcrumbSchema } from '@/lib/schema';
-import { getInsightBySlug, listInsightSlugStatuses } from '@/lib/server/public-content';
+import { getInsightBySlug, isCaseStudyPubliclyVisible, listInsightSlugStatuses, listVisibleCaseStudyStatuses } from '@/lib/server/public-content';
 import { getInsightSidebarConfigForSlug } from '@/lib/server/sidebar-config';
 import { ContentStatus } from '@prisma/client';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { caseStudies } from '@/content/case-studies';
 
 export async function generateStaticParams() {
   const dbPosts = await listInsightSlugStatuses();
@@ -87,10 +90,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     : insightsBySlug[slug];
   if (!post) return { title: 'Post Not Found' };
 
+  // Honor admin-configured meta fields and same-origin canonical paths.
+  const canonicalPath = dbPost?.canonicalPath?.startsWith('/')
+    ? dbPost.canonicalPath
+    : `/insights/${slug}`;
+
   return generatePageMetadata({
-    title: post.title,
-    description: post.excerpt,
-    canonical: `${siteConfig.baseUrl}/insights/${slug}`,
+    title: dbPost?.metaTitle || post.title,
+    description: dbPost?.metaDescription || post.excerpt,
+    canonical: `${siteConfig.baseUrl}${canonicalPath}`,
   });
 }
 
@@ -131,6 +139,17 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
   const staticPosts = insights.filter((post) => !dbStatusBySlug.has(post.slug));
   const allPosts = [...mappedDbPosts, ...staticPosts];
 
+  // Insights previously linked to zero case studies.
+  const postIndustry = getIndustryForPath(`/insights/${post.slug}`);
+  const caseStatuses = await listVisibleCaseStudyStatuses();
+  const hiddenStudySlugs = new Set(
+    caseStatuses.filter((item) => !isCaseStudyPubliclyVisible(item)).map((item) => item.slug),
+  );
+  const relatedProof = caseStudies
+    .filter((study) => !hiddenStudySlugs.has(study.slug) && getIndustryForPath(`/case-studies/${study.slug}`) === postIndustry)
+    .slice(0, 2)
+    .map((study) => ({ label: study.title, href: `/case-studies/${study.slug}`, description: study.summary ?? study.challenge }));
+
   const relatedPosts = allPosts
     .filter((p) => p.slug !== post.slug)
     .sort((a, b) => {
@@ -149,10 +168,11 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
         url: postUrl,
         datePublished: post.date,
         author: post.author,
+        image: `${siteConfig.baseUrl}/images/og/codingbull-og.png`,
       })} />
       <JsonLd data={generateBreadcrumbSchema([
         { name: 'Home', url: siteConfig.baseUrl },
-        { name: 'Insights', url: `${siteConfig.baseUrl}/insights` },
+        { name: 'Blog', url: `${siteConfig.baseUrl}/insights` },
         { name: post.title, url: postUrl },
       ])} />
 
@@ -160,13 +180,12 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
         title={post.title}
         subtitle={post.excerpt}
         badge={post.category}
-        accentColor={post.accentColor}
       />
 
-      <section className="py-20 lg:py-28 relative z-10 overflow-hidden bg-[#050508]">
+      <section className="py-20 lg:py-28 relative z-10 overflow-hidden bg-[var(--surface-base)]">
         {/* Shifting radial ambient glows in background */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-teal/[0.02] rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-1/3 left-1/3 w-[800px] h-[800px] bg-white/[0.01] rounded-full blur-[180px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-teal/[0.02] rounded-full pointer-events-none" />
+        <div className="absolute bottom-1/3 left-1/3 w-[800px] h-[800px] bg-white/[0.01] rounded-full pointer-events-none" />
 
         <div className="max-w-[var(--max-w-wide)] mx-auto px-6 lg:px-10">
           <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start justify-between">
@@ -185,10 +204,10 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                 </div>
               </div>
 
-              <div className="mb-12 rounded-2xl border border-white/[0.06] bg-white/[0.025] p-6 lg:p-7">
+              <div className="mb-12 border border-white/[0.06] bg-white/[0.025] p-6 lg:p-7">
                 <div className="grid gap-7 lg:grid-cols-[1.2fr_0.8fr]">
                   <div>
-                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal/20 bg-teal/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-teal">
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal/20 bg-teal/[0.04] px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-teal">
                       <BookOpenCheck className="h-3.5 w-3.5" strokeWidth={2} />
                       Decision Brief
                     </div>
@@ -201,7 +220,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                           <a
                             key={heading.id}
                             href={`#${heading.id}`}
-                            className="group flex items-center justify-between rounded-lg border border-white/[0.04] bg-black/20 px-4 py-3 text-sm text-white/65 transition-colors hover:border-teal/20 hover:bg-teal/[0.035] hover:text-white"
+                            className="group flex items-center justify-between border border-white/[0.04] bg-black/20 px-4 py-3 text-sm text-white/65 transition-colors hover:border-teal/20 hover:bg-teal/[0.035] hover:text-white"
                           >
                             <span>{heading.text}</span>
                             <ArrowUpRight className="h-3.5 w-3.5 text-white/60 transition-colors group-hover:text-teal" strokeWidth={2} />
@@ -211,13 +230,13 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                     )}
                   </div>
 
-                  <div className="rounded-xl border border-white/[0.05] bg-black/20 p-5">
-                    <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white/35">
+                  <div className="border border-white/[0.05] bg-black/20 p-5">
+                    <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-white/35">
                       Related Service
                     </p>
                     <Link
                       href={primaryService.href}
-                      className="group mb-5 block rounded-lg border border-white/[0.05] bg-white/[0.02] p-4 transition-colors hover:border-teal/25 hover:bg-teal/[0.035]"
+                      className="group mb-5 block border border-white/[0.05] bg-white/[0.02] p-4 transition-colors hover:border-teal/25 hover:bg-teal/[0.035]"
                     >
                       <span className="mb-2 flex items-center justify-between gap-3 text-sm font-semibold text-white">
                         {primaryService.label}
@@ -228,7 +247,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                       </span>
                     </Link>
 
-                    <p className="mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-white/35">
+                    <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-white/35">
                       <Globe2 className="h-3.5 w-3.5 text-teal/60" strokeWidth={2} />
                       Country Coverage
                     </p>
@@ -237,7 +256,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                         <Link
                           key={country.href}
                           href={country.href}
-                          className="rounded-lg border border-white/[0.05] bg-white/[0.015] px-3 py-2 text-xs font-medium text-white/55 transition-colors hover:border-teal/20 hover:bg-teal/[0.035] hover:text-white"
+                          className="border border-white/[0.05] bg-white/[0.015] px-3 py-2 text-xs font-medium text-white/55 transition-colors hover:border-teal/20 hover:bg-teal/[0.035] hover:text-white"
                         >
                           {country.label}
                         </Link>
@@ -251,16 +270,16 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
               <MarkdownContent blocks={blocks} />
 
               {/* Author Bio Card */}
-              <div className="mt-20 p-8 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="mt-20 p-8 border border-white/[0.04] bg-white/[0.01] relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-6">
                 <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(ellipse_at_bottom_right,rgba(20,184,166,0.06),transparent_70%)] pointer-events-none" />
                 <div className="w-16 h-16 rounded-full bg-teal/10 border border-teal/20 flex items-center justify-center shrink-0">
                   <span className="text-xl font-bold text-teal">PD</span>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-white mb-1 font-[family-name:var(--font-outfit)]">
+                  <h4 className="text-lg font-semibold text-white mb-1 font-[family-name:var(--font-display)]">
                     {post.author}
                   </h4>
-                  <p className="text-[10px] text-teal font-mono uppercase tracking-widest mb-3">
+                  <p className="text-xs text-teal font-mono uppercase tracking-widest mb-3">
                     Founder & Chief Architect
                   </p>
                   <p className="text-sm text-white/50 leading-relaxed font-light">
@@ -280,12 +299,12 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                       <Link
                         key={related.slug}
                         href={`/insights/${related.slug}`}
-                        className="group block p-6 rounded-xl border border-white/[0.04] bg-white/[0.015] hover:bg-white/[0.03] hover:border-white/10 transition-all duration-300"
+                        className="group block p-6 border border-white/[0.04] bg-white/[0.015] hover:bg-white/[0.03] hover:border-white/10 transition-all duration-300"
                       >
-                        <span className="text-[9px] font-bold text-teal uppercase tracking-widest block mb-2 font-mono">
+                        <span className="text-xs font-bold text-teal uppercase tracking-widest block mb-2 font-mono">
                           {related.category}
                         </span>
-                        <h4 className="text-base font-bold text-white mb-2 group-hover:text-teal transition-colors line-clamp-2 font-[family-name:var(--font-outfit)]">
+                        <h4 className="text-base font-bold text-white mb-2 group-hover:text-teal transition-colors line-clamp-2 font-[family-name:var(--font-display)]">
                           {related.title}
                         </h4>
                         <p className="text-white/45 text-xs font-light line-clamp-2 leading-relaxed">
@@ -326,6 +345,12 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
           </div>
         </div>
       </section>
+
+      <RelatedLinksRail
+        kicker="Proof"
+        title="Deployments in this area."
+        links={relatedProof}
+      />
 
       <CTASection cta={homeContent.finalCTA} />
     </>

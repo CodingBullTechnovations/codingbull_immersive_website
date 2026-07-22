@@ -10,19 +10,23 @@ import { Button } from '@/components/ui/Button';
 import { trackFormStart, trackFormSubmit } from '@/lib/tracking';
 
 const inputClasses =
-  'w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-teal/50 focus:bg-white/[0.05] transition-all';
+  'w-full min-h-14 bg-[var(--surface-panel)] border border-white/12 rounded-[2px] px-4 py-3.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[var(--accent)]/65 focus:bg-[var(--surface-card)] transition-colors';
 
 const selectClasses =
-  'w-full bg-[#101522] border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-teal/50 transition-all appearance-none';
+  'w-full min-h-14 bg-[var(--surface-panel)] border border-white/12 rounded-[2px] px-4 py-3.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/65 transition-colors appearance-none';
 
-function FieldError({ message }: { message?: string }) {
+function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
-  return <p className="text-rose-400 text-[10px] ml-1 mt-1 font-medium">{message}</p>;
+  return (
+    <p id={id} className="text-rose-400 text-xs ml-1 mt-1 font-medium">
+      {message}
+    </p>
+  );
 }
 
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
-    <label htmlFor={htmlFor} className="text-[10px] uppercase tracking-widest font-bold text-white/60 ml-1">
+    <label htmlFor={htmlFor} className="font-mono text-xs uppercase tracking-[0.16em] font-semibold text-white/48">
       {children}
     </label>
   );
@@ -45,12 +49,8 @@ export function ContactForm() {
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: {
-      service: 'healthcare',
-      budget: 'under_2000',
-      timeline: 'this_month',
-      country: 'India',
-    },
+    // No preselected service/budget/timeline — preselections pollute lead
+    // data with defaults the visitor never chose.
   });
 
   useEffect(() => {
@@ -97,8 +97,8 @@ export function ContactForm() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-1 bg-white/[0.03] rounded-[2rem] border border-white/10 backdrop-blur-3xl shadow-[0_0_80px_var(--color-primary-glow)]">
-      <div className="p-6 sm:p-10">
+    <div className="w-full border border-white/10 bg-[var(--surface-card)]">
+      <div className="p-5 sm:p-8 lg:p-10">
         <AnimatePresence mode="wait">
           {submitStatus?.success ? (
             <motion.div
@@ -111,12 +111,12 @@ export function ContactForm() {
               exit={{ opacity: 0, y: -20 }}
               className="py-12 text-center focus:outline-none focus:ring-2 focus:ring-primary/70"
             >
-              <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
+              <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center border border-primary/30 bg-primary/10 text-primary">
                 <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Inquiry Received</h3>
+              <h3 className="text-2xl font-semibold text-white mb-4">Brief received</h3>
               <p className="text-white/60 mb-10 max-w-sm mx-auto">{submitStatus.message}</p>
               <Button
                 label="Send Another"
@@ -142,9 +142,13 @@ export function ContactForm() {
                     id="contact-name"
                     {...register('name')}
                     placeholder="Your name"
+                    required
+                    aria-required="true"
+                    aria-invalid={errors.name ? true : undefined}
+                    aria-describedby={errors.name ? 'contact-name-error' : undefined}
                     className={`${inputClasses} ${errors.name ? 'border-rose-500/50' : ''}`}
                   />
-                  <FieldError message={errors.name?.message} />
+                  <FieldError id="contact-name-error" message={errors.name?.message} />
                 </div>
 
                 <div className="space-y-2">
@@ -154,9 +158,13 @@ export function ContactForm() {
                     {...register('email')}
                     type="email"
                     placeholder="name@company.com"
+                    required
+                    aria-required="true"
+                    aria-invalid={errors.email ? true : undefined}
+                    aria-describedby={errors.email ? 'contact-email-error' : undefined}
                     className={`${inputClasses} ${errors.email ? 'border-rose-500/50' : ''}`}
                   />
-                  <FieldError message={errors.email?.message} />
+                  <FieldError id="contact-email-error" message={errors.email?.message} />
                 </div>
               </div>
 
@@ -166,10 +174,15 @@ export function ContactForm() {
                   <input
                     id="contact-phone"
                     {...register('phone')}
+                    type="tel"
                     placeholder="+91 79848 91664"
+                    required
+                    aria-required="true"
+                    aria-invalid={errors.phone ? true : undefined}
+                    aria-describedby={errors.phone ? 'contact-phone-error' : undefined}
                     className={`${inputClasses} ${errors.phone ? 'border-rose-500/50' : ''}`}
                   />
-                  <FieldError message={errors.phone?.message} />
+                  <FieldError id="contact-phone-error" message={errors.phone?.message} />
                 </div>
 
                 <div className="space-y-2">
@@ -200,9 +213,11 @@ export function ContactForm() {
                     id="contact-company-website"
                     {...register('companyWebsite')}
                     placeholder="https://example.com"
+                    aria-invalid={errors.companyWebsite ? true : undefined}
+                    aria-describedby={errors.companyWebsite ? 'contact-company-website-error' : undefined}
                     className={`${inputClasses} ${errors.companyWebsite ? 'border-rose-500/50' : ''}`}
                   />
-                  <FieldError message={errors.companyWebsite?.message} />
+                  <FieldError id="contact-company-website-error" message={errors.companyWebsite?.message} />
                 </div>
               </div>
 
@@ -212,8 +227,14 @@ export function ContactForm() {
                   <select
                     id="contact-service"
                     {...register('service')}
+                    required
+                    aria-required="true"
+                    aria-invalid={errors.service ? true : undefined}
+                    aria-describedby={errors.service ? 'contact-service-error' : undefined}
+                    defaultValue=""
                     className={`${selectClasses} ${errors.service ? 'border-rose-500/50' : ''}`}
                   >
+                    <option value="" disabled>Select a service…</option>
                     <option value="healthcare">Healthcare Systems</option>
                     <option value="ecommerce">E-commerce Systems</option>
                     <option value="hrms">HRMS and Payroll</option>
@@ -221,11 +242,18 @@ export function ContactForm() {
                     <option value="consulting">Architecture Consulting</option>
                     <option value="other">Other Inquiry</option>
                   </select>
+                  <FieldError id="contact-service-error" message={errors.service ? 'Select a service' : undefined} />
                 </div>
 
                 <div className="space-y-2">
                   <FieldLabel htmlFor="contact-budget">Budget</FieldLabel>
-                  <select id="contact-budget" {...register('budget')} className={selectClasses}>
+                  <select
+                    id="contact-budget"
+                    {...register('budget', { setValueAs: (v) => (v === '' ? undefined : v) })}
+                    defaultValue=""
+                    className={selectClasses}
+                  >
+                    <option value="">Select…</option>
                     <option value="under_2000">$1k-$2k</option>
                     <option value="2000_3000">$2k-$3k</option>
                     <option value="3000_5000">$3k-$5k</option>
@@ -236,7 +264,13 @@ export function ContactForm() {
 
                 <div className="space-y-2">
                   <FieldLabel htmlFor="contact-timeline">Timeline</FieldLabel>
-                  <select id="contact-timeline" {...register('timeline')} className={selectClasses}>
+                  <select
+                    id="contact-timeline"
+                    {...register('timeline', { setValueAs: (v) => (v === '' ? undefined : v) })}
+                    defaultValue=""
+                    className={selectClasses}
+                  >
+                    <option value="">Select…</option>
                     <option value="asap">ASAP</option>
                     <option value="this_month">This month</option>
                     <option value="this_quarter">This quarter</option>
@@ -253,9 +287,13 @@ export function ContactForm() {
                   {...register('message')}
                   rows={5}
                   placeholder="Tell us what system you need, who will use it, and what outcome matters most."
+                  required
+                  aria-required="true"
+                  aria-invalid={errors.message ? true : undefined}
+                  aria-describedby={errors.message ? 'contact-message-error' : undefined}
                   className={`${inputClasses} resize-none ${errors.message ? 'border-rose-500/50' : ''}`}
                 />
-                <FieldError message={errors.message?.message} />
+                <FieldError id="contact-message-error" message={errors.message?.message} />
               </div>
 
               <input type="hidden" {...register('sourcePage')} />
@@ -275,7 +313,7 @@ export function ContactForm() {
                   ref={submitStatusRef}
                   tabIndex={-1}
                   role="alert"
-                  className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs text-center focus:outline-none focus:ring-2 focus:ring-rose-400/70"
+                  className="border border-rose-500/20 bg-rose-500/10 p-4 text-center text-xs text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-400/70"
                 >
                   {submitStatus.message}
                 </div>
@@ -284,14 +322,14 @@ export function ContactForm() {
               <div className="pt-4">
                 <Button
                   type="submit"
-                  label={isSubmitting ? 'Submitting...' : 'Request Architecture Review'}
+                  label={isSubmitting ? 'Submitting...' : 'Submit Project Brief'}
                   variant="primary"
                   size="large"
-                  className="w-full justify-center shadow-[0_0_40px_-5px_rgba(20,184,166,0.2)]"
+                  className="w-full justify-center"
                   disabled={isSubmitting}
                   trackingSource="contact_form_submit"
                 />
-                <p className="text-center mt-6 text-[10px] text-white/60 uppercase tracking-[0.18em] font-medium">
+                <p className="text-center mt-6 text-xs text-white/60 uppercase tracking-[0.18em] font-medium">
                   Founder-led review for qualified projects
                 </p>
               </div>

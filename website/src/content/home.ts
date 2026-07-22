@@ -2,18 +2,18 @@ import type { HomeContent } from '@/types/content';
 
 export const homeContent: HomeContent = {
   hero: {
-    headline: 'Proprietary Digital Products That Run Your Enterprise',
+    headline: 'We turn complex operations into living software.',
     subheadline:
-      'CodingBull is a custom software development company in Ahmedabad building business websites, admin panels, CRM, HRMS, e-commerce platforms, and healthcare management systems.',
+      'CodingBull maps how your business thinks, decides, and moves—then engineers custom healthcare, commerce, HRMS, CRM, and operational platforms around that reality.',
     primaryCTA: {
-      label: 'Get Fixed-Price Quote',
+      label: 'Discuss Your Workflow',
       href: '#whatsapp',
       variant: 'primary',
       trackingSource: 'hero_primary',
       icon: 'whatsapp',
     },
     secondaryCTA: {
-      label: 'View Case Studies',
+      label: 'See Deployment Proof',
       href: '/case-studies',
       variant: 'secondary',
       trackingSource: 'hero_secondary',
@@ -22,10 +22,10 @@ export const homeContent: HomeContent = {
   },
 
   trustStats: [
-    { label: 'Founder-Led Architecture', value: 'Direct', icon: 'shield' },
-    { label: 'Case Studies Published', value: '3', icon: 'check' },
-    { label: 'Core Platforms', value: 'Healthcare · E-com · HRMS · Custom', icon: 'layers' },
-    { label: 'Company Base', value: 'Ahmedabad, India', icon: 'globe' },
+    { label: 'Founder-led architecture', value: 'Direct', icon: 'shield' },
+    { label: 'Scope and price before build', value: 'Fixed', icon: 'check' },
+    { label: 'Published case studies', value: '3', icon: 'layers' },
+    { label: 'Company base', value: 'Ahmedabad', icon: 'globe' },
   ],
 
   whatWeBuild: [
@@ -63,19 +63,19 @@ export const homeContent: HomeContent = {
     {
       title: 'Healthcare Core Engine',
       description:
-        'Our proprietary healthcare platforms handle complex scheduling, automated intake, and multi-location coordination. Currently powering operations at Physioway Active Health LLP and Shashwat IVF.',
+        'Custom healthcare systems for scheduling, intake, patient coordination, clinic CRM, and multi-location operating workflows.',
       icon: 'health',
     },
     {
       title: 'E-commerce Architecture',
       description:
-        'We license high-performance Business Process Automation, order routing, and inventory systems that keep massive international supply chains running flawlessly. Currently deployed at ANR Mechanical (Tesla Supply Chain Partner, NY).',
+        'Custom commerce systems for storefronts, order routing, inventory visibility, fulfilment workflows, and operational reporting.',
       icon: 'cart',
     },
     {
       title: 'Enterprise HRMS & Automation',
       description:
-        'Powering large-scale operational HRMS through comprehensive Business Process Automation. Our proprietary tools handle attendance, payroll compliance, leave generation, and security logs automatically.',
+        'Workforce systems for attendance, payroll workflows, leave management, approval structures, and operational reporting.',
       icon: 'users',
     },
   ],
@@ -161,7 +161,7 @@ export const homeContent: HomeContent = {
       number: 5,
       title: 'Launch & Support',
       description:
-        'We deploy, test, and hand over. Post-launch support ensures everything runs smoothly. Your system is production-ready from day one.',
+        'We deploy, test, and hand over the agreed release. Post-launch support is scoped around stabilization, feedback, and the next practical improvements.',
     },
   ],
 

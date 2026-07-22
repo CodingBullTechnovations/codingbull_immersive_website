@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { InsightSidebarWidgetConfig } from '@/lib/sidebar-config';
+import { siteConfig } from '@/content/site';
 
 interface InsightSidebarProps {
   headings: { text: string; id: string }[];
@@ -13,49 +14,17 @@ interface InsightSidebarProps {
   config: InsightSidebarWidgetConfig;
 }
 
-const LOG_TEMPLATES = [
-  'SYS.INIT -> BOOT_SUCCESS',
-  'DB.QUERY -> SELECT * FROM "Post"',
-  'DB.CONN -> POOL_ACTIVE [12ms]',
-  'ISR.SWG -> GENERATING_STATIC_PATH',
-  'CDN.EDGE -> CACHE_HIT [LHR]',
-  'SEO.JSONLD -> BUILT_SUCCESSFULLY',
-  'UI.HYDRATE -> ENGINE_ACTIVE',
-  'TELEMETRY -> TRANSCEIVER_OK',
-  'SYS.LOG -> BUFFER_ROTATION_OK',
-];
-
-export function InsightSidebar({ headings, slug, title, config }: InsightSidebarProps) {
+export function InsightSidebar({ headings, slug, title, config, author, date, readingTime }: InsightSidebarProps) {
+  // Static, factual article metadata only — no simulated telemetry, fake
+  // timestamps, or invented system activity.
+  const articleFacts = [
+    { label: 'AUTHOR', value: author.toUpperCase() },
+    { label: 'PUBLISHED', value: date },
+    { label: 'READ TIME', value: readingTime.toUpperCase() },
+    { label: 'RENDER', value: 'SSR + ISR 60s' },
+  ];
   const [activeId, setActiveId] = useState<string>('');
   const [progress, setProgress] = useState(0);
-  const [systemTime, setSystemTime] = useState<string>('');
-  const [logs, setLogs] = useState<string[]>([
-    '[00:00] SYS.INIT -> BOOT_SUCCESS',
-    '[00:01] DB.CONN -> POOL_ACTIVE [12ms]',
-    '[00:02] UI.HYDRATE -> ENGINE_ACTIVE'
-  ]);
-
-  useEffect(() => {
-    // Keep a mock system clock updated to give that high-tech cockpit feeling
-    const updateTime = () => {
-      const now = new Date();
-      setSystemTime(now.toISOString().slice(11, 19) + ' UTC');
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    // Cyber logs rotation
-    const interval = setInterval(() => {
-      const now = new Date();
-      const timeStr = now.toISOString().slice(14, 19);
-      const randomLog = LOG_TEMPLATES[Math.floor(Math.random() * LOG_TEMPLATES.length)];
-      setLogs((prev) => [...prev.slice(1), `[${timeStr}] ${randomLog}`]);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,7 +55,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
     };
   }, [headings]);
 
-  const shareUrl = encodeURIComponent(`https://codingbull.com/insights/${slug}`);
+  const shareUrl = encodeURIComponent(`${siteConfig.baseUrl}/insights/${slug}`);
   const shareText = encodeURIComponent(title);
   const showShareButtons = config.shareLinks.linkedin || config.shareLinks.twitter || config.shareLinks.whatsapp;
 
@@ -95,7 +64,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
       <div className="sticky top-28 flex flex-col gap-8">
         
         {/* Reading Progress Card */}
-        <div className="relative p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-teal shadow-[0_4px_30px_rgba(0,0,0,0.2)] hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
+        <div className="relative p-6 border border-white/[0.04] bg-white/[0.01] overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-teal hover:border-teal/20 transition-all duration-300">
           <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 mb-3 font-mono">
             {'// READING PROGRESS'}
           </h4>
@@ -112,7 +81,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
 
         {/* Table of Contents */}
         {headings.length > 0 && (
-          <div className="flex flex-col gap-4 p-6 rounded-2xl border border-white/[0.03] bg-white/[0.005] hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
+          <div className="flex flex-col gap-4 p-6 border border-white/[0.03] bg-white/[0.005] hover:border-teal/20 transition-all duration-300">
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 font-mono">
               {'// TABLE OF CONTENTS'}
             </h4>
@@ -135,7 +104,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
         )}
 
         {config.hudTelemetry.enabled && (
-          <div className="p-6 rounded-2xl border border-teal/10 bg-teal/[0.01] backdrop-blur-xl font-mono text-xs text-white/50 relative overflow-hidden shadow-[0_0_15px_rgba(20,184,166,0.02)] hover:border-teal/30 hover:shadow-[0_0_20px_rgba(20,184,166,0.08)] transition-all duration-300">
+          <div className="p-6 border border-teal/10 bg-teal/[0.01] font-mono text-xs text-white/50 relative overflow-hidden hover:border-teal/30 transition-all duration-300">
             <div className="absolute inset-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(transparent_50%,rgba(255,255,255,1)_50%)] bg-[length:100%_4px]" />
             
             <div className="flex items-center justify-between mb-4">
@@ -168,21 +137,21 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
             <div className="space-y-3">
               {config.hudTelemetry.showSystemState && (
                 <div className="flex items-center justify-between">
-                  <span>SYSTEM STATE:</span>
+                  <span>ARTICLE STATUS:</span>
                   <div className="flex items-center gap-1.5 text-teal">
                     <span className="relative flex h-1.5 w-1.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-teal"></span>
                     </span>
-                    <span className="font-bold text-xs">ONLINE</span>
+                    <span className="font-bold text-xs">PUBLISHED</span>
                   </div>
                 </div>
               )}
 
               {config.hudTelemetry.showLatency && (
                 <div className="flex items-center justify-between">
-                  <span>LATENCY STATE:</span>
-                  <span className="text-white/80 font-bold text-xs">18ms (STABLE)</span>
+                  <span>READ TIME:</span>
+                  <span className="text-white/80 font-bold text-xs">{readingTime.toUpperCase()}</span>
                 </div>
               )}
 
@@ -195,18 +164,18 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
 
               {config.hudTelemetry.showClock && (
                 <div className="flex items-center justify-between">
-                  <span>CLOCK_TIME:</span>
-                  <span className="text-white/80 font-semibold text-xs">{systemTime || 'LOADING...'}</span>
+                  <span>PUBLISHED:</span>
+                  <span className="text-white/80 font-semibold text-xs">{date}</span>
                 </div>
               )}
 
               {config.hudTelemetry.showConsoleFeed && (
                 <div className="mt-4 pt-3 border-t border-white/[0.04]">
-                  <span className="text-[10px] uppercase tracking-wider text-white/60 block mb-1.5">{'// LIVE CONSOLE FEED:'}</span>
-                  <div className="bg-black/40 p-2.5 rounded-lg border border-white/[0.03] space-y-1.5 h-[84px] overflow-hidden flex flex-col justify-end">
-                    {logs.map((log, i) => (
-                      <div key={i} className="text-[10px] leading-tight truncate text-teal/70 font-mono">
-                        <span className="text-white/20 select-none">&gt;</span> {log}
+                  <span className="text-xs uppercase tracking-wider text-white/60 block mb-1.5">{'// ARTICLE FACTS:'}</span>
+                  <div className="bg-black/40 p-2.5 border border-white/[0.03] space-y-1.5">
+                    {articleFacts.map((fact) => (
+                      <div key={fact.label} className="text-xs leading-tight truncate text-teal/70 font-mono">
+                        <span className="text-white/20 select-none">&gt;</span> {fact.label} → {fact.value}
                       </div>
                     ))}
                   </div>
@@ -214,15 +183,15 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
               )}
 
               {config.hudTelemetry.showActivityBars && (
-                <div className="mt-2 flex items-end justify-between h-8 gap-0.5 opacity-60">
-                  <div className="w-full bg-teal/15 h-3 animate-pulse" />
-                  <div className="w-full bg-teal/30 h-5" />
-                  <div className="w-full bg-teal/20 h-4" />
-                  <div className="w-full bg-teal/40 h-6 [animation-delay:0.2s]" />
-                  <div className="w-full bg-teal/25 h-3" />
-                  <div className="w-full bg-teal/50 h-7 [animation-delay:0.4s]" />
-                  <div className="w-full bg-teal/35 h-5" />
-                  <div className="w-full bg-teal/15 h-2" />
+                <div className="mt-2 flex items-end justify-between h-8 gap-0.5 opacity-60" aria-hidden="true">
+                  {/* Real read progress, quantized into eight bars. */}
+                  {Array.from({ length: 8 }, (_, index) => (
+                    <div
+                      key={index}
+                      className={`w-full transition-colors duration-300 ${progress >= ((index + 1) / 8) * 100 ? 'bg-teal/50' : 'bg-teal/15'}`}
+                      style={{ height: `${8 + index * 2.5}px` }}
+                    />
+                  ))}
                 </div>
               )}
             </div>
@@ -230,15 +199,15 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
         )}
 
         {config.architectureSpecs.enabled && config.architectureSpecs.categories.length > 0 && (
-          <div className="p-6 rounded-2xl border border-white/[0.04] bg-white/[0.01] backdrop-blur-xl hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
+          <div className="p-6 border border-white/[0.04] bg-white/[0.01] hover:border-teal/20 transition-all duration-300">
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 mb-4 font-mono">
               {config.architectureSpecs.title}
             </h4>
             <div className="space-y-4">
               {config.architectureSpecs.categories.map((category) => (
                 <div key={category.label}>
-                  <span className="text-[10px] uppercase text-white/60 font-mono block mb-1.5">{category.label}</span>
-                  <div className="flex flex-wrap gap-1.5 font-mono font-semibold uppercase tracking-wider text-[10px]">
+                  <span className="text-xs uppercase text-white/60 font-mono block mb-1.5">{category.label}</span>
+                  <div className="flex flex-wrap gap-1.5 font-mono font-semibold uppercase tracking-wider text-xs">
                     {category.tags.map((tag) => (
                       <span
                         key={`${category.label}-${tag.text}`}
@@ -255,7 +224,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
         )}
 
         {config.shareLinks.enabled && showShareButtons && (
-          <div className="flex flex-col gap-4 p-6 rounded-2xl border border-white/[0.03] bg-white/[0.005] hover:border-teal/20 hover:shadow-[0_0_20px_rgba(20,184,166,0.05)] transition-all duration-300">
+          <div className="flex flex-col gap-4 p-6 border border-white/[0.03] bg-white/[0.005] hover:border-teal/20 transition-all duration-300">
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-white/60 font-mono">
               {'// SHARE INSIGHT'}
             </h4>
@@ -265,7 +234,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
                   href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center text-white/60 hover:text-teal hover:border-teal/40 hover:bg-teal/5 transition-all duration-300 cursor-pointer"
+                  className="w-10 h-10 border border-white/10 flex items-center justify-center text-white/60 hover:text-teal hover:border-teal/40 hover:bg-teal/5 transition-all duration-300 cursor-pointer"
                   aria-label="Share on LinkedIn"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -280,7 +249,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
                   href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center text-white/60 hover:text-teal hover:border-teal/40 hover:bg-teal/5 transition-all duration-300 cursor-pointer"
+                  className="w-10 h-10 border border-white/10 flex items-center justify-center text-white/60 hover:text-teal hover:border-teal/40 hover:bg-teal/5 transition-all duration-300 cursor-pointer"
                   aria-label="Share on X"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -293,7 +262,7 @@ export function InsightSidebar({ headings, slug, title, config }: InsightSidebar
                   href={`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center text-white/60 hover:text-teal hover:border-teal/40 hover:bg-teal/5 transition-all duration-300 cursor-pointer"
+                  className="w-10 h-10 border border-white/10 flex items-center justify-center text-white/60 hover:text-teal hover:border-teal/40 hover:bg-teal/5 transition-all duration-300 cursor-pointer"
                   aria-label="Share on WhatsApp"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

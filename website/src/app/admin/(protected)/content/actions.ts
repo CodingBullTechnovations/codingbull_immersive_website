@@ -86,6 +86,8 @@ function revalidateContentList(entityType: string) {
     ServicePage: '/services',
     InsightPost: '/insights',
     CaseStudy: '/case-studies',
+    // Testimonials render publicly on the case-studies hub.
+    Testimonial: '/case-studies',
   };
 
   revalidatePath(paths[entityType] ?? '/admin/content');
@@ -324,6 +326,9 @@ export async function saveTestimonialAction(formData: FormData) {
   });
 
   revalidatePath('/admin/content/testimonials');
+  // Testimonials render publicly on the case-studies hub — refresh it now
+  // instead of waiting out the ISR window.
+  revalidatePath('/case-studies');
   redirect(`/admin/content/testimonials/${saved.id}`);
 }
 

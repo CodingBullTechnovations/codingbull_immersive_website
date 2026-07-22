@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { CountryAuthorityPage } from '@/components/sections/CountryAuthorityPage';
 import { generatePageMetadata, pageMetadata } from '@/lib/seo';
+import { JsonLd, generateBreadcrumbSchema } from '@/lib/schema';
+import { siteConfig } from '@/content/site';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { countrySiblings } from '@/content/link-graph';
 
 export const metadata: Metadata = generatePageMetadata(pageMetadata.canada);
 
@@ -72,7 +76,12 @@ const canadaCaseStudies = [
 
 export default function CanadaPage() {
   return (
-    <CountryAuthorityPage
+    <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'Canada', url: `${siteConfig.baseUrl}/canada` },
+      ])} />
+      <CountryAuthorityPage
       title="Custom Software Development for Canadian Businesses"
       subtitle="CodingBull serves Canadian businesses remotely from India with business websites, CRM, clinic and appointment systems, dashboards, e-commerce workflows, and custom software."
       marketLabel="Canada Software Development"
@@ -115,6 +124,13 @@ export default function CanadaPage() {
       caseStudySectionDescription="Review these healthcare and service-business examples to understand how CodingBull structures proof, inquiry paths, and maintainable foundations before discussing a Canadian project."
       ctaLabel="Request Canada Build Plan"
       ctaTrackingSource="canada_page_cta_primary"
-    />
+      />
+      <RelatedLinksRail
+        kicker="Other markets"
+        title="Delivery in other regions."
+        links={countrySiblings('/canada')}
+        intro="The same founder-led delivery model, scoped to each market's buying and compliance context."
+      />
+    </>
   );
 }

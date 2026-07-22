@@ -1,212 +1,95 @@
-'use client';
-
-import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import type { HeroContent } from '@/types/content';
-import { MultiFrameHero } from '@/components/animations/MultiFrameHero';
 
 interface HeroSectionProps {
   content: HeroContent;
 }
 
+/**
+ * Hero of the neural narrative. The section itself is transparent — the
+ * persistent NeuralMind field renders behind it and forms the bull logo in
+ * the right half of the viewport. A server-rendered static logo occupies the
+ * same spot until the field is ready (and permanently for reduced motion),
+ * so no visitor ever sees an empty stage.
+ */
 export function HeroSection({ content }: HeroSectionProps) {
-  // Section 1: Intro (80 frames)
-  const introFrames = Array.from({ length: 80 }, (_, i) => 
-    `/images/heroframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
-  );
-  const mobileIntroFrames = Array.from({ length: 40 }, (_, i) =>
-    `/images/mobile-frames/hero-intro/frame-${String(i + 1).padStart(3, '0')}.webp`
-  );
+  return (
+    <section className="cortex-hero relative isolate min-h-[100svh] overflow-hidden pt-24 text-white">
+      <div className="cortex-noise pointer-events-none absolute inset-0 opacity-30" />
+      <div className="pointer-events-none absolute inset-x-0 top-24 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="hero-readability-scrim pointer-events-none absolute inset-0 z-10 hidden lg:block" />
+      {/* Mobile readability scrim: the field sits behind the copy on small
+          screens, so dim it strongly where the text lives. Desktop keeps the
+          clear split (copy left, field right). */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#05070a]/98 via-[#05070a]/92 to-[#05070a]/58 lg:hidden" />
 
-  // Section 2: Healthcare (80 frames)
-  const healthcareFrames = Array.from({ length: 80 }, (_, i) => 
-    `/images/healthcarejpgframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
-  );
-  const mobileHealthcareFrames = Array.from({ length: 40 }, (_, i) =>
-    `/images/mobile-frames/hero-healthcare/frame-${String(i + 1).padStart(3, '0')}.webp`
-  );
-
-  // Section 3: E-Commerce (64 frames)
-  const ecomFrames = Array.from({ length: 64 }, (_, i) => 
-    `/images/e-commercejpgFrames/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
-  );
-  const mobileEcomFrames = Array.from({ length: 32 }, (_, i) =>
-    `/images/mobile-frames/hero-ecommerce/frame-${String(i + 1).padStart(3, '0')}.webp`
-  );
-
-  // Section 4: Enterprise HRMS (80 frames)
-  const hrmsFrames = Array.from({ length: 80 }, (_, i) => 
-    `/images/hrmsjpgframes/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`
-  );
-  const mobileHrmsFrames = Array.from({ length: 40 }, (_, i) =>
-    `/images/mobile-frames/hero-hrms/frame-${String(i + 1).padStart(3, '0')}.webp`
-  );
-
-  // Section 5: CTA (80 frames)
-  // Using the final frames of the original hero sequence
-  const ctaFrames = Array.from({ length: 80 }, (_, i) => 
-    `/images/heroframes/ezgif-frame-${String(161 + i).padStart(3, '0')}.jpg`
-  );
-  const mobileCtaFrames = Array.from({ length: 40 }, (_, i) =>
-    `/images/mobile-frames/hero-cta/frame-${String(i + 1).padStart(3, '0')}.webp`
-  );
-
-  // Combine into a 384-frame master sequence
-  const frames = [
-    ...introFrames,
-    ...healthcareFrames,
-    ...ecomFrames,
-    ...hrmsFrames,
-    ...ctaFrames,
-  ];
-  const mobileFrames = [
-    ...mobileIntroFrames,
-    ...mobileHealthcareFrames,
-    ...mobileEcomFrames,
-    ...mobileHrmsFrames,
-    ...mobileCtaFrames,
-  ];
-
-  const section1 = (
-    <div className="flex flex-col items-center justify-center h-full w-full pointer-events-auto pb-12 sm:pb-32 px-4 max-w-5xl mx-auto">
-      <h1 className="hero-anim-item text-[clamp(2.5rem,6vw,5rem)] text-center font-bold font-[family-name:var(--font-outfit)] leading-[1.05] tracking-[0.1em] mb-4 uppercase text-white">
-        Coding<span className="text-teal">Bull</span> <br />Technovations
-      </h1>
-      <p className="hero-anim-item text-white/50 tracking-[0.2em] text-[10px] sm:text-xs uppercase mb-3">
-        Pvt. Ltd. • Premium Enterprise Architecture
-      </p>
-      
-      {/* Premium GSTIN Badge */}
-      <div className="hero-anim-item inline-flex items-center gap-2 px-3 py-1.5 bg-teal/10 border border-teal/20 rounded-md backdrop-blur-md">
-        <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
-        <span className="text-[10px] sm:text-[11px] font-mono text-teal tracking-widest uppercase">
-          GSTIN: <span className="font-bold text-white">24AAMCC7617E1ZP</span>
-        </span>
-      </div>
-    </div>
-  );
-
-  const section2 = (
-    <div className="flex flex-col items-center justify-center h-full w-full pointer-events-auto px-4 max-w-5xl mx-auto text-center">
-      <div className="hero-anim-item">
-        <span className="text-[10px] sm:text-[12px] font-semibold uppercase tracking-[0.4em] text-teal block mb-4">
-          Brand Promise
-        </span>
-        <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black font-[family-name:var(--font-outfit)] text-white mb-8">
-          Custom Digital Systems
-        </h2>
-      </div>
-      <div className="hero-anim-item w-full max-w-2xl p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
-        <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
-          From clinic websites to enterprise platforms — we design, build, and ship custom digital systems engineered precisely for your operational complexity.
-        </p>
-      </div>
-    </div>
-  );
-
-  const section3 = (
-    <div className="flex flex-col items-center justify-center h-full w-full pointer-events-auto px-4 max-w-5xl mx-auto text-center">
-      <div className="hero-anim-item">
-        <span className="text-[10px] sm:text-[12px] font-semibold uppercase tracking-[0.4em] text-teal block mb-4">
-          Core Philosophy
-        </span>
-        <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black font-[family-name:var(--font-outfit)] text-white mb-8">
-          Built For Operations
-        </h2>
-      </div>
-      <div className="hero-anim-item w-full max-w-2xl p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
-        <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
-          We don&apos;t use generic templates. Every line of code is structured organically around how your business naturally operates, scales, and generates revenue.
-        </p>
-      </div>
-    </div>
-  );
-
-  const section4 = (
-    <div className="flex flex-col items-center justify-center h-full w-full pointer-events-auto px-4 max-w-5xl mx-auto text-center">
-      <div className="hero-anim-item">
-        <span className="text-[10px] sm:text-[12px] font-semibold uppercase tracking-[0.4em] text-teal block mb-4">
-          Absolute Coverage
-        </span>
-        <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black font-[family-name:var(--font-outfit)] text-white mb-8">
-          End-to-End Capabilities
-        </h2>
-      </div>
-      <div className="hero-anim-item w-full max-w-2xl p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-2xl sm:rounded-[2rem] shadow-[0_0_80px_rgba(20,184,166,0.15)] mx-auto">
-        <p className="text-white/80 text-lg sm:text-xl font-light leading-relaxed">
-          From deep backend logic to high-performance user interfaces, we deliver comprehensive digital dominance that outpaces the market.
-        </p>
-      </div>
-    </div>
-  );
-
-  const section5 = (
-    <div className="flex flex-col items-center justify-center sm:justify-end pb-10 sm:pb-32 h-full w-full pointer-events-auto px-4">
-      <div className="hero-anim-item relative z-20 w-full max-w-4xl mx-auto p-5 sm:p-8 lg:p-12 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-[2rem] text-center shadow-[0_0_80px_-20px_rgba(20,184,166,0.2)]">
-        
-        <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold font-[family-name:var(--font-outfit)] leading-[1.05] tracking-[-0.02em] mb-8">
-          <span className="text-white">Ready To Transform Your </span>
-          <span className="bg-gradient-to-r from-teal via-white to-teal bg-clip-text text-transparent">Digital Presence?</span>
-        </h2>
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-5 justify-center mt-6 sm:mt-10">
-          <Button
-            label={content.primaryCTA.label}
-            href={content.primaryCTA.href}
-            variant={content.primaryCTA.variant}
-            icon={content.primaryCTA.icon}
-            trackingSource={content.primaryCTA.trackingSource}
-            size="large"
-            className="shadow-[0_0_40px_-10px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_-10px_rgba(20,184,166,0.5)] transition-shadow duration-500"
-          />
-          <Button
-            label={content.secondaryCTA.label}
-            href={content.secondaryCTA.href}
-            variant={content.secondaryCTA.variant}
-            icon={content.secondaryCTA.icon}
-            trackingSource={content.secondaryCTA.trackingSource}
-            size="large"
-            className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10"
-          />
+      {/* Static logo stage — replaced by the particle field once it resolves */}
+      <div
+        className="mind-static-logo pointer-events-none absolute inset-y-0 right-0 flex w-full items-center justify-center lg:w-[52%]"
+        aria-hidden="true"
+      >
+        <div className="relative aspect-[0.84] h-[46%] max-h-[36rem] lg:h-[62%]">
+          <div className="cortex-orbit cortex-orbit-a" />
+          <div className="cortex-orbit cortex-orbit-b" />
+          <div className="absolute inset-[10%] opacity-75 [filter:drop-shadow(0_0_28px_rgba(57,177,230,0.32))]">
+            <Image src="/images/logo/logo.png" alt="" fill loading="eager" sizes="36vw" className="object-contain" />
+          </div>
         </div>
       </div>
-    </div>
-  );
 
-  return (
-    <MultiFrameHero 
-      frames={frames}
-      mobileFrames={mobileFrames}
-      textSections={[section1, section2, section3, section4, section5]}
-      weights={[80, 80, 64, 80, 80]} // Dynamically synced strictly to array lengths
-      mobileWeights={[40, 40, 32, 40, 40]}
-      scrollHeight="800vh" // Drastically slows down the scroll based on feedback
-    >
-      {/* Scroll hint absolute at bottom of container */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="flex flex-col items-center gap-3"
-        >
-          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.4em] font-semibold bg-gradient-to-r from-teal to-white bg-clip-text text-transparent opacity-80 animate-pulse">
-            Scroll To Initialize
-          </span>
-          <div className="w-6 h-10 rounded-full border border-teal/40 shadow-[0_0_15px_rgba(20,184,166,0.3)] flex items-start justify-center p-1.5 overflow-hidden">
-            <motion.div
-              animate={{ y: [0, 16, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-1.5 h-2.5 bg-teal rounded-full shadow-[0_0_8px_rgba(20,184,166,0.8)]"
-            />
+      <div className="relative z-20 mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-[106rem] flex-col justify-end px-5 pb-24 sm:px-8 lg:px-10 xl:px-14">
+        <div className="mb-8 flex items-center gap-4">
+          <span className="h-px w-10 bg-[var(--accent)]" />
+          <p className="cb-mono text-xs uppercase tracking-[0.24em] text-[var(--accent-bright)]">
+            Custom software · founder-led architecture
+          </p>
+        </div>
+
+        <h1 className="max-w-[13ch] text-balance font-[family-name:var(--font-display)] text-[clamp(3.4rem,7vw,7.6rem)] font-medium leading-[0.92] tracking-[-0.04em] text-[#f2f4f5]">
+          {content.headline}
+        </h1>
+
+        <div className="mt-10 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-[36rem]">
+            <p className="text-pretty border-l border-[var(--accent)]/70 pl-5 text-base font-normal leading-7 text-white/78 sm:text-lg sm:leading-8">
+              {content.subheadline}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button
+                label={content.primaryCTA.label}
+                href={content.primaryCTA.href}
+                variant={content.primaryCTA.variant}
+                icon={content.primaryCTA.icon}
+                trackingSource={content.primaryCTA.trackingSource}
+                size="large"
+              />
+              <Button
+                label={content.secondaryCTA.label}
+                href={content.secondaryCTA.href}
+                variant={content.secondaryCTA.variant}
+                icon={content.secondaryCTA.icon}
+                trackingSource={content.secondaryCTA.trackingSource}
+                size="large"
+              />
+            </div>
           </div>
-        </motion.div>
-      </motion.div>
-    </MultiFrameHero>
+
+          <div className="cb-mono hidden max-w-xs flex-col gap-2 text-xs uppercase leading-5 tracking-[0.18em] text-white/55 lg:flex">
+            <span className="flex items-center gap-2">
+              <span className="h-1 w-1 rounded-full bg-[var(--accent-bright)] shadow-[0_0_14px_var(--accent)]" />
+              Live field · move to disturb, release to resolve
+            </span>
+            <span>Healthcare · Commerce · HRMS · CRM · Operations</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-30 mx-auto flex max-w-[106rem] flex-wrap items-center justify-between gap-3 border-t border-white/[0.12] bg-[#05070a]/78 px-5 py-4 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-white/58 sm:px-8 lg:px-10 xl:px-14">
+        <span>CodingBull Technovations Pvt. Ltd. · GST registered</span>
+        <span className="hidden sm:inline">Scroll — the field follows the story</span>
+        <span>Ahmedabad · India · Built for global operations</span>
+      </div>
+    </section>
   );
 }

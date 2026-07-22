@@ -1,130 +1,107 @@
-'use client';
-
-import { useRef } from 'react';
 import Link from 'next/link';
-import { motion, useInView } from 'framer-motion';
+import { caseStudiesBySlug } from '@/content/case-studies';
 import { Button } from '@/components/ui/Button';
-
-const featuredStudies = [
-  {
-    slug: 'physioway',
-    title: 'PhysioWays',
-    industry: 'Healthcare',
-    summary: 'Proprietary clinic management platform with appointment booking, patient tracking, and care coordination.',
-    outcome: 'Currently powering Physioway Active Health LLP',
-    gradient: 'from-teal/10 to-teal/[0.02]',
-    borderHover: 'hover:border-teal/15',
-  },
-  {
-    slug: 'shashwat-ivf',
-    title: 'Shashwat IVF',
-    industry: 'Healthcare',
-    summary: 'Proprietary patient management and scheduling system engineered for complex IVF treatment workflows.',
-    outcome: 'Currently powering Shashwat IVF',
-    gradient: 'from-copper/10 to-copper/[0.02]',
-    borderHover: 'hover:border-copper/15',
-  },
-  {
-    slug: 'anr-mechanical',
-    title: 'ANR Mechanical',
-    industry: 'Operations',
-    summary: 'Proprietary Business Process Automation and enterprise reporting engine for massive operational supply chains.',
-    outcome: 'Deployed at ANR Mechanical (Tesla Supply Chain, NY)',
-    gradient: 'from-[#6366f1]/10 to-[#6366f1]/[0.02]',
-    borderHover: 'hover:border-[#6366f1]/15',
-  },
-];
+import { Reveal } from '@/components/animations/Reveal';
+import { getCaseStudyBySlug, isCaseStudyPubliclyVisible } from '@/lib/server/public-content';
 
 interface FeaturedCaseStudiesProps {
   slugs: string[];
 }
 
-export function FeaturedCaseStudies({ slugs }: FeaturedCaseStudiesProps) {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const studies = featuredStudies.filter((s) => slugs.includes(s.slug));
+type FeaturedStudy = {
+  slug: string;
+  year: string;
+  category: string;
+  client: string;
+  summary: string;
+  modules: string[];
+};
+
+function architectureTitles(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (typeof item === 'string') return [item];
+    if (typeof item === 'object' && item !== null) {
+      const title = String((item as Record<string, unknown>).title ?? '');
+      return title ? [title] : [];
+    }
+    return [];
+  });
+}
+
+export async function FeaturedCaseStudies({ slugs }: FeaturedCaseStudiesProps) {
+  const dbStudies = await Promise.all(slugs.map((slug) => getCaseStudyBySlug(slug)));
+  const studies = slugs.flatMap<FeaturedStudy>((slug, index) => {
+    const dbStudy = dbStudies[index];
+    if (dbStudy) {
+      if (!isCaseStudyPubliclyVisible(dbStudy)) return [];
+      const modules = architectureTitles(dbStudy.architecture);
+      return [{
+        slug: dbStudy.slug,
+        year: String((dbStudy.publishedAt ?? dbStudy.createdAt).getFullYear()),
+        category: dbStudy.industry,
+        client: dbStudy.client,
+        summary: dbStudy.problem,
+        modules: modules.length > 0 ? modules : ['Custom system architecture'],
+      }];
+    }
+
+    const fallback = caseStudiesBySlug[slug];
+    if (!fallback) return [];
+    return [{
+      slug: fallback.slug,
+      year: fallback.year,
+      category: fallback.category,
+      client: fallback.client,
+      summary: fallback.summary ?? fallback.challenge,
+      modules: fallback.modules ?? fallback.techStack,
+    }];
+  });
 
   return (
-    <section ref={ref} className="relative py-28 lg:py-36 px-6 lg:px-10 overflow-hidden">
-      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-teal/[0.02] rounded-full blur-[150px] pointer-events-none" />
-
-      <div className="max-w-[var(--max-w-content)] mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-          className="mb-16"
-        >
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-teal/60 block mb-4">
-            Proprietary Architecture
-          </span>
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-outfit)] tracking-tight leading-[1.1] mb-5">
-                <span className="text-white">Platforms We </span>
-                <span className="bg-gradient-to-r from-teal to-[#5aeacc] bg-clip-text text-transparent">Deploy</span>
-              </h2>
-              <p className="text-white/70 text-base lg:text-lg max-w-xl leading-relaxed font-light">
-                Enterprise-grade Business Process Automation currently powering industry leaders.
-              </p>
-            </div>
-            <Button
-              label="View All Deployments"
-              href="/case-studies"
-              variant="secondary"
-              icon="arrow"
-              trackingSource="home_case_studies_cta"
-            />
+    <section className="mind-section cb-section border-b border-white/[0.08]" aria-labelledby="deployment-title">
+      <div className="cb-shell">
+        <Reveal className="flex flex-col gap-8 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="cb-kicker">Deployments / 03</p>
+            <h2 id="deployment-title" className="cb-display mt-6 max-w-[12ch]">
+              Systems measured in operating reality.
+            </h2>
           </div>
-        </motion.div>
+          <Button label="View all case studies" href="/case-studies" variant="secondary" icon="arrow" trackingSource="home_case_studies_cta" />
+        </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+        <Reveal mode="group" className="divide-y divide-white/10">
           {studies.map((study, index) => (
-            <motion.div
+            <article
               key={study.slug}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.7,
-                delay: 0.15 * index,
-                ease: [0.23, 1, 0.32, 1],
-              }}
+              data-reveal=""
+              style={{ ['--reveal-delay' as string]: `${index * 0.08}s` }}
+              className="grid gap-8 py-12 lg:grid-cols-[0.18fr_0.72fr_0.68fr_0.32fr] lg:items-start lg:gap-10 lg:py-16"
             >
-              <Link
-                href={`/case-studies/${study.slug}`}
-                className={`group relative block h-full rounded-2xl border border-white/[0.04] bg-white/[0.015] overflow-hidden transition-all duration-500 ${study.borderHover} hover:shadow-[0_0_50px_rgba(45,212,191,0.06)]`}
-              >
-                {/* Visual area with gradient */}
-                <div className={`relative h-52 bg-gradient-to-br ${study.gradient} flex items-center justify-center`}>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.03),transparent)]" />
-                  <span className="text-4xl font-black font-[family-name:var(--font-outfit)] text-white/[0.04] group-hover:text-white/[0.08] transition-colors duration-500 tracking-tight">
-                    {study.title}
-                  </span>
-                </div>
-
-                <div className="p-7">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-[10px] font-semibold px-3 py-1.5 rounded-full bg-white/[0.04] text-teal/80 uppercase tracking-wider">
-                      {study.industry}
-                    </span>
+              <div className="cb-mono text-xs tracking-[0.18em] text-[var(--accent-soft)]">0{index + 1} / {study.year}</div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.13em] text-white/45">{study.category}</p>
+                <h3 className="mt-3 max-w-[14ch] font-[family-name:var(--font-display)] text-3xl font-medium leading-[1.02] tracking-[-0.03em] text-white sm:text-4xl">
+                  {study.client}
+                </h3>
+                <p className="mt-5 max-w-lg text-sm leading-7 text-white/55">{study.summary}</p>
+              </div>
+              <div className="border border-white/12 bg-white/[0.015]">
+                <p className="cb-mono border-b border-white/12 px-4 py-3 text-xs uppercase tracking-[0.14em] text-[var(--accent-soft)]">System modules</p>
+                {study.modules.slice(0, 3).map((module, moduleIndex) => (
+                  <div key={module} className="flex min-h-14 items-center gap-3 border-b border-white/12 px-4 py-3 last:border-b-0">
+                    <span className="cb-mono text-xs text-white/35">0{moduleIndex + 1}</span>
+                    <p className="text-sm leading-6 text-white/70">{module}</p>
                   </div>
-                  <h3 className="text-lg font-semibold font-[family-name:var(--font-outfit)] text-white mb-3 group-hover:text-teal transition-colors duration-300">
-                    {study.title}
-                  </h3>
-                  <p className="text-sm text-white/70 leading-relaxed mb-4 font-light">
-                    {study.summary}
-                  </p>
-                  <p className="text-xs text-copper/70 font-medium flex items-center gap-1.5">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                    </svg>
-                    {study.outcome}
-                  </p>
-                </div>
+                ))}
+              </div>
+              <Link href={`/case-studies/${study.slug}`} className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--accent-soft)] transition-colors hover:text-white lg:justify-self-end">
+                Read the {study.client} deployment <span aria-hidden="true">↗</span>
               </Link>
-            </motion.div>
+            </article>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

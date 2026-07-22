@@ -3,6 +3,15 @@ import type { NextConfig } from "next";
 const isProduction = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
+  // Pin the workspace root. The repo root holds a convenience package.json for
+  // `npm run dev`; without this pin Turbopack can infer the wrong root and fail
+  // to resolve tailwindcss. Dependencies stay installed in website/ only.
+  turbopack: {
+    root: __dirname,
+  },
+  // One canonical URL form. Explicit (not defaulted) so nobody can silently
+  // introduce /about/ duplicates of /about. Matches canonicalUrl() in lib/seo.ts.
+  trailingSlash: false,
   images: {
     qualities: [60, 75, 90],
   },

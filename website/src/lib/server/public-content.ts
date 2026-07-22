@@ -1,5 +1,17 @@
-import { ContentStatus } from '@prisma/client';
+import { ContentStatus, PermissionStatus } from '@prisma/client';
 import { isDatabaseConfigured, prisma } from '@/lib/server/prisma';
+
+/**
+ * A case study is publicly visible only when it is PUBLISHED *and* the client
+ * has APPROVED publicising it. Every public surface (homepage count, hub,
+ * detail route, static params, sitemap, schemas) must use this single rule.
+ */
+export function isCaseStudyPubliclyVisible(study: {
+  status: ContentStatus;
+  permissionStatus: PermissionStatus;
+}) {
+  return study.status === ContentStatus.PUBLISHED && study.permissionStatus === PermissionStatus.APPROVED;
+}
 
 async function safeQuery<T>(query: () => Promise<T>, fallback: T) {
   if (!isDatabaseConfigured()) return fallback;
@@ -115,6 +127,27 @@ export async function listCaseStudySlugStatuses() {
   );
 }
 
+/** All CMS rows with the fields needed for the public-visibility rule. */
+export async function listVisibleCaseStudyStatuses() {
+  return safeQuery(
+    () =>
+      prisma.caseStudy.findMany({
+        select: { slug: true, status: true, permissionStatus: true, publishedAt: true, updatedAt: true },
+      }),
+    [],
+  );
+}
+
+export async function getVisibleCaseStudyBySlug(slug: string) {
+  return safeQuery(
+    () =>
+      prisma.caseStudy.findFirst({
+        where: { slug, status: ContentStatus.PUBLISHED, permissionStatus: PermissionStatus.APPROVED },
+      }),
+    null,
+  );
+}
+
 export async function getPublishedCaseStudyBySlug(slug: string) {
   return safeQuery(
     () =>
@@ -132,5 +165,17 @@ export async function getCaseStudyBySlug(slug: string) {
         where: { slug },
       }),
     null,
+  );
+}
+
+export async function getPublishedTestimonials(limit = 6) {
+  return safeQuery(
+    () =>
+      prisma.testimonial.findMany({
+        where: { status: ContentStatus.PUBLISHED, permissionStatus: PermissionStatus.APPROVED },
+        orderBy: { order: 'asc' },
+        take: limit,
+      }),
+    [],
   );
 }

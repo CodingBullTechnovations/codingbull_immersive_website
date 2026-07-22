@@ -3,22 +3,23 @@ import { ContentStatus } from '@prisma/client';
 import { caseStudies } from '@/content/case-studies';
 import { services } from '@/content/services';
 import { insights } from '@/content/insights';
-import { siteConfig } from '@/content/site';
-import { listCaseStudySlugStatuses, listInsightSlugStatuses, listServiceSlugStatuses } from '@/lib/server/public-content';
+import { products } from '@/content/products';
+import { canonicalUrl } from '@/lib/seo';
+import { isCaseStudyPubliclyVisible, listInsightSlugStatuses, listServiceSlugStatuses, listVisibleCaseStudyStatuses } from '@/lib/server/public-content';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = siteConfig.baseUrl;
-  const fallbackLastModified = new Date('2026-05-27T00:00:00.000Z');
+  const fallbackLastModified = new Date('2026-07-14T00:00:00.000Z');
   const [dbServices, dbInsights, dbCaseStudies] = await Promise.all([
     listServiceSlugStatuses(),
     listInsightSlugStatuses(),
-    listCaseStudySlugStatuses(),
+    listVisibleCaseStudyStatuses(),
   ]);
 
   const routes = [
     '',
     '/services',
     '/case-studies',
+    '/products',
     '/insights',
     '/about',
     '/contact',
@@ -32,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/privacy',
     '/terms',
   ].map((route) => ({
-    url: `${baseUrl}${route}`,
+    url: canonicalUrl(route),
     lastModified: fallbackLastModified,
     changeFrequency: 'weekly' as const,
     priority: route === '' ? 1 : 0.8,
@@ -49,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...services.filter((item) => !dbServiceStatusBySlug.has(item.slug)).map((item) => item.slug),
   ]);
   const serviceRoutes = Array.from(serviceSlugs).map((slug) => ({
-    url: `${baseUrl}/services/${slug}`,
+    url: canonicalUrl(`/services/${slug}`),
     lastModified: dbServiceDates.get(slug) ?? fallbackLastModified,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
@@ -67,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...insights.filter((item) => !dbInsightStatusBySlug.has(item.slug)).map((item) => item.slug),
   ]);
   const insightRoutes = Array.from(insightSlugs).map((slug) => ({
-    url: `${baseUrl}/insights/${slug}`,
+    url: canonicalUrl(`/insights/${slug}`),
     lastModified: dbInsightDates.get(slug) ?? staticInsightDates.get(slug) ?? fallbackLastModified,
     changeFrequency: 'monthly' as const,
     priority: 0.6,
@@ -77,19 +78,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const dbCaseStudyStatusBySlug = new Map(dbCaseStudies.map((item) => [item.slug, item.status]));
   const dbCaseStudyDates = new Map(
     dbCaseStudies
-      .filter((item) => item.status === ContentStatus.PUBLISHED)
+      .filter(isCaseStudyPubliclyVisible)
       .map((item) => [item.slug, item.updatedAt ?? item.publishedAt ?? fallbackLastModified]),
   );
   const caseStudySlugs = new Set([
-    ...dbCaseStudies.filter((item) => item.status === ContentStatus.PUBLISHED).map((item) => item.slug),
+    ...dbCaseStudies.filter(isCaseStudyPubliclyVisible).map((item) => item.slug),
     ...caseStudies.filter((item) => !dbCaseStudyStatusBySlug.has(item.slug)).map((item) => item.slug),
   ]);
   const caseStudyRoutes = Array.from(caseStudySlugs).map((slug) => ({
-    url: `${baseUrl}/case-studies/${slug}`,
+    url: canonicalUrl(`/case-studies/${slug}`),
     lastModified: dbCaseStudyDates.get(slug) ?? staticCaseStudyDates.get(slug) ?? fallbackLastModified,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
 
-  return [...routes, ...serviceRoutes, ...insightRoutes, ...caseStudyRoutes];
+  const productRoutes = products.map((product) => ({
+    url: canonicalUrl(`/products/${product.slug}`),
+    lastModified: fallbackLastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
+  return [...routes, ...serviceRoutes, ...insightRoutes, ...caseStudyRoutes, ...productRoutes];
 }

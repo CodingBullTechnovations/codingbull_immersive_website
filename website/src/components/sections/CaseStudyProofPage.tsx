@@ -7,11 +7,6 @@ import { Button } from '@/components/ui/Button';
 
 type ServiceLink = { label: string; href: string; description?: string };
 
-function accentForPageHero(accentColor: string) {
-  if (accentColor === 'blue') return 'sky';
-  return accentColor;
-}
-
 function fallbackServices(study: CaseStudy): ServiceLink[] {
   const lower = `${study.category} ${study.title} ${study.challenge}`.toLowerCase();
   if (lower.includes('clinic') || lower.includes('healthcare') || lower.includes('ivf') || lower.includes('patient')) {
@@ -94,7 +89,6 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
         title={study.client}
         subtitle={summary}
         badge={study.mainServiceCategory ?? study.category}
-        accentColor={accentForPageHero(study.accentColor)}
       />
 
       <SectionWrapper className="py-20 lg:py-28">
@@ -102,7 +96,7 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Case Study Summary</p>
-              <h2 className="mt-4 text-3xl font-bold text-white lg:text-5xl">{study.title}</h2>
+              <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white lg:text-5xl">{study.title}</h2>
               <p className="mt-5 text-base leading-7 text-white/60">{summary}</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Button label={cta.label} href="/contact" variant="primary" trackingSource={`case_study_${study.slug}_primary`} />
@@ -112,8 +106,8 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               {snapshot.map((item) => (
-                <div key={item.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">{item.label}</p>
+                <div key={item.label} className="border border-white/10 bg-white/[0.03] p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/35">{item.label}</p>
                   <p className="mt-3 text-sm leading-6 text-white/70">{item.value}</p>
                 </div>
               ))}
@@ -128,9 +122,9 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
             <p className="mb-8 text-xs font-semibold uppercase tracking-[0.2em] text-teal">Snapshot Proof Points</p>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
               {study.stats.map((stat) => (
-                <div key={stat.label} className="rounded-lg border border-white/10 bg-white/[0.03] p-7 text-center">
+                <div key={stat.label} className="border border-white/10 bg-white/[0.03] p-7 text-center">
                   <span className="block text-3xl font-black text-white">{stat.value}</span>
-                  <span className="mt-2 block text-[10px] uppercase tracking-widest text-white/60">{stat.label}</span>
+                  <span className="mt-2 block text-xs uppercase tracking-widest text-white/60">{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -143,22 +137,22 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
           <div className="space-y-12">
             <section>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Business Problem</p>
-              <h2 className="mt-4 text-3xl font-bold text-white">What needed to be solved</h2>
+              <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white">What needed to be solved</h2>
               <p className="mt-5 text-lg font-light leading-8 text-white/70">{study.challenge}</p>
             </section>
 
             <section>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">What CodingBull Built</p>
-              <h2 className="mt-4 text-3xl font-bold text-white">The delivered system</h2>
+              <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white">The delivered system</h2>
               <p className="mt-5 text-lg font-light leading-8 text-white/70">{study.solution}</p>
             </section>
 
             <section>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Business Value</p>
-              <h2 className="mt-4 text-3xl font-bold text-white">What the project was designed to support</h2>
+              <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white">What the project was designed to support</h2>
               <div className="mt-6 space-y-3">
                 {businessValue.map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
+                  <div key={item} className="flex items-start gap-3 border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
                     <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-teal" />
                     <span>{item}</span>
                   </div>
@@ -168,11 +162,11 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
           </div>
 
           <aside className="space-y-8">
-            <div className="rounded-lg border border-white/10 bg-white/[0.03] p-6">
+            <div className="border border-white/10 bg-white/[0.03] p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Technical Approach</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {study.techStack.map((tech) => (
-                  <span key={tech} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium text-white/60">
+                  <span key={tech} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/60">
                     {tech}
                   </span>
                 ))}
@@ -184,8 +178,8 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
               </div>
             </div>
 
-            <div className="rounded-lg border border-teal/20 bg-teal/[0.04] p-6">
-              <h2 className="text-xl font-bold text-white">{cta.title}</h2>
+            <div className="border border-teal/20 bg-teal/[0.04] p-6">
+              <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-white">{cta.title}</h2>
               <p className="mt-4 text-sm leading-6 text-white/60">{cta.description}</p>
               <Button label={cta.label} href="/contact" variant="primary" trackingSource={`case_study_${study.slug}_aside_cta`} className="mt-6" />
             </div>
@@ -197,11 +191,11 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Key Modules and Features</p>
-            <h2 className="mt-4 text-3xl font-bold text-white lg:text-4xl">Reusable project building blocks</h2>
+            <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white lg:text-4xl">Reusable project building blocks</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {modules.map((module) => (
-              <div key={module} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+              <div key={module} className="border border-white/10 bg-white/[0.03] p-5">
                 <CheckCircle2 className="h-4 w-4 text-teal" />
                 <p className="mt-3 text-sm leading-6 text-white/65">{module}</p>
               </div>
@@ -214,14 +208,14 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Related Services</p>
-            <h2 className="mt-4 text-3xl font-bold text-white lg:text-4xl">Services connected to this proof</h2>
+            <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white lg:text-4xl">Services connected to this proof</h2>
             <p className="mt-5 text-sm leading-6 text-white/55">
               These links connect the case study to the service pages a buyer would naturally compare before contacting CodingBull.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {services.map((service) => (
-              <Link key={service.href} href={service.href} className="group rounded-lg border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-teal/30 hover:bg-white/[0.05]">
+              <Link key={service.href} href={service.href} className="group border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-teal/30 hover:bg-white/[0.05]">
                 <span className="text-base font-semibold text-white group-hover:text-teal">{service.label}</span>
                 {service.description && <p className="mt-3 text-sm leading-6 text-white/50">{service.description}</p>}
                 <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-teal">
@@ -230,7 +224,7 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
                 </span>
               </Link>
             ))}
-            <Link href="/contact" className="group rounded-lg border border-teal/20 bg-teal/[0.05] p-5 transition-colors hover:border-teal/40 hover:bg-teal/[0.08]">
+            <Link href="/contact" className="group border border-teal/20 bg-teal/[0.05] p-5 transition-colors hover:border-teal/40 hover:bg-teal/[0.08]">
               <span className="text-base font-semibold text-white group-hover:text-teal">Contact CodingBull</span>
               <p className="mt-3 text-sm leading-6 text-white/55">Share a similar workflow, website, dashboard, or business system requirement.</p>
               <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-teal">
@@ -247,14 +241,14 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Future Roadmap</p>
-              <h2 className="mt-4 text-3xl font-bold text-white lg:text-4xl">What can be improved next</h2>
+              <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white lg:text-4xl">What can be improved next</h2>
               <p className="mt-5 text-sm leading-6 text-white/55">
                 Roadmap ideas are written as realistic future opportunities, not as claims that every module already exists.
               </p>
             </div>
             <div className="space-y-3">
               {roadmap.map((item) => (
-                <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
+                <div key={item} className="border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
                   {item}
                 </div>
               ))}

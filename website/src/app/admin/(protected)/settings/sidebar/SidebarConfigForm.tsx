@@ -62,7 +62,7 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-      <h3 className="text-sm font-bold text-white uppercase tracking-[0.14em] mb-5 font-[family-name:var(--font-outfit)]">{title}</h3>
+      <h3 className="text-sm font-bold text-white uppercase tracking-[0.14em] mb-5 font-[family-name:var(--font-display)]">{title}</h3>
       {children}
     </div>
   );

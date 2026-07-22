@@ -7,15 +7,17 @@ import { insights } from '@/content/insights';
 import { pageMetadata, generatePageMetadata } from '@/lib/seo';
 import { getPublishedInsightBySlug, listInsightSlugStatuses } from '@/lib/server/public-content';
 import { ContentStatus } from '@prisma/client';
+import { JsonLd, generateBlogSchema, generateItemListSchema } from '@/lib/schema';
+import { siteConfig } from '@/content/site';
 
 export const metadata = generatePageMetadata(pageMetadata.insights);
 
 const ACCENT_COLORS: Record<string, { border: string; bg: string; text: string }> = {
   teal: { border: 'border-teal/20', bg: 'bg-teal/[0.05]', text: 'text-teal' },
-  amber: { border: 'border-amber-400/20', bg: 'bg-amber-400/[0.05]', text: 'text-amber-400' },
-  violet: { border: 'border-violet-400/20', bg: 'bg-violet-400/[0.05]', text: 'text-violet-400' },
-  sky: { border: 'border-sky-400/20', bg: 'bg-sky-400/[0.05]', text: 'text-sky-400' },
-  rose: { border: 'border-rose-400/20', bg: 'bg-rose-400/[0.05]', text: 'text-rose-400' },
+  amber: { border: 'border-[var(--accent-soft)]/20', bg: 'bg-[var(--accent-soft)]/[0.05]', text: 'text-[var(--accent-soft)]' },
+  violet: { border: 'border-[var(--accent-soft)]/20', bg: 'bg-[var(--accent-soft)]/[0.05]', text: 'text-[var(--accent-soft)]' },
+  sky: { border: 'border-[var(--accent-soft)]/20', bg: 'bg-[var(--accent-soft)]/[0.05]', text: 'text-[var(--accent-soft)]' },
+  rose: { border: 'border-[var(--accent-soft)]/20', bg: 'bg-[var(--accent-soft)]/[0.05]', text: 'text-[var(--accent-soft)]' },
 };
 
 const INSIGHT_CLUSTERS = [
@@ -85,11 +87,28 @@ export default async function InsightsPage() {
 
   return (
     <>
+      <JsonLd data={generateBlogSchema({
+        name: 'CodingBull Blog',
+        description: 'Practical engineering and operations writing from real custom software delivery — healthcare, e-commerce, HRMS, and internal business systems.',
+        url: `${siteConfig.baseUrl}/insights`,
+        posts: posts.map((post) => ({
+          name: post.title,
+          url: `${siteConfig.baseUrl}/insights/${post.slug}`,
+        })),
+      })} />
+      <JsonLd data={generateItemListSchema({
+        name: 'CodingBull blog',
+        url: `${siteConfig.baseUrl}/insights`,
+        items: posts.map((post) => ({
+          name: post.title,
+          url: `${siteConfig.baseUrl}/insights/${post.slug}`,
+          description: post.excerpt,
+        })),
+      })} />
       <PageHero
-        title="Engineering Insights"
-        subtitle="We document our technical approaches to difficult problems in healthcare algorithms, mass inventory coordination, and HRMS data security."
+        title="CodingBull Blog"
+        subtitle="Practical writing from real delivery — how we approach hard problems in healthcare software, inventory and order coordination, HRMS, and custom business systems."
         badge="Blog & Notes"
-        accentColor="rose"
       />
 
       <section className="py-20 lg:py-28 relative z-10">
@@ -100,7 +119,7 @@ export default async function InsightsPage() {
                 <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-teal">
                   Service Knowledge Clusters
                 </p>
-                <h2 className="font-[family-name:var(--font-outfit)] text-3xl font-bold tracking-tight text-white lg:text-4xl">
+                <h2 className="font-[family-name:var(--font-display)] text-3xl font-bold tracking-tight text-white lg:text-4xl">
                   Research-backed software guides for the services CodingBull sells.
                 </h2>
               </div>
@@ -115,17 +134,17 @@ export default async function InsightsPage() {
                 return (
                   <div
                     key={cluster.href}
-                    className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 transition-colors duration-300 hover:border-white/10 hover:bg-white/[0.04]"
+                    className="border border-white/10 bg-white/[0.02] p-5 transition-colors duration-300 hover:border-white/10 hover:bg-white/[0.04]"
                   >
                     <div className="mb-5 flex items-start justify-between gap-4">
-                      <div className={`flex h-11 w-11 items-center justify-center rounded-xl border ${cluster.accent.border} ${cluster.accent.bg}`}>
+                      <div className={`flex h-11 w-11 items-center justify-center border ${cluster.accent.border} ${cluster.accent.bg}`}>
                         <Icon className={`h-5 w-5 ${cluster.accent.text}`} strokeWidth={1.8} />
                       </div>
-                      <span className="rounded-full border border-white/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
+                      <span className="border border-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
                         {cluster.count}
                       </span>
                     </div>
-                    <h3 className="mb-3 font-[family-name:var(--font-outfit)] text-lg font-bold text-white">
+                    <h3 className="mb-3 font-[family-name:var(--font-display)] text-lg font-bold text-white">
                       {cluster.label}
                     </h3>
                     <p className="mb-5 text-sm font-light leading-relaxed text-white/50">
@@ -148,7 +167,7 @@ export default async function InsightsPage() {
                 <Link
                   key={country.href}
                   href={country.href}
-                  className="group flex min-h-14 items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.015] px-4 text-sm font-medium text-white/70 transition-colors duration-300 hover:border-teal/30 hover:bg-teal/[0.04] hover:text-white"
+                  className="group flex min-h-14 items-center justify-between border border-white/10 bg-white/[0.015] px-4 text-sm font-medium text-white/70 transition-colors duration-300 hover:border-teal/30 hover:bg-teal/[0.04] hover:text-white"
                 >
                   <span className="inline-flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-teal/70" strokeWidth={1.8} />
@@ -167,17 +186,17 @@ export default async function InsightsPage() {
                 <Link
                   key={post.slug}
                   href={`/insights/${post.slug}`}
-                  className="group block rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] hover:border-white/10 transition-all duration-500 overflow-hidden"
+                  className="group block border border-white/10 bg-white/[0.02] transition-colors duration-500 hover:border-teal/25 hover:bg-white/[0.04] overflow-hidden"
                 >
                   {/* Category bar */}
                   <div className={`px-8 py-3 ${accent.bg} border-b ${accent.border}`}>
-                    <span className={`text-[10px] font-bold uppercase tracking-[0.25em] ${accent.text}`}>
+                    <span className={`text-xs font-bold uppercase tracking-[0.25em] ${accent.text}`}>
                       {post.category}
                     </span>
                   </div>
 
                   <div className="p-8">
-                    <h2 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-outfit)] text-white mb-3 group-hover:text-teal transition-colors duration-300 tracking-tight">
+                    <h2 className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-display)] text-white mb-3 group-hover:text-teal transition-colors duration-300 tracking-tight">
                       {post.title}
                     </h2>
                     <p className="text-white/50 text-sm leading-relaxed mb-6 font-light line-clamp-3">
@@ -187,11 +206,11 @@ export default async function InsightsPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-teal/10 border border-teal/20 flex items-center justify-center">
-                          <span className="text-[10px] font-bold text-teal">PD</span>
+                          <span className="text-xs font-bold text-teal">PD</span>
                         </div>
                         <div>
                           <p className="text-white/60 text-xs font-medium">{post.author}</p>
-                          <p className="text-white/60 text-[10px]">{post.readingTime}</p>
+                          <p className="text-white/60 text-xs">{post.readingTime}</p>
                         </div>
                       </div>
 

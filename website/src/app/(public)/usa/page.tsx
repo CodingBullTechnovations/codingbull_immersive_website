@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { CountryAuthorityPage } from '@/components/sections/CountryAuthorityPage';
 import { generatePageMetadata, pageMetadata } from '@/lib/seo';
+import { JsonLd, generateBreadcrumbSchema } from '@/lib/schema';
+import { siteConfig } from '@/content/site';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { countrySiblings } from '@/content/link-graph';
 
 export const metadata: Metadata = generatePageMetadata(pageMetadata.usa);
 
@@ -64,15 +68,20 @@ const usaCaseStudies = [
     description: 'Specialty healthcare website foundation with organized service content and a clearer inquiry path.',
   },
   {
-    title: 'ANR Mechanical business website proof',
+    title: 'ANR Mechanical’s New York Tesla project proof',
     href: '/case-studies/anr-mechanical',
-    description: 'Business website structure for a services company with crawlable service pages and contact-focused presentation.',
+    description: 'CodingBull brought ANR Mechanicals online and gave its 150,000 sq ft New York project for Tesla a clear place in the company portfolio.',
   },
 ];
 
 export default function USAPage() {
   return (
-    <CountryAuthorityPage
+    <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'USA', url: `${siteConfig.baseUrl}/usa` },
+      ])} />
+      <CountryAuthorityPage
       title="Custom Software Development for USA Businesses"
       subtitle="CodingBull is an India-based software development partner for USA businesses needing fixed-scope websites, CRM, dashboards, e-commerce workflows, healthcare software, and internal systems."
       marketLabel="USA Software Development"
@@ -115,6 +124,13 @@ export default function USAPage() {
       caseStudySectionDescription="Use these examples to review how CodingBull structures healthcare websites, service-business websites, inquiry paths, and software foundations before discussing a USA project."
       ctaLabel="Request USA Delivery Plan"
       ctaTrackingSource="usa_page_cta_primary"
-    />
+      />
+      <RelatedLinksRail
+        kicker="Other markets"
+        title="Delivery in other regions."
+        links={countrySiblings('/usa')}
+        intro="The same founder-led delivery model, scoped to each market's buying and compliance context."
+      />
+    </>
   );
 }

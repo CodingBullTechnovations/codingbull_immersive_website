@@ -34,6 +34,11 @@ export const mainNav: NavEntry[] = [
     href: '/india',
     items: [
       {
+        label: 'Ahmedabad',
+        href: '/ahmedabad',
+        description: 'Local software partner — websites, CRM, HRMS, custom systems',
+      },
+      {
         label: 'India',
         href: '/india',
         description: 'Healthcare, e-commerce, HRMS, and custom systems for India',
@@ -55,6 +60,7 @@ export const mainNav: NavEntry[] = [
       },
     ],
   },
-  { label: 'Insights', href: '/insights' },
+  { label: 'Products', href: '/products' },
+  { label: 'Blog', href: '/insights' },
   { label: 'Contact', href: '/contact' },
 ];

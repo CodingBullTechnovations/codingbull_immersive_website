@@ -1,7 +1,4 @@
-'use client';
-
-import { type ReactNode, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import type { ReactNode } from 'react';
 
 interface SectionWrapperProps {
   children: ReactNode;
@@ -12,13 +9,13 @@ interface SectionWrapperProps {
   padding?: 'normal' | 'large';
 }
 
-const bgClasses: Record<string, string> = {
-  default: '',
-  alternate: 'gradient-bg-section',
+const bgClasses = {
+  default: 'bg-[#05070a]',
+  alternate: 'bg-[var(--surface-panel)]',
   hero: 'gradient-bg-hero',
 };
 
-const maxWidthClasses: Record<string, string> = {
+const maxWidthClasses = {
   narrow: 'max-w-[var(--max-w-narrow)]',
   content: 'max-w-[var(--max-w-content)]',
   wide: 'max-w-[var(--max-w-wide)]',
@@ -32,27 +29,14 @@ export function SectionWrapper({
   maxWidth = 'content',
   padding = 'normal',
 }: SectionWrapperProps) {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
-
-  const paddingClass = padding === 'large'
-    ? 'py-[var(--spacing-4xl)] px-[var(--spacing-lg)]'
-    : 'py-[var(--spacing-3xl)] px-[var(--spacing-lg)]';
-
   return (
     <section
-      ref={ref}
       id={id}
-      className={`${bgClasses[background]} ${paddingClass} ${className}`}
+      className={`${bgClasses[background]} ${padding === 'large' ? 'py-28 lg:py-40' : 'py-20 lg:py-28'} px-5 sm:px-8 lg:px-10 ${className}`}
     >
-      <motion.div
-        className={`${maxWidthClasses[maxWidth]} w-full mx-auto`}
-        initial={{ opacity: 0, y: 24 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-      >
+      <div className={`${maxWidthClasses[maxWidth]} mx-auto w-full`}>
         {children}
-      </motion.div>
+      </div>
     </section>
   );
 }

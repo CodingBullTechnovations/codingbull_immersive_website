@@ -29,7 +29,7 @@ export function AdminShell({ children, session }: { children: React.ReactNode; s
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-white/10 bg-[#090d14] px-5 py-6 lg:flex lg:flex-col">
         <Link href="/admin" className="mb-8 block">
           <p className="text-xs uppercase tracking-[0.24em] text-teal">CodingBull</p>
-          <h1 className="mt-2 text-xl font-bold font-[family-name:var(--font-outfit)]">Growth Admin</h1>
+          <h1 className="mt-2 text-xl font-bold font-[family-name:var(--font-display)]">Growth Admin</h1>
         </Link>
 
         <nav className="flex flex-1 flex-col gap-1">

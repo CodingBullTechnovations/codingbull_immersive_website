@@ -1,11 +1,15 @@
 import { Metadata } from 'next';
 import { pageMetadata, generatePageMetadata } from '@/lib/seo';
 import { JsonLd, generateLocalBusinessSchema } from '@/lib/schema';
+import { getPublicSocialLinksConfig } from '@/lib/server/social-links';
+import { sameAsSocialUrls } from '@/lib/social-links';
 import { PageHero } from '@/components/sections/PageHero';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { services } from '@/content/services';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { ahmedabadSiblings } from '@/content/link-graph';
 
 export const metadata: Metadata = generatePageMetadata(pageMetadata.ahmedabad);
 
@@ -36,7 +40,9 @@ const localServiceLinks = [
   { title: 'Case studies', href: '/case-studies', description: 'Review proof from healthcare, lead-generation, and operations-focused builds.' },
 ];
 
-export default function AhmedabadPage() {
+export default async function AhmedabadPage() {
+  const socialConfig = await getPublicSocialLinksConfig();
+
   return (
     <>
       <JsonLd data={generateLocalBusinessSchema({
@@ -44,6 +50,7 @@ export default function AhmedabadPage() {
         city: 'Ahmedabad',
         region: 'Gujarat',
         country: 'India',
+        sameAs: sameAsSocialUrls(socialConfig),
       })} />
       <PageHero
         title="Software Development in Ahmedabad"
@@ -59,16 +66,16 @@ export default function AhmedabadPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10">
+            <div className="border border-white/10 bg-white/[0.02] p-8">
               <h3 className="text-xl font-bold mb-4 text-teal">Local Expertise</h3>
               <p className="text-sm text-white/60 leading-relaxed">
                 Ahmedabad companies often need clear scope, fast communication, WhatsApp-led inquiry flow, practical admin tools, and software that fits Indian operating realities.
               </p>
             </div>
-            <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10">
+            <div className="border border-white/10 bg-white/[0.02] p-8">
               <h3 className="text-xl font-bold mb-4 text-teal">Global Standards</h3>
               <p className="text-sm text-white/60 leading-relaxed">
-                Our code and architecture follow international best practices, ensuring your system is ready for global scale from day one.
+                Our code and architecture follow established engineering practices, with maintainable foundations that can support staged growth as requirements become clear.
               </p>
             </div>
           </div>
@@ -79,9 +86,9 @@ export default function AhmedabadPage() {
               <Link
                 key={page.href}
                 href={page.href}
-                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-7 transition-all hover:border-teal/40 hover:bg-teal/[0.04]"
+                className="group border border-white/10 bg-white/[0.02] p-7 transition-colors hover:border-teal/40 hover:bg-teal/[0.04]"
               >
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-teal">Local buyer page</span>
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-teal">Local buyer page</span>
                 <h3 className="mt-4 text-xl font-bold text-white group-hover:text-teal">{page.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-white/50">{page.description}</p>
               </Link>
@@ -94,7 +101,7 @@ export default function AhmedabadPage() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-2xl bg-white/[0.03] border border-white/10 p-5 hover:border-teal/50 hover:bg-teal/5 transition-all group"
+                className="border border-white/10 bg-white/[0.02] p-5 transition-colors hover:border-teal/50 hover:bg-teal/5 group"
               >
                 <span className="font-semibold group-hover:text-teal transition-colors">{link.title}</span>
                 <p className="mt-2 text-sm leading-6 text-white/45">{link.description}</p>
@@ -108,15 +115,15 @@ export default function AhmedabadPage() {
               <Link
                 key={service.slug}
                 href={`/services/${service.slug}`}
-                className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 hover:border-teal/50 hover:bg-teal/5 transition-all group"
+                className="border border-white/10 bg-white/[0.02] px-6 py-4 transition-colors hover:border-teal/50 hover:bg-teal/5 group"
               >
                 <span className="font-semibold group-hover:text-teal transition-colors">{service.title}</span>
               </Link>
             ))}
           </div>
 
-          <div className="p-12 rounded-[3rem] bg-gradient-to-br from-teal/20 to-transparent border border-teal/20 text-center">
-            <h3 className="text-3xl font-black mb-6 italic">Ready to build your system in Ahmedabad?</h3>
+          <div className="border border-teal/25 bg-teal/[0.05] p-12 text-center">
+            <h3 className="mb-6 font-[family-name:var(--font-display)] text-3xl font-medium tracking-[-0.03em]">Ready to build your system in Ahmedabad?</h3>
             <p className="text-white/60 mb-10 max-w-lg mx-auto">
               Share the website, CRM, HRMS, e-commerce, healthcare software, admin panel, dashboard, or workflow automation you need. CodingBull will respond with a practical starting scope for your Ahmedabad business.
             </p>
@@ -140,6 +147,12 @@ export default function AhmedabadPage() {
           </div>
         </div>
       </SectionWrapper>
+      <RelatedLinksRail
+        kicker="Ahmedabad"
+        title="More for Ahmedabad buyers."
+        links={ahmedabadSiblings('/ahmedabad')}
+        intro="Related local pages covering the same delivery capability from a different buying intent."
+      />
     </>
   );
 }

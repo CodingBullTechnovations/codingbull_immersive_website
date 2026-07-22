@@ -3,6 +3,19 @@ import type { PageMetadata } from '@/types/content';
 import { siteConfig } from '@/content/site';
 
 export const defaultOgImage = `${siteConfig.baseUrl}/images/og/codingbull-og.png`;
+
+/**
+ * The one canonical form for every public URL: https + www + lowercase + no
+ * trailing slash (root included). This matches what Next actually renders —
+ * with `trailingSlash: false` it strips trailing slashes from canonical and
+ * og:url, so the sitemap must use the identical form or the two disagree.
+ * Build every canonical and sitemap entry with this helper.
+ */
+export function canonicalUrl(path = '/') {
+  if (path === '/' || path === '') return siteConfig.baseUrl;
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  return `${siteConfig.baseUrl}${normalized.replace(/\/+$/, '')}`;
+}
 export const defaultOgImageDimensions = {
   width: 1200,
   height: 630,
@@ -73,9 +86,9 @@ export function generatePageMetadata(page: PageMetadata): Metadata {
 /** Per-page metadata definitions */
 export const pageMetadata: Record<string, PageMetadata> = {
   home: {
-    title: 'CodingBull Technovations — Custom Software for Healthcare, E-commerce & HRMS',
+    title: 'Custom Software Development | CodingBull Technovations',
     description:
-      'CodingBull builds custom digital systems for healthcare clinics, e-commerce operations, and workforce management. Fixed-price projects, founder-led delivery for India, USA, UAE, and Canada.',
+      'Founder-led custom software for healthcare, commerce, HRMS, CRM, and business workflows. Fixed-scope delivery from Ahmedabad for global teams.',
     keywords: [
       'custom software development',
       'healthcare software',
@@ -84,7 +97,7 @@ export const pageMetadata: Record<string, PageMetadata> = {
       'Ahmedabad software company',
       'fixed price software',
     ],
-    canonical: siteConfig.baseUrl,
+    canonical: canonicalUrl('/'),
   },
   about: {
     title: 'About CodingBull — Founder-Led Custom Software Company',
@@ -99,19 +112,19 @@ export const pageMetadata: Record<string, PageMetadata> = {
     canonical: `${siteConfig.baseUrl}/contact`,
   },
   caseStudies: {
-    title: 'Case Studies — Real Systems We\'ve Built | CodingBull',
+    title: 'Case Studies — Published Client Work | CodingBull',
     description:
-      'See real healthcare, e-commerce, and HRMS systems built by CodingBull. Detailed case studies with challenges, solutions, and outcomes.',
+      'Review published CodingBull work for Physioway, Shashwat IVF, and ANR Mechanicals across healthcare platforms, managed websites, and industrial portfolios.',
     canonical: `${siteConfig.baseUrl}/case-studies`,
   },
   insights: {
-    title: 'Insights — Software Development & Business Systems | CodingBull',
+    title: 'Blog — Software Development & Business Systems | CodingBull',
     description:
-      'Expert insights on healthcare software, e-commerce systems, HRMS, and custom business software development from the CodingBull team.',
+      'The CodingBull blog: practical writing on healthcare software, e-commerce systems, HRMS, and custom business software from real delivery work.',
     canonical: `${siteConfig.baseUrl}/insights`,
   },
   ahmedabad: {
-    title: 'Best Software Development Company in Ahmedabad | CodingBull',
+    title: 'Software Development Company in Ahmedabad | CodingBull',
     description:
       'CodingBull Technovations — Ahmedabad-based custom software company specializing in healthcare, e-commerce, and HRMS systems. Fixed-price, founder-led delivery.',
     keywords: ['software company Ahmedabad', 'custom software Ahmedabad', 'web development Ahmedabad'],

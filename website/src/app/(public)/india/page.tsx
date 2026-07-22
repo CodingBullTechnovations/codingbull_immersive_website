@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 import { CountryAuthorityPage } from '@/components/sections/CountryAuthorityPage';
 import { generatePageMetadata, pageMetadata } from '@/lib/seo';
+import { JsonLd, generateBreadcrumbSchema, generateLocalBusinessSchema } from '@/lib/schema';
+import { getPublicSocialLinksConfig } from '@/lib/server/social-links';
+import { sameAsSocialUrls } from '@/lib/social-links';
+import { siteConfig } from '@/content/site';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { countrySiblings } from '@/content/link-graph';
 
 export const metadata: Metadata = generatePageMetadata(pageMetadata.india);
 
@@ -70,9 +76,23 @@ const indiaCaseStudies = [
   },
 ];
 
-export default function IndiaPage() {
+export default async function IndiaPage() {
+  const socialConfig = await getPublicSocialLinksConfig();
+
   return (
-    <CountryAuthorityPage
+    <>
+      <JsonLd data={generateLocalBusinessSchema({
+        name: siteConfig.companyName,
+        city: 'Ahmedabad',
+        region: 'Gujarat',
+        country: 'IN',
+        sameAs: sameAsSocialUrls(socialConfig),
+      })} />
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'India', url: `${siteConfig.baseUrl}/india` },
+      ])} />
+      <CountryAuthorityPage
       title="Custom Software Development Company in India"
       subtitle="CodingBull builds custom software, websites, CRM, HRMS, e-commerce platforms, healthcare software, dashboards, and workflow automation for Indian businesses that need practical systems and direct engineering ownership."
       marketLabel="India Software Development"
@@ -115,6 +135,13 @@ export default function IndiaPage() {
       caseStudySectionDescription="Review healthcare and business website examples before starting a custom CRM, HRMS, clinic software, e-commerce, or internal dashboard project."
       ctaLabel="Request India Build Plan"
       ctaTrackingSource="india_page_cta_primary"
-    />
+      />
+      <RelatedLinksRail
+        kicker="Other markets"
+        title="Delivery in other regions."
+        links={countrySiblings('/india')}
+        intro="The same founder-led delivery model, scoped to each market's buying and compliance context."
+      />
+    </>
   );
 }

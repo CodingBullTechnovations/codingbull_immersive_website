@@ -38,7 +38,7 @@ export function CookieConsent() {
           exit={{ y: 100, opacity: 0 }}
           className="fixed bottom-6 left-6 right-6 z-[200] max-w-4xl mx-auto"
         >
-          <div className="bg-black/90 backdrop-blur-2xl border border-white/10 p-6 sm:p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="bg-black/90 border border-white/10 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex-1">
               <h3 className="text-white font-bold mb-2">Privacy & Performance</h3>
               <p className="text-white/60 text-sm leading-relaxed">

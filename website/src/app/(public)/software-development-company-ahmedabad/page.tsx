@@ -10,6 +10,8 @@ import { caseStudies } from '@/content/case-studies';
 import { generatePageMetadata } from '@/lib/seo';
 import { JsonLd, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/schema';
 import { siteConfig } from '@/content/site';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { ahmedabadSiblings } from '@/content/link-graph';
 
 const pageUrl = `${siteConfig.baseUrl}/software-development-company-ahmedabad`;
 
@@ -150,7 +152,6 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
         title="Software Development Company in Ahmedabad"
         subtitle="CodingBull Technovations Pvt. Ltd. is a custom software development company in Ahmedabad building business websites, admin panels, CRM, HRMS, e-commerce systems, healthcare software, dashboards, and workflow automation."
         badge="Ahmedabad Software Development"
-        accentColor="teal"
       />
 
       <SectionWrapper className="py-20 lg:py-28">
@@ -165,7 +166,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {softwareTypes.map((item) => (
-                <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+                <div key={item} className="border border-white/10 bg-white/[0.03] p-5">
                   <CheckCircle2 className="h-4 w-4 text-teal" />
                   <p className="mt-3 text-sm leading-6 text-white/65">{item}</p>
                 </div>
@@ -186,7 +187,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
               <Link
                 key={service.href}
                 href={service.href}
-                className="group rounded-lg border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]"
+                className="group border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -203,7 +204,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
 
       <SectionWrapper className="py-20">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2">
-          <article className="rounded-lg border border-white/10 bg-white/[0.03] p-7">
+          <article className="border border-white/10 bg-white/[0.03] p-7">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Industries we serve</p>
             <h2 className="mt-4 text-2xl font-bold text-white">Ahmedabad use cases we understand.</h2>
             <ul className="mt-6 space-y-3">
@@ -216,7 +217,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
             </ul>
           </article>
 
-          <article className="rounded-lg border border-white/10 bg-white/[0.03] p-7">
+          <article className="border border-white/10 bg-white/[0.03] p-7">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Why Ahmedabad businesses choose CodingBull</p>
             <h2 className="mt-4 text-2xl font-bold text-white">Direct scoping before development starts.</h2>
             <p className="mt-5 text-sm leading-6 text-white/60">
@@ -238,7 +239,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
           </div>
           <div className="grid gap-4 md:grid-cols-4">
             {process.map((step, index) => (
-              <div key={step} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+              <div key={step} className="border border-white/10 bg-white/[0.03] p-5">
                 <span className="font-mono text-xs font-bold text-teal">0{index + 1}</span>
                 <p className="mt-4 text-sm leading-6 text-white/60">{step}</p>
               </div>
@@ -259,7 +260,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
             </div>
             <div className="space-y-3">
               {projectTypes.map((item) => (
-                <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
+                <div key={item} className="border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
                   {item}
                 </div>
               ))}
@@ -276,7 +277,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
           </div>
           <div className="grid gap-5 md:grid-cols-3">
             {relevantCaseStudies.map((study) => (
-              <Link key={study.slug} href={`/case-studies/${study.slug}`} className="group rounded-lg border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]">
+              <Link key={study.slug} href={`/case-studies/${study.slug}`} className="group border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal">{study.category}</p>
                 <h3 className="mt-4 text-xl font-semibold text-white group-hover:text-teal">{study.title}</h3>
                 <p className="mt-3 line-clamp-4 text-sm leading-6 text-white/55">{study.challenge}</p>
@@ -292,7 +293,7 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
           <h2 className="mt-4 text-3xl font-bold text-white">Software development questions from Ahmedabad buyers.</h2>
           <div className="mt-8 space-y-4">
             {faqs.map((faq) => (
-              <div key={faq.question} className="rounded-lg border border-white/10 bg-white/[0.03] p-6">
+              <div key={faq.question} className="border border-white/10 bg-white/[0.03] p-6">
                 <h3 className="font-semibold text-white">{faq.question}</h3>
                 <p className="mt-3 text-sm leading-6 text-white/60">{faq.answer}</p>
               </div>
@@ -300,6 +301,13 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
           </div>
         </div>
       </SectionWrapper>
+
+      <RelatedLinksRail
+        kicker="Ahmedabad"
+        title="More for Ahmedabad buyers."
+        links={ahmedabadSiblings('/software-development-company-ahmedabad')}
+        intro="Related local pages covering the same delivery capability from a different buying intent."
+      />
 
       <CTASection cta={homeContent.finalCTA} />
     </>

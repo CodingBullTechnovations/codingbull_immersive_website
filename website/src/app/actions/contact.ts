@@ -56,7 +56,7 @@ export async function submitContactForm(data: ContactFormData) {
 
     return {
       success: true,
-      message: 'Your inquiry has been received. We will respond within 24 hours.',
+      message: "Your inquiry has been received. We'll review it and get back to you shortly.",
     };
   } catch (error) {
     console.error('[contact_form_submit_failed]', error);

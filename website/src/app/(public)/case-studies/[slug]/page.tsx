@@ -5,7 +5,10 @@ import { CaseStudyProofPage } from '@/components/sections/CaseStudyProofPage';
 import { generatePageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/content/site';
 import { JsonLd, generateBreadcrumbSchema, generateCreativeWorkSchema } from '@/lib/schema';
-import { getCaseStudyBySlug, listCaseStudySlugStatuses } from '@/lib/server/public-content';
+import { getCaseStudyBySlug, isCaseStudyPubliclyVisible, listInsightSlugStatuses, listVisibleCaseStudyStatuses } from '@/lib/server/public-content';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { insights } from '@/content/insights';
+import { getIndustryForPath } from '@/lib/industry';
 import { ContentStatus } from '@prisma/client';
 
 interface CaseStudyPageProps {
@@ -13,10 +16,10 @@ interface CaseStudyPageProps {
 }
 
 export async function generateStaticParams() {
-  const dbStudies = await listCaseStudySlugStatuses();
+  const dbStudies = await listVisibleCaseStudyStatuses();
   const dbStatusBySlug = new Map(dbStudies.map((item) => [item.slug, item.status]));
   const slugs = new Set([
-    ...dbStudies.filter((item) => item.status === ContentStatus.PUBLISHED).map((item) => item.slug),
+    ...dbStudies.filter(isCaseStudyPubliclyVisible).map((item) => item.slug),
     ...caseStudies.filter((item) => !dbStatusBySlug.has(item.slug)).map((item) => item.slug),
   ]);
 
@@ -29,14 +32,19 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
   const { slug } = await params;
   const dbStudy = await getCaseStudyBySlug(slug);
   const study = dbStudy
-    ? (dbStudy.status === ContentStatus.PUBLISHED ? mapDbCaseStudy(dbStudy) : null)
+    ? (isCaseStudyPubliclyVisible(dbStudy) ? mapDbCaseStudy(dbStudy) : null)
     : caseStudiesBySlug[slug];
   if (!study) return {};
+
+  // Honor an admin-configured canonical path when it is same-origin relative.
+  const canonicalPath = dbStudy?.canonicalPath?.startsWith('/')
+    ? dbStudy.canonicalPath
+    : `/case-studies/${slug}`;
 
   return generatePageMetadata({
     title: `${study.title} | Case Study | CodingBull`,
     description: study.challenge.substring(0, 160),
-    canonical: `${siteConfig.baseUrl}/case-studies/${slug}`,
+    canonical: `${siteConfig.baseUrl}${canonicalPath}`,
   });
 }
 
@@ -75,7 +83,8 @@ function mapDbCaseStudy(study: Awaited<ReturnType<typeof getCaseStudyBySlug>>): 
     market: 'Not specified in public case-study data',
     mainServiceCategory: study.seoIndustry.replaceAll('_', ' '),
     deliveryModel: 'Founder-led custom build',
-    status: study.permissionStatus === 'APPROVED' ? 'Published case study' : 'Public case study',
+    // Only PUBLISHED + APPROVED records reach this mapper.
+    status: 'Published case study',
   };
 }
 
@@ -83,11 +92,25 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps
   const { slug } = await params;
   const dbStudy = await getCaseStudyBySlug(slug);
   const study = dbStudy
-    ? (dbStudy.status === ContentStatus.PUBLISHED ? mapDbCaseStudy(dbStudy) : null)
+    ? (isCaseStudyPubliclyVisible(dbStudy) ? mapDbCaseStudy(dbStudy) : null)
     : caseStudiesBySlug[slug];
   if (!study) notFound();
 
   const caseUrl = `${siteConfig.baseUrl}/case-studies/${study.slug}`;
+
+  // Case studies previously linked to no insights and never back to the index.
+  const industry = getIndustryForPath(`/case-studies/${study.slug}`);
+  const insightStatuses = await listInsightSlugStatuses();
+  const hiddenInsightSlugs = new Set(
+    insightStatuses.filter((item) => item.status !== ContentStatus.PUBLISHED).map((item) => item.slug),
+  );
+  const relatedLinks = [
+    ...insights
+      .filter((post) => !hiddenInsightSlugs.has(post.slug) && getIndustryForPath(`/insights/${post.slug}`) === industry)
+      .slice(0, 2)
+      .map((post) => ({ label: post.title, href: `/insights/${post.slug}`, description: post.excerpt })),
+    { label: 'All case studies', href: '/case-studies', description: 'Every published deployment with its constraints and outcome.' },
+  ];
 
   return (
     <>
@@ -104,6 +127,11 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps
       ])} />
 
       <CaseStudyProofPage study={study} />
+      <RelatedLinksRail
+        kicker="Related reading"
+        title="Context behind this build."
+        links={relatedLinks}
+      />
     </>
   );
 }

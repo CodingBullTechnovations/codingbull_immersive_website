@@ -24,7 +24,7 @@ export default function NotFound() {
           Error 404
         </span>
         
-        <h1 className="text-4xl sm:text-6xl font-black font-[family-name:var(--font-outfit)] text-white mb-8 tracking-tight">
+        <h1 className="text-4xl sm:text-6xl font-black font-[family-name:var(--font-display)] text-white mb-8 tracking-tight">
           System Path <span className="bg-gradient-to-r from-teal to-white bg-clip-text text-transparent italic">Not Found.</span>
         </h1>
 
@@ -49,7 +49,7 @@ export default function NotFound() {
         </div>
 
         <div className="mt-24 pt-8 border-t border-white/5">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/20 font-medium">
+          <p className="text-xs uppercase tracking-[0.2em] text-white/20 font-medium">
             CodingBull Technovations Pvt. Ltd.
           </p>
         </div>

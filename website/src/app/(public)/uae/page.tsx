@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { CountryAuthorityPage } from '@/components/sections/CountryAuthorityPage';
 import { generatePageMetadata, pageMetadata } from '@/lib/seo';
+import { JsonLd, generateBreadcrumbSchema } from '@/lib/schema';
+import { siteConfig } from '@/content/site';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { countrySiblings } from '@/content/link-graph';
 
 export const metadata: Metadata = generatePageMetadata(pageMetadata.uae);
 
@@ -72,7 +76,12 @@ const uaeCaseStudies = [
 
 export default function UAEPage() {
   return (
-    <CountryAuthorityPage
+    <>
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'UAE', url: `${siteConfig.baseUrl}/uae` },
+      ])} />
+      <CountryAuthorityPage
       title="Custom Software Development for UAE Businesses"
       subtitle="CodingBull serves UAE businesses remotely from India with websites, CRM, e-commerce, inventory and order systems, clinic software, dashboards, and business automation."
       marketLabel="UAE Software Development"
@@ -115,6 +124,13 @@ export default function UAEPage() {
       caseStudySectionDescription="Review healthcare and business website examples before discussing a UAE CRM, e-commerce, inventory, clinic software, dashboard, or automation project."
       ctaLabel="Request UAE Build Plan"
       ctaTrackingSource="uae_page_cta_primary"
-    />
+      />
+      <RelatedLinksRail
+        kicker="Other markets"
+        title="Delivery in other regions."
+        links={countrySiblings('/uae')}
+        intro="The same founder-led delivery model, scoped to each market's buying and compliance context."
+      />
+    </>
   );
 }

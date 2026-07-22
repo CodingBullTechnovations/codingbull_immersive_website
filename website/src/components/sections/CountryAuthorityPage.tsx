@@ -81,22 +81,22 @@ export function CountryAuthorityPage({
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_0.85fr]">
           <div>
             <p className="text-xs uppercase tracking-[0.16em] text-teal">{marketLabel}</p>
-            <h2 className="mt-4 text-3xl font-bold text-white">{positioningTitle}</h2>
+            <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white">{positioningTitle}</h2>
             <p className="mt-5 text-base leading-7 text-white/60">{intro}</p>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {marketHighlights.map(({ title, description }) => (
-                <article key={title} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+                <article key={title} className="border border-white/10 bg-white/[0.03] p-5">
                   <ShieldCheck className="h-4 w-4 text-teal" />
-                  <h3 className="mt-3 text-sm font-semibold text-white">{title}</h3>
-                  <p className="mt-2 text-xs leading-5 text-white/50">{description}</p>
+                  <h3 className="font-[family-name:var(--font-display)] mt-3 text-sm font-semibold text-white">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-white/55">{description}</p>
                 </article>
               ))}
             </div>
           </div>
 
-          <aside className="rounded-lg border border-white/10 bg-black/30 p-6">
+          <aside className="border border-white/10 bg-black/30 p-6">
             <Globe2 className="h-5 w-5 text-teal" />
-            <h3 className="mt-4 text-xl font-semibold text-white">Market delivery notes</h3>
+            <h3 className="font-[family-name:var(--font-display)] mt-4 text-xl font-semibold text-white">Market delivery notes</h3>
             <dl className="mt-6 space-y-4">
               <div>
                 <dt className="text-xs uppercase tracking-[0.14em] text-white/60">Response window</dt>
@@ -119,7 +119,7 @@ export function CountryAuthorityPage({
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 max-w-3xl">
             <p className="text-xs uppercase tracking-[0.16em] text-teal">Service Focus</p>
-            <h2 className="mt-4 text-3xl font-bold text-white">{serviceSectionTitle}</h2>
+            <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white">{serviceSectionTitle}</h2>
             {serviceSectionDescription && (
               <p className="mt-4 text-base leading-7 text-white/60">{serviceSectionDescription}</p>
             )}
@@ -129,11 +129,11 @@ export function CountryAuthorityPage({
               <Link
                 key={service.href}
                 href={service.href}
-                className="group rounded-lg border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]"
+                className="group border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-white group-hover:text-teal">{service.title}</h3>
+                    <h3 className="font-[family-name:var(--font-display)] text-xl font-semibold text-white group-hover:text-teal">{service.title}</h3>
                     <p className="mt-3 text-sm leading-6 text-white/55">{service.description}</p>
                   </div>
                   <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-teal" />
@@ -149,7 +149,7 @@ export function CountryAuthorityPage({
           <div className="mx-auto max-w-6xl">
             <div className="mb-10 max-w-3xl">
               <p className="text-xs uppercase tracking-[0.16em] text-teal">Case Study Proof</p>
-              <h2 className="mt-4 text-3xl font-bold text-white">{caseStudySectionTitle}</h2>
+              <h2 className="font-[family-name:var(--font-display)] mt-4 text-3xl font-bold text-white">{caseStudySectionTitle}</h2>
               <p className="mt-4 text-base leading-7 text-white/60">{caseStudySectionDescription}</p>
             </div>
             <div className="grid gap-5 md:grid-cols-3">
@@ -157,9 +157,9 @@ export function CountryAuthorityPage({
                 <Link
                   key={caseStudy.href}
                   href={caseStudy.href}
-                  className="group rounded-lg border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]"
+                  className="group border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-teal/30 hover:bg-white/[0.05]"
                 >
-                  <h3 className="text-lg font-semibold text-white group-hover:text-teal">{caseStudy.title}</h3>
+                  <h3 className="font-[family-name:var(--font-display)] text-lg font-semibold text-white group-hover:text-teal">{caseStudy.title}</h3>
                   <p className="mt-3 text-sm leading-6 text-white/55">{caseStudy.description}</p>
                   <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-teal">
                     View case study
@@ -174,9 +174,9 @@ export function CountryAuthorityPage({
 
       <SectionWrapper className="border-y border-white/10 bg-black/30 py-16">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2">
-          <article className="rounded-lg border border-white/10 bg-white/[0.03] p-6">
+          <article className="border border-white/10 bg-white/[0.03] p-6">
             <FileText className="h-5 w-5 text-teal" />
-            <h2 className="mt-4 text-2xl font-bold text-white">Buyer questions we resolve before build</h2>
+            <h2 className="font-[family-name:var(--font-display)] mt-4 text-2xl font-bold text-white">Buyer questions we resolve before build</h2>
             <ul className="mt-6 space-y-3">
               {buyingSignals.map((signal) => (
                 <li key={signal} className="flex items-start gap-3 text-sm leading-6 text-white/60">
@@ -187,9 +187,9 @@ export function CountryAuthorityPage({
             </ul>
           </article>
 
-          <article className="rounded-lg border border-white/10 bg-white/[0.03] p-6">
+          <article className="border border-white/10 bg-white/[0.03] p-6">
             <Clock3 className="h-5 w-5 text-teal" />
-            <h2 className="mt-4 text-2xl font-bold text-white">Proof signals clients should expect</h2>
+            <h2 className="font-[family-name:var(--font-display)] mt-4 text-2xl font-bold text-white">Proof signals clients should expect</h2>
             <ul className="mt-6 space-y-3">
               {proofPoints.map((point) => (
                 <li key={point} className="flex items-start gap-3 text-sm leading-6 text-white/60">
@@ -203,8 +203,8 @@ export function CountryAuthorityPage({
       </SectionWrapper>
 
       <SectionWrapper className="py-16">
-        <div className="mx-auto max-w-5xl rounded-lg border border-white/10 bg-white/[0.03] px-8 py-10 text-center">
-          <h2 className="text-3xl font-bold text-white">Need a scoped software build plan?</h2>
+        <div className="mx-auto max-w-5xl border border-white/10 bg-white/[0.03] px-8 py-10 text-center">
+          <h2 className="font-[family-name:var(--font-display)] text-3xl font-bold text-white">Need a scoped software build plan?</h2>
           <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-white/60">
             Share the workflow, country context, integrations, timeline, and operational constraints. CodingBull will return a fixed-scope recommendation with clear delivery phases.
           </p>

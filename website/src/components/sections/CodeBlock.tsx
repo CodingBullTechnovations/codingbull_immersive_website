@@ -22,8 +22,8 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative border border-white/[0.06] rounded-xl overflow-hidden bg-[#07070a] my-8 group/code shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
-      <div className="flex items-center justify-between px-5 py-2.5 bg-white/[0.02] border-b border-white/[0.04] text-[10px] font-mono tracking-widest text-white/60 uppercase">
+    <div className="relative border border-white/[0.06] overflow-hidden bg-[var(--surface-card)] my-8 group/code ">
+      <div className="flex items-center justify-between px-5 py-2.5 bg-white/[0.02] border-b border-white/[0.04] text-xs font-mono tracking-widest text-white/60 uppercase">
         <span>{language}</span>
         <button
           onClick={handleCopy}

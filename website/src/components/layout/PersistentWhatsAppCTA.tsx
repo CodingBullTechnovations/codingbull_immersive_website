@@ -42,7 +42,7 @@ export function PersistentWhatsAppCTA() {
           : 'bottom-[calc(env(safe-area-inset-bottom)+1rem)] lg:bottom-6'
       }`}
     >
-      <div className="hidden min-[390px]:block rounded-full border border-white/10 bg-black/80 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-white/70 shadow-xl backdrop-blur-md lg:px-4 lg:py-2 lg:text-[10px]">
+      <div className="hidden min-[390px]:block rounded-full border border-white/10 bg-black/80 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white/70 shadow-xl backdrop-blur-md lg:px-4 lg:py-2 lg:text-xs">
         Founder Available
       </div>
       
@@ -51,8 +51,7 @@ export function PersistentWhatsAppCTA() {
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleClick}
-        className="
-          pointer-events-auto
+        className="pointer-events-auto
           relative
           flex h-14 w-14 items-center justify-center
           bg-primary hover:bg-primary-hover
@@ -60,8 +59,7 @@ export function PersistentWhatsAppCTA() {
           transition-all duration-300
           hover:scale-110 active:scale-95
           group
-          lg:h-16 lg:w-16 lg:shadow-[0_0_42px_rgba(45,212,191,0.32)]
-        "
+          lg:h-16 lg:w-16 lg:shadow-[0_0_42px_rgba(45,212,191,0.32)]"
         aria-label="Contact us on WhatsApp"
       >
         <span className="absolute inset-0 rounded-full bg-primary/25 motion-safe:animate-pulse pointer-events-none" />

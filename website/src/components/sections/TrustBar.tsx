@@ -1,37 +1,64 @@
-'use client';
-
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import Link from 'next/link';
 import type { TrustStat } from '@/types/content';
+import { Reveal } from '@/components/animations/Reveal';
 
 interface TrustBarProps {
   stats: TrustStat[];
 }
 
-export function TrustBar({ stats }: TrustBarProps) {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
+const proofSources = [
+  { label: 'About the founder', href: '/about' },
+  { label: 'Terms of engagement', href: '/terms' },
+  { label: 'Published work', href: '/case-studies' },
+  { label: 'Company profile', href: '/about' },
+];
 
+export function TrustBar({ stats }: TrustBarProps) {
   return (
-    <section ref={ref} className="relative border-y border-white/[0.04] bg-white/[0.01] py-10 lg:py-14">
-      <div className="max-w-[var(--max-w-content)] mx-auto px-6 lg:px-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={false}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }}
-              className="flex flex-col items-center text-center gap-2"
-            >
-              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-teal to-[#5aeacc] bg-clip-text text-transparent font-[family-name:var(--font-outfit)]">
-                {stat.value}
-              </span>
-              <span className="text-[11px] sm:text-xs text-white/60 font-medium uppercase tracking-wider">
-                {stat.label}
-              </span>
-            </motion.div>
-          ))}
+    <section className="mind-section cb-section border-y border-white/[0.08]" aria-labelledby="proof-ledger-title">
+      <div className="cb-shell">
+        <Reveal className="grid gap-10 border-b border-white/10 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+          <div>
+            <p className="cb-kicker">Evidence ledger / 01</p>
+            <h2 id="proof-ledger-title" className="cb-display mt-6 max-w-[11ch]">
+              Facts before promises.
+            </h2>
+          </div>
+          <p className="cb-copy max-w-2xl lg:justify-self-end">
+            The operating model, published work, and company identity a buyer can inspect before starting a conversation.
+          </p>
+        </Reveal>
+
+        <Reveal mode="group" className="grid md:grid-cols-2 xl:grid-cols-4">
+          {stats.map((stat, index) => {
+            const source = proofSources[index];
+            return (
+              <article
+                key={stat.label}
+                data-reveal=""
+                style={{ ['--reveal-delay' as string]: `${index * 0.08}s` }}
+                className="group border-b border-white/10 py-9 md:border-r md:px-7 md:odd:pl-0 md:even:border-r-0 xl:border-b-0 xl:border-r xl:px-7 xl:first:pl-0 xl:last:border-r-0 xl:last:pr-0"
+              >
+                <p className="font-[family-name:var(--font-display)] text-[clamp(2.35rem,4.3vw,4.2rem)] font-medium leading-none tracking-[-0.035em] text-white">
+                  {stat.value}
+                </p>
+                <h3 className="mt-4 text-sm font-semibold text-white/85">{stat.label}</h3>
+                {source && (
+                  <Link
+                    href={source.href}
+                    className="cb-mono mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[var(--accent-soft)] transition-colors hover:text-white"
+                  >
+                    {source.label} <span aria-hidden="true">↗</span>
+                  </Link>
+                )}
+              </article>
+            );
+          })}
+        </Reveal>
+
+        <div className="cb-mono mt-12 flex flex-col justify-between gap-3 border-t border-white/10 pt-5 text-xs uppercase tracking-[0.16em] text-white/58 sm:flex-row">
+          <span>CodingBull Technovations Pvt. Ltd. · Ahmedabad, Gujarat</span>
+          <span>GSTIN 24AAMCC7617E1ZP</span>
         </div>
       </div>
     </section>

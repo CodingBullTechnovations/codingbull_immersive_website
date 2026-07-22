@@ -26,8 +26,8 @@ const WhatsAppIcon = () => (
 );
 
 const ArrowIcon = () => (
-  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-    <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 transition-transform duration-300 group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5">
+    <path d="M5 15 15 5M7 5h8v8" />
   </svg>
 );
 
@@ -38,11 +38,11 @@ const icons: Record<string, React.FC> = {
 
 const variantClasses: Record<CTAVariant, string> = {
   primary:
-    'bg-primary hover:bg-primary-hover text-black shadow-glow hover:shadow-[0_0_30px_rgba(45,212,191,0.5)] transition-all duration-300',
+    'border border-primary bg-primary text-[var(--accent-ink)] hover:border-primary-hover hover:bg-primary-hover shadow-glow',
   secondary:
-    'border border-primary/40 hover:border-primary/80 text-primary hover:bg-primary/5',
+    'border border-white/18 bg-white/[0.025] text-white/80 hover:border-primary/55 hover:bg-primary/[0.055] hover:text-white',
   ghost:
-    'text-text-secondary hover:text-text-primary hover:bg-surface-hover',
+    'border border-transparent text-text-secondary hover:border-white/10 hover:bg-white/[0.035] hover:text-text-primary',
 };
 
 export function Button({
@@ -66,8 +66,8 @@ export function Button({
   const isExternal = finalHref?.startsWith('http') || finalHref?.startsWith('https');
 
   const sizeClass = size === 'large'
-    ? 'px-8 py-4 text-base'
-    : 'px-6 py-3 text-sm';
+    ? 'min-h-14 px-6 py-4 text-[12px] sm:px-7'
+    : 'min-h-11 px-5 py-3 text-xs';
 
   const handleClick = (e: React.MouseEvent) => {
     if (disabled) {
@@ -84,7 +84,8 @@ export function Button({
   };
 
   const classes = `
-    inline-flex items-center gap-2 font-semibold rounded-[var(--radius-button)]
+    group/button inline-flex items-center justify-center gap-3 rounded-[var(--radius-button)]
+    font-semibold uppercase tracking-[0.13em]
     transition-all duration-[var(--duration-normal)] cursor-pointer
     disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale-[0.5]
     ${sizeClass} ${variantClasses[variant]} ${className}

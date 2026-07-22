@@ -9,6 +9,8 @@ import { homeContent } from '@/content/home';
 import { generatePageMetadata } from '@/lib/seo';
 import { JsonLd, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/schema';
 import { siteConfig } from '@/content/site';
+import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
+import { ahmedabadSiblings } from '@/content/link-graph';
 
 const pageUrl = `${siteConfig.baseUrl}/web-development-company-ahmedabad`;
 
@@ -98,13 +100,12 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
         title="Web Development Company in Ahmedabad"
         subtitle="CodingBull builds SEO-ready business websites and lead-generation websites for Ahmedabad companies, with proper structure, contact flows, WhatsApp CTA, analytics readiness, and maintainable code."
         badge="Ahmedabad Web Development"
-        accentColor="sky"
       />
 
       <SectionWrapper className="py-20 lg:py-28">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">Business website development in Ahmedabad</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Business website development in Ahmedabad</p>
             <h2 className="mt-4 text-3xl font-bold text-white lg:text-4xl">Websites built for inquiries, not only a digital brochure.</h2>
             <p className="mt-5 text-base leading-7 text-white/60">
               CodingBull is a website development company Ahmedabad businesses can use when they need a site that explains services clearly, routes buyers to WhatsApp or contact, and leaves room for CRM, dashboards, e-commerce, HRMS, or custom software later.
@@ -116,8 +117,8 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {websiteTypes.map((item) => (
-              <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
-                <CheckCircle2 className="h-4 w-4 text-sky-400" />
+              <div key={item} className="border border-white/10 bg-white/[0.03] p-5">
+                <CheckCircle2 className="h-4 w-4 text-[var(--accent-soft)]" />
                 <p className="mt-3 text-sm leading-6 text-white/65">{item}</p>
               </div>
             ))}
@@ -128,12 +129,12 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
       <SectionWrapper className="border-y border-white/10 bg-black/30 py-20">
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">What is included</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-soft)]">What is included</p>
             <h2 className="mt-4 text-3xl font-bold text-white lg:text-4xl">The foundation a lead-generation website needs.</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {includedItems.map((item) => (
-              <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+              <div key={item} className="border border-white/10 bg-white/[0.03] p-5">
                 <p className="text-sm leading-6 text-white/60">{item}</p>
               </div>
             ))}
@@ -143,16 +144,16 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
 
       <SectionWrapper className="py-20">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2">
-          <article className="rounded-lg border border-white/10 bg-white/[0.03] p-7">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">Why not just a template website</p>
+          <article className="border border-white/10 bg-white/[0.03] p-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Why not just a template website</p>
             <h2 className="mt-4 text-2xl font-bold text-white">Templates rarely understand the sales path.</h2>
             <p className="mt-5 text-sm leading-6 text-white/60">
               A template can look complete while still missing buyer intent, service hierarchy, local search terms, conversion flow, and maintainable code. CodingBull builds business website development Ahmedabad companies can extend into stronger landing pages, CRM, dashboards, booking, or automation when the business grows.
             </p>
           </article>
 
-          <article className="rounded-lg border border-white/10 bg-white/[0.03] p-7">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">Website plus lead capture</p>
+          <article className="border border-white/10 bg-white/[0.03] p-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Website plus lead capture</p>
             <h2 className="mt-4 text-2xl font-bold text-white">Contact, WhatsApp, and source-page readiness.</h2>
             <p className="mt-5 text-sm leading-6 text-white/60">
               A lead-generation website should make it easy for a visitor to ask for scope. CodingBull connects clear CTAs, WhatsApp entry points, contact forms, and analytics/source readiness so Ahmedabad businesses can see which pages create inquiries.
@@ -165,7 +166,7 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">Technical foundation</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Technical foundation</p>
               <h2 className="mt-4 text-3xl font-bold text-white lg:text-4xl">Performance, SEO basics, responsive design, and Search Console readiness.</h2>
               <p className="mt-5 text-sm leading-6 text-white/60">
                 Good web development is not only visual polish. The site should be crawlable, responsive, maintainable, and ready for the basic search and lead-generation systems a growing Ahmedabad business needs.
@@ -173,7 +174,7 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {technicalFoundation.map((item) => (
-                <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
+                <div key={item} className="border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
                   {item}
                 </div>
               ))}
@@ -185,22 +186,22 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
       <SectionWrapper className="py-20">
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">Typical starting-scope guidance</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-soft)]">Typical starting-scope guidance</p>
             <h2 className="mt-4 text-3xl font-bold text-white lg:text-4xl">Start with the site structure that can generate and qualify leads.</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {startingScopes.map((item) => (
-              <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
+              <div key={item} className="border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-white/60">
                 {item}
               </div>
             ))}
           </div>
-          <div className="mt-8 rounded-lg border border-white/10 bg-white/[0.03] p-6">
+          <div className="mt-8 border border-white/10 bg-white/[0.03] p-6">
             <h3 className="text-lg font-semibold text-white">Need custom software beyond the website?</h3>
             <p className="mt-3 text-sm leading-6 text-white/60">
               If the website needs to connect with admin panels, CRM, HRMS, e-commerce, healthcare management, dashboards, or workflow automation, review CodingBull as a custom software development company in Ahmedabad.
             </p>
-            <Link href="/software-development-company-ahmedabad" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-sky-400 hover:text-white">
+            <Link href="/software-development-company-ahmedabad" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-soft)] hover:text-white">
               View software development page
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -210,11 +211,11 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
 
       <SectionWrapper className="border-y border-white/10 bg-black/30 py-20">
         <div className="mx-auto max-w-4xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">FAQs</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent-soft)]">FAQs</p>
           <h2 className="mt-4 text-3xl font-bold text-white">Web development questions from Ahmedabad businesses.</h2>
           <div className="mt-8 space-y-4">
             {faqs.map((faq) => (
-              <div key={faq.question} className="rounded-lg border border-white/10 bg-white/[0.03] p-6">
+              <div key={faq.question} className="border border-white/10 bg-white/[0.03] p-6">
                 <h3 className="font-semibold text-white">{faq.question}</h3>
                 <p className="mt-3 text-sm leading-6 text-white/60">{faq.answer}</p>
               </div>
@@ -222,6 +223,13 @@ export default function WebDevelopmentCompanyAhmedabadPage() {
           </div>
         </div>
       </SectionWrapper>
+
+      <RelatedLinksRail
+        kicker="Ahmedabad"
+        title="More for Ahmedabad buyers."
+        links={ahmedabadSiblings('/web-development-company-ahmedabad')}
+        intro="Related local pages covering the same delivery capability from a different buying intent."
+      />
 
       <CTASection cta={homeContent.finalCTA} />
     </>

@@ -25,16 +25,24 @@ export const siteConfig: SiteConfig = {
   email: 'codingbullz@gmail.com',
   phone: '+91 79848 91664',
   address: {
-    street: 'Ahmedabad',
+    // Street intentionally unpublished (owner decision). Postal code confirmed
+    // by the owner as 380061 on 2026-07-12, resolving the earlier 380015/380061
+    // ambiguity. Empty fields are omitted from schema, never emitted blank.
+    street: '',
     city: 'Ahmedabad',
     state: 'Gujarat',
-    country: 'India',
-    zip: '380015',
+    country: 'IN',
+    zip: '380061',
   },
-  socialLinks: {}, // Placeholder until profiles are verified as active
+  // Public profile URLs are managed in Admin → Social Links, not here. Schema
+  // `sameAs` is populated at request time via sameAsSocialUrls(config).
+  socialLinks: {},
   registration: {
-    gst: '24AAMCC7617E1ZP', // Add when available
-    cin: '', // Add when available
+    gst: '24AAMCC7617E1ZP',
+    // CIN is NOT the GST number. It is the 21-character Corporate Identity
+    // Number issued by the MCA (e.g. U62013GJ2024PTC123456), printed on the
+    // Certificate of Incorporation. Add it here to strengthen corporate trust.
+    cin: '',
   },
   baseUrl: env.baseUrl,
 };

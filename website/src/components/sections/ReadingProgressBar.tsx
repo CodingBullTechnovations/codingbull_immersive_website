@@ -31,7 +31,7 @@ export function ReadingProgressBar() {
         />
       </div>
       {/* Floating Pill - Visible only on Mobile/Tablet */}
-      <div className="fixed top-20 right-4 bg-black/85 backdrop-blur-md border border-white/10 rounded-full px-2.5 py-1 text-[9px] font-mono text-teal font-bold shadow-xl lg:hidden">
+      <div className="fixed top-20 right-4 bg-black/85 backdrop-blur-md border border-white/10 rounded-full px-2.5 py-1 text-xs font-mono text-teal font-bold shadow-xl lg:hidden">
         {Math.round(progress)}%
       </div>
     </div>

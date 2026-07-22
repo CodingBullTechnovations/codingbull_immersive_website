@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md flex-col justify-center">
         <div className="mb-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-teal">CodingBull Admin</p>
-          <h1 className="mt-4 text-4xl font-bold tracking-tight font-[family-name:var(--font-outfit)]">Sign in</h1>
+          <h1 className="mt-4 text-4xl font-bold tracking-tight font-[family-name:var(--font-display)]">Sign in</h1>
           <p className="mt-3 text-sm leading-6 text-white/50">
             Manage leads, content, conversion analytics, and website growth operations.
           </p>

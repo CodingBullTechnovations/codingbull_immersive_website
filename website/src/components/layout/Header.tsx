@@ -1,434 +1,253 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 import { mainNav } from '@/content/navigation';
 import { isNavGroup } from '@/types/content';
 import { Button } from '@/components/ui/Button';
 
 export function Header() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
-  const mobileCloseButtonRef = useRef<HTMLButtonElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobilePanelRef = useRef<HTMLElement>(null);
-  const pathname = usePathname();
 
-  // Close mobile menu on route/pathname change
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 18);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       setIsMobileOpen(false);
+      setOpenDropdown(null);
     });
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-    };
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {
-    let lastScrollHeight = document.documentElement.scrollHeight;
-
-    const updateHeight = () => {
-      lastScrollHeight = document.documentElement.scrollHeight;
-    };
-
-    // Use ResizeObserver to dynamically track document height changes (like image loads)
-    // without triggering layout reflows during scroll ticks.
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
-      resizeObserver = new ResizeObserver(() => {
-        updateHeight();
-      });
-      if (document.body) {
-        resizeObserver.observe(document.body);
-      }
-    }
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 20);
-      
-      // Use cached scrollHeight to prevent layout thrashing.
-      // Use a smaller threshold (30px) so the header hides only at the very bottom
-      // and shows immediately when scrolling up.
-      const isAtBottom = window.innerHeight + scrollY >= lastScrollHeight - 30;
-      setIsHidden(isAtBottom);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Initial calculation
-    updateHeight();
-
+    if (!isMobileOpen) return;
+    const menuButton = menuButtonRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const firstLink = mobilePanelRef.current?.querySelector<HTMLElement>('a[href], button');
+    firstLink?.focus();
     return () => {
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-      window.removeEventListener('scroll', handleScroll);
+      document.body.style.overflow = previousOverflow;
+      menuButton?.focus();
     };
-  }, []);
-
-  // Handle body scroll locking when mobile menu is open
-  useEffect(() => {
-    if (isMobileOpen) {
-      const menuButton = mobileMenuButtonRef.current;
-      document.body.style.overflow = 'hidden';
-      const frame = window.requestAnimationFrame(() => {
-        mobileCloseButtonRef.current?.focus();
-      });
-
-      return () => {
-        window.cancelAnimationFrame(frame);
-        document.body.style.overflow = '';
-        menuButton?.focus();
-      };
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
   }, [isMobileOpen]);
 
-  const closeMobileMenu = () => {
-    setIsMobileOpen(false);
-  };
-
-  const handleMobileMenuKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+  const handleMobileKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key === 'Escape') {
-      event.preventDefault();
-      closeMobileMenu();
+      setIsMobileOpen(false);
       return;
     }
-
-    if (event.key !== 'Tab') {
-      return;
-    }
-
-    const panel = mobilePanelRef.current;
-    if (!panel) {
-      return;
-    }
-
-    const focusableElements = Array.from(
-      panel.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      )
-    ).filter((element) => element.offsetParent !== null);
-
-    if (focusableElements.length === 0) {
+    if (event.key !== 'Tab' || !mobilePanelRef.current) return;
+    const focusable = Array.from(
+      mobilePanelRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
       event.preventDefault();
-      return;
-    }
-
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
-
-    if (event.shiftKey && document.activeElement === firstElement) {
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
       event.preventDefault();
-      lastElement.focus();
-    } else if (!event.shiftKey && document.activeElement === lastElement) {
-      event.preventDefault();
-      firstElement.focus();
+      first.focus();
     }
   };
 
   return (
     <>
-      <header
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        isHidden ? '-translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'
-      } ${
-        isScrolled
-          ? 'py-2 bg-black/95 backdrop-blur-xl border-b border-white/[0.04] shadow-[0_4px_30px_rgba(0,0,0,0.3)]'
-          : 'py-4 bg-transparent'
-      }`}
-    >
-      <div className="max-w-[var(--max-w-wide)] mx-auto px-6 lg:px-10 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group relative">
-          <div className="relative w-16 h-16 lg:w-20 lg:h-20 transition-transform duration-500 group-hover:scale-105">
-            <Image
-              src="/images/logo/logo.png"
-              alt="CodingBull Technovations"
-              fill
-              sizes="(max-width: 768px) 48px, 56px"
-              className="object-contain"
-              priority
-              loading="eager"
-              quality={60}
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xl lg:text-2xl font-bold font-[family-name:var(--font-outfit)] tracking-tight text-white leading-none">
-              Coding<span className="text-teal">Bull</span>
+      <header className={`fixed inset-x-0 top-0 z-[100] transition-all duration-300 ${isScrolled ? 'border-b border-white/[0.08] bg-[#05070a]/92 backdrop-blur-xl' : 'bg-gradient-to-b from-[#05070a]/85 to-transparent'}`}>
+        <div className="mx-auto flex h-20 max-w-[100rem] items-center justify-between px-5 sm:px-8 lg:px-10 xl:px-14">
+          <Link href="/" className="group flex items-center gap-3" aria-label="CodingBull Technovations home">
+            <span className="relative h-11 w-9 shrink-0">
+              <Image
+                src="/images/logo/logo.png"
+                alt=""
+                fill
+                sizes="36px"
+                priority
+                className="object-contain transition-transform duration-300 group-hover:scale-[1.04]"
+              />
             </span>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-medium hidden sm:block mt-1">
-              Technovations Pvt. Ltd.
+            <span className="flex flex-col">
+              <span className="font-[family-name:var(--font-display)] text-[17px] font-semibold leading-none tracking-[-0.035em] text-white">
+                Coding<span className="text-[var(--accent)]">Bull</span>
+              </span>
+              <span className="mt-1 font-mono text-[10.5px] uppercase tracking-[0.14em] text-white/45">
+                Technovations Pvt. Ltd.
+              </span>
             </span>
-          </div>
-        </Link>
+          </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-1" role="navigation" aria-label="Main navigation">
-          {mainNav.map((entry) =>
-            isNavGroup(entry) ? (
-              <div
-                key={entry.label}
-                className="relative"
-                onMouseEnter={() => setOpenDropdown(entry.label)}
-                onMouseLeave={() => setOpenDropdown(null)}
-                onFocus={() => setOpenDropdown(entry.label)}
-                onBlur={(event) => {
-                  if (!event.currentTarget.contains(event.relatedTarget)) {
-                    setOpenDropdown(null);
-                  }
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Escape') {
-                    event.preventDefault();
-                    setOpenDropdown(null);
-                    event.currentTarget.querySelector<HTMLAnchorElement>('a')?.focus();
-                  }
-                }}
-              >
-                <Link
-                  href={entry.href || '#'}
-                  className="px-4 py-2 text-[13px] font-medium text-white/60 hover:text-white transition-colors duration-300 flex items-center gap-1.5 cursor-pointer rounded-lg hover:bg-white/[0.04]"
-                  aria-expanded={openDropdown === entry.label}
-                  aria-haspopup="true"
-                  aria-controls={`nav-dropdown-${entry.label.toLowerCase().replace(/\s+/g, '-')}`}
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
+            {mainNav.map((entry) => {
+              if (!isNavGroup(entry)) {
+                const active = pathname === entry.href || pathname?.startsWith(`${entry.href}/`);
+                return (
+                  <Link
+                    key={entry.href}
+                    href={entry.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={`px-3 py-2 text-xs font-medium tracking-[0.04em] transition-colors ${active ? 'text-white' : 'text-white/52 hover:text-white'}`}
+                  >
+                    {entry.label}
+                  </Link>
+                );
+              }
+
+              const dropdownId = `nav-${entry.label.toLowerCase().replaceAll(' ', '-')}`;
+              const active = entry.items.some((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`));
+              return (
+                <div
+                  key={entry.label}
+                  className="relative"
+                  onMouseEnter={() => setOpenDropdown(entry.label)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                  onFocus={() => setOpenDropdown(entry.label)}
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) setOpenDropdown(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Escape') setOpenDropdown(null);
+                  }}
                 >
-                  {entry.label}
-                  <svg className={`w-3 h-3 transition-transform duration-200 ${openDropdown === entry.label ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                  </svg>
-                </Link>
+                  <Link
+                    href={entry.href || entry.items[0].href}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium tracking-[0.04em] transition-colors ${active ? 'text-white' : 'text-white/52 hover:text-white'}`}
+                    aria-expanded={openDropdown === entry.label}
+                    aria-controls={dropdownId}
+                    aria-haspopup="true"
+                  >
+                    {entry.label}
+                    <span aria-hidden="true" className={`text-xs transition-transform ${openDropdown === entry.label ? 'rotate-45' : ''}`}>＋</span>
+                  </Link>
 
-                <AnimatePresence>
-                  {openDropdown === entry.label && (
-                    <motion.div
-                      id={`nav-dropdown-${entry.label.toLowerCase().replace(/\s+/g, '-')}`}
-                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                      transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-80 bg-black/95 backdrop-blur-2xl rounded-2xl border border-white/[0.06] shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden z-[110]"
-                    >
-                      <div className="p-2">
-                        {entry.items.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className="group/item flex items-start gap-3 px-4 py-3.5 rounded-xl hover:bg-white/[0.04] transition-all duration-200"
-                          >
-                            <div className="mt-0.5 w-8 h-8 rounded-lg bg-teal/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-teal/20 transition-colors">
-                              <div className="w-1.5 h-1.5 rounded-full bg-teal" />
-                            </div>
-                            <div>
-                              <div className="text-sm font-medium text-white/90 group-hover/item:text-white">
-                                {item.label}
-                              </div>
-                              {item.description && (
-                                <div className="text-xs text-white/60 mt-0.5 leading-relaxed">
-                                  {item.description}
-                                </div>
-                              )}
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <Link
-                key={entry.href}
-                href={entry.href}
-                className="px-4 py-2 text-[13px] font-medium text-white/60 hover:text-white transition-colors duration-300 rounded-lg hover:bg-white/[0.04]"
-              >
-                {entry.label}
-              </Link>
-            )
-          )}
-        </nav>
+                  <AnimatePresence>
+                    {openDropdown === entry.label && (
+                      <motion.div
+                        id={dropdownId}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 8 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute left-1/2 top-full w-[23rem] -translate-x-1/2 pt-4"
+                      >
+                        <div className="border border-white/10 bg-[var(--surface-panel)]/98 p-2 shadow-[0_28px_80px_-25px_rgba(0,0,0,0.9)] backdrop-blur-2xl">
+                          <div className="mb-1 flex items-center justify-between border-b border-white/[0.07] px-3 py-2 font-mono text-xs uppercase tracking-[0.2em] text-white/28">
+                            <span>{entry.label} directory</span>
+                            <span>0{entry.items.length}</span>
+                          </div>
+                          {entry.items.map((item, index) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className="group/item grid grid-cols-[2rem_1fr] gap-3 border-b border-white/[0.05] px-3 py-3 last:border-b-0 hover:bg-white/[0.035]"
+                            >
+                              <span className="pt-0.5 font-mono text-xs text-[var(--accent-soft)]">0{index + 1}</span>
+                              <span>
+                                <span className="block text-xs font-medium text-white/82 group-hover/item:text-white">{item.label}</span>
+                                {item.description && <span className="mt-1 block text-xs leading-4 text-white/35">{item.description}</span>}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </nav>
 
-        <div className="hidden lg:flex items-center gap-5">
-          <Button
-            label="Initialize Project"
-            href="/contact"
-            variant="primary"
-            trackingSource="header_cta"
-            size="default"
-          />
-        </div>
-
-        {/* Mobile Hamburger */}
-        <button
-          ref={mobileMenuButtonRef}
-          className="lg:hidden relative z-[70] w-12 h-12 flex items-center justify-center cursor-pointer transition-transform duration-200 active:scale-90"
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-          aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isMobileOpen}
-          aria-controls="mobile-navigation"
-        >
-          <div className="w-6 flex flex-col gap-[5px]">
-            <span
-              className={`w-full h-[1.5px] bg-white rounded-full transition-all duration-300 origin-center ${
-                isMobileOpen ? 'rotate-45 translate-y-[6.5px]' : ''
-              }`}
-            />
-            <span
-              className={`w-full h-[1.5px] bg-white rounded-full transition-all duration-300 ${
-                isMobileOpen ? 'opacity-0 scale-x-0' : ''
-              }`}
-            />
-            <span
-              className={`w-full h-[1.5px] bg-white rounded-full transition-all duration-300 origin-center ${
-                isMobileOpen ? '-rotate-45 -translate-y-[6.5px]' : ''
-              }`}
-            />
+          <div className="hidden lg:block">
+            <Button label="Start a project" href="/contact" variant="primary" icon="arrow" trackingSource="header_cta" />
           </div>
-        </button>
-      </div>
-    </header>
 
-    {/* Mobile Menu Overlay */}
-    <AnimatePresence>
-      {isMobileOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
+          <button
+            ref={menuButtonRef}
+            type="button"
+            onClick={() => setIsMobileOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center border border-white/10 bg-white/[0.025] lg:hidden"
+            aria-expanded={isMobileOpen}
+            aria-controls="mobile-navigation"
+            aria-label={isMobileOpen ? 'Close navigation' : 'Open navigation'}
+          >
+            <span className="relative h-4 w-5" aria-hidden="true">
+              <span className={`absolute left-0 top-1 h-px w-5 bg-white transition-transform ${isMobileOpen ? 'translate-y-1.5 rotate-45' : ''}`} />
+              <span className={`absolute bottom-1 left-0 h-px w-5 bg-white transition-transform ${isMobileOpen ? '-translate-y-1.5 -rotate-45' : ''}`} />
+            </span>
+          </button>
+        </div>
+      </header>
+
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.nav
+            id="mobile-navigation"
+            ref={mobilePanelRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm lg:hidden z-[110]"
-            onClick={() => setIsMobileOpen(false)}
-          />
-          {/* Panel */}
-          <motion.nav
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            id="mobile-navigation"
-            ref={mobilePanelRef}
-            className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-[#060608]/90 backdrop-blur-3xl border-l border-white/[0.08] lg:hidden overflow-y-auto z-[120] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[1px] before:bg-gradient-to-b before:from-teal/60 before:via-teal/20 before:to-transparent"
+            transition={{ duration: 0.24 }}
+            className="fixed inset-0 z-[90] overflow-y-auto bg-[#05070a] px-5 pb-10 pt-28 sm:px-8 lg:hidden"
+            aria-label="Mobile navigation"
             role="dialog"
             aria-modal="true"
-            aria-label="Mobile navigation"
-            onKeyDown={handleMobileMenuKeyDown}
+            onKeyDown={handleMobileKeyDown}
           >
-            {/* Scanline pattern layer */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,rgba(255,255,255,1)_50%)] bg-[length:100%_4px] z-0" />
-
-            {/* Close Button inside Panel */}
-            <div className="absolute top-5 right-6 z-[30]">
-              <button
-                ref={mobileCloseButtonRef}
-                className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-95 text-white hover:border-white/30 hover:shadow-[0_0_15px_rgba(20,184,166,0.25)] bg-white/5 backdrop-blur-md"
-                onClick={closeMobileMenu}
-                aria-label="Close menu"
-              >
-                <div className="w-5 h-5 flex flex-col justify-center items-center relative">
-                  <span className="w-4 h-[1.5px] bg-white rounded-full rotate-45 absolute" />
-                  <span className="w-4 h-[1.5px] bg-white rounded-full -rotate-45 absolute" />
-                </div>
-              </button>
-            </div>
-
-            <div className="relative z-10 p-6 pt-24 flex flex-col justify-between min-h-full">
-              {/* Top links */}
-              <div className="flex flex-col gap-6">
-                {mainNav.map((entry, idx) =>
-                  isNavGroup(entry) ? (
-                    <div key={entry.label} className="flex flex-col gap-2">
-                      <span className="font-mono text-[9px] font-bold text-teal bg-teal/5 px-2.5 py-1 border border-teal/15 w-max tracking-[0.25em] uppercase">
-                        {'[ SECTION 0'}{idx + 1}{' // '}{entry.label}{' ]'}
-                      </span>
-                      <div className="flex flex-col gap-2 mt-2 pl-2">
-                        {entry.items.map((item, subIdx) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className="group flex flex-col gap-0.5 py-1.5 px-3 rounded-xl hover:bg-white/[0.04] transition-all duration-300 border-l border-transparent hover:border-teal/40"
-                            onClick={closeMobileMenu}
-                          >
-                            <div className="flex items-center gap-2 text-[15px] font-semibold font-[family-name:var(--font-outfit)] text-white/90 group-hover:text-teal transition-colors">
-                              <span className="font-mono text-xs text-teal/50">
-                                0{subIdx + 1}.
-                              </span>
-                              {item.label}
-                            </div>
-                            {item.description && (
-                              <span className="text-[11px] text-white/60 font-light leading-normal pl-5">
-                                {item.description}
-                              </span>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div key={entry.label} className="flex flex-col gap-2">
-                      {idx === 1 && (
-                        <span className="font-mono text-[9px] font-bold text-teal bg-teal/5 px-2.5 py-1 border border-teal/15 w-max tracking-[0.25em] uppercase mb-3 block">
-                          [ SECTION 02 // DIRECTORY ]
-                        </span>
-                      )}
-                      <Link
-                        href={entry.href}
-                        className="group flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-white/[0.04] text-[15px] font-semibold font-[family-name:var(--font-outfit)] text-white/90 hover:text-white transition-all duration-300 border-l border-transparent hover:border-teal/40 hover:pl-4"
-                        onClick={closeMobileMenu}
-                      >
-                        <span className="text-teal/50 group-hover:text-teal group-hover:translate-x-1 transition-all">
-                          &gt;
-                        </span>
-                        {entry.label}
-                      </Link>
-                    </div>
-                  )
-                )}
+            <div className="public-grid pointer-events-none absolute inset-0 opacity-35" />
+            <div className="relative mx-auto max-w-2xl">
+              <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4 font-mono text-xs uppercase tracking-[0.22em] text-white/35">
+                <span>Navigation index</span>
+                <span>CodingBull / 2026</span>
               </div>
 
-              {/* Bottom footer & CTA */}
-              <div className="flex flex-col gap-6 pt-8 mt-8 border-t border-white/[0.06]">
-                <Button
-                  label="Get Fixed-Price Quote"
-                  href="https://wa.me/917984891664?text=Hi%2C%20I'd%20like%20to%20discuss%20a%20custom%20software%20project%20with%20CodingBull."
-                  variant="primary"
-                  icon="whatsapp"
-                  trackingSource="mobile_menu_cta"
-                  className="w-full justify-center shadow-[0_0_20px_rgba(20,184,166,0.2)] hover:shadow-[0_0_35px_rgba(20,184,166,0.4)] transition-shadow duration-500 py-3.5 text-sm"
-                  size="large"
-                />
+              <div className="divide-y divide-white/[0.08] border-b border-white/[0.08]">
+                {mainNav.map((entry, index) => (
+                  <div key={entry.label} className="py-5">
+                    {isNavGroup(entry) ? (
+                      <>
+                        <Link href={entry.href || entry.items[0].href} className="mb-4 flex items-baseline gap-4 text-2xl font-medium tracking-[-0.035em] text-white">
+                          <span className="font-mono text-xs tracking-normal text-[var(--accent-soft)]">{String(index + 1).padStart(2, '0')}</span>
+                          {entry.label}
+                        </Link>
+                        <div className="grid gap-2 pl-8 sm:grid-cols-2">
+                          {entry.items.map((item) => (
+                            <Link key={item.href} href={item.href} className="text-sm leading-6 text-white/48 transition-colors hover:text-white">
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <Link href={entry.href} className="flex items-baseline gap-4 text-2xl font-medium tracking-[-0.035em] text-white">
+                        <span className="font-mono text-xs tracking-normal text-[var(--accent-soft)]">{String(index + 1).padStart(2, '0')}</span>
+                        {entry.label}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
 
-                {/* Tactical Status Footer */}
-                <div className="flex flex-col gap-2 font-mono text-[10px] text-white/60">
-                  <div className="flex items-center gap-2">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-teal"></span>
-                    </span>
-                    <span className="text-white/60 tracking-wider">SYSTEM STATUS: ONLINE</span>
-                  </div>
-                  <div className="tracking-wide">
-                    GSTIN: <span className="text-white/60">24AAMCC7617E1ZP</span>
-                  </div>
-                  <div className="text-[9px] tracking-wider text-white/60 uppercase mt-1">
-                    {'AHMEDABAD, IN // NEW YORK, USA'}
-                  </div>
-                </div>
+              <div className="mt-8">
+                <Button label="Start a project" href="/contact" variant="primary" icon="arrow" trackingSource="mobile_header_cta" size="large" className="w-full" />
               </div>
             </div>
           </motion.nav>
-        </>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
     </>
   );
 }

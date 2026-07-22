@@ -286,11 +286,11 @@ For service scope, see our [custom HRMS and payroll systems page](/services/cust
   {
     slug: 'anr-mechanicals-digital-presence',
     title: 'How We Built ANR Mechanicals\' Digital Presence',
-    excerpt: 'A deeper case study on building ANR Mechanicals\' B2B digital presence: positioning, project storytelling, technical SEO, image performance, trust signals, and lead qualification for enterprise buyers.',
+    excerpt: 'How we brought ANR Mechanicals online and structured its 150,000 sq ft New York project for Tesla as credible portfolio proof.',
     content: `
 ## The business problem
 
-ANR Mechanicals had completed large industrial and commercial projects, including a 150,000 sqft Tesla facility, but the company did not have a digital presence that reflected that scale. Their offline reputation was stronger than their search visibility. That gap matters for B2B companies because buyers often verify a vendor online before making contact.
+ANR Mechanicals had no online presence despite completing substantial industrial work, including a 150,000 sq ft project for Tesla in New York. CodingBull built ANR's website to bring that previously offline portfolio into a credible digital experience. That distinction matters: ANR completed the Tesla project; CodingBull built the website that presents ANR's work.
 
 The website did not need to feel like a startup landing page. It needed to function like a qualification asset for enterprise buyers: show proof of capability, make project scale visible, explain service areas, and let serious prospects contact the company quickly.
 
@@ -345,13 +345,13 @@ Image optimization was especially important. B2B project galleries often fail be
 
 ## The Tesla Project Showcase
 
-The centerpiece of the site is the Tesla project section. We designed it as a scroll-driven reveal:
+The strongest proof point in ANR's portfolio is its 150,000 sq ft Tesla project in New York. We gave that project a clear place in the website and designed the section to make ANR's role and project scale easy to understand:
 
-1. The 150,000 sqft number animates in as the user scrolls
-2. Project details (scope, timeline, specifications) appear sequentially
-3. High-resolution imagery fills the viewport
+1. Tesla is identified as ANR's project client, not CodingBull's direct client.
+2. The 150,000 sq ft scale and New York location are presented prominently.
+3. Project context, specifications, and imagery appear in a clear sequence.
 
-This single section has generated more inbound inquiries than anything else on the site.
+The result is a focused proof section that showcases a major ANR achievement without claiming the website secured that contract or that Tesla engaged CodingBull.
 
 ## SEO approach for a B2B portfolio site
 
@@ -359,17 +359,13 @@ For B2B service companies, SEO is not only about blog volume. The important foun
 
 The ANR project reinforced a pattern we now use across service businesses: the page should answer who the company serves, what work they do, where they operate, what proof exists, and how a qualified buyer can start a conversation.
 
-## Results
+## Delivered result
 
-Within 6 months:
-
-- **First page Google ranking** for "mechanical contractor Ahmedabad".
-- **3x increase** in inbound project inquiries.
-- **Enterprise clients** reaching out after seeing the Tesla project showcase.
+The project established ANR Mechanicals' online presence with a dedicated website for its capabilities, project portfolio, and inquiry path. It also gave the company's 150,000 sq ft Tesla project in New York a prominent, inspectable place in that portfolio. No contract-win or lead-growth result is attributed to the website.
 
 ## Tactical Architecture & Internal Systems
 
-To protect proprietary operating advantages, certain mission-critical backend tools such as project tracking and vendor management systems remain internal. However, the public-facing platform shows how a traditional industrial company can modernize its lead qualification, search presence, and buyer trust without changing the substance of its work.
+The public-facing platform shows how an established industrial company can make its capabilities and completed work easier to inspect without changing the substance of the business.
 
 ## What other B2B companies can learn
 

@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
     'CodingBull builds custom digital systems that power healthcare clinics, e-commerce operations, and workforce management — delivered as fixed-price, founder-led engagements.',
   whatsappNumber: env.whatsappNumber,
   whatsappMessages,
-  email: 'codingbullz@gmail.com',
+  email: 'pranshu@codingbullz.com',
   phone: '+91 79848 91664',
   address: {
     // Street intentionally unpublished (owner decision). Postal code confirmed

@@ -68,7 +68,7 @@ export default function PrivacyPage() {
 
           <h2 className="text-2xl font-bold mb-6 mt-12">6. Contact Us</h2>
           <p>
-            If you have questions about this Privacy Policy, contact us at <a href="mailto:codingbullz@gmail.com" className="text-teal underline">codingbullz@gmail.com</a>.
+            If you have questions about this Privacy Policy, contact us at <a href="mailto:pranshu@codingbullz.com" className="text-teal underline">pranshu@codingbullz.com</a>.
           </p>
         </div>
       </SectionWrapper>

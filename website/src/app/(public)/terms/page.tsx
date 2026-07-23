@@ -53,7 +53,7 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-bold mb-6 mt-12">7. Contact Us</h2>
           <p>
-            If you have questions about these terms, contact us at <a href="mailto:codingbullz@gmail.com" className="text-teal underline">codingbullz@gmail.com</a>.
+            If you have questions about these terms, contact us at <a href="mailto:pranshu@codingbullz.com" className="text-teal underline">pranshu@codingbullz.com</a>.
           </p>
         </div>
       </SectionWrapper>

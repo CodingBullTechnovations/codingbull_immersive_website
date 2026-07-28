@@ -87,7 +87,7 @@ export default function UAEPage() {
       marketLabel="UAE Software Development"
       positioningTitle="Remote software development for UAE businesses"
       intro="UAE businesses often need digital systems that support fast-moving sales teams, premium customer expectations, trading and distribution workflows, e-commerce operations, clinic appointments, dashboards, and multi-location coordination. CodingBull works remotely from India to scope and build custom software, websites, CRM, inventory systems, and business automation with clear project ownership."
-      responseWindow="Architecture response within 48 working hours with India-UAE time overlap for discovery, review, and milestone calls."
+      responseWindow="Founder-led scope review with India-UAE time overlap for discovery, review, and milestone calls."
       deliveryModel="Remote-first delivery from India with India-UAE time overlap for discovery, reviews, milestone calls, written updates, and decision checkpoints."
       bestFitProjects="Trading and distribution inventory systems, CRM and lead management, e-commerce workflow automation, clinic and appointment systems, dashboards, reporting, HRMS/payroll, and admin panels."
       marketHighlights={[

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { PageHero } from '@/components/sections/PageHero';
+import { Button } from '@/components/ui/Button';
 import { CTASection } from '@/components/sections/CTASection';
 import { MarkdownContent, parseMarkdownToBlocks } from '@/components/sections/MarkdownContent';
 import { homeContent } from '@/content/home';
@@ -27,6 +28,34 @@ type ServiceViewContent = ServiceContent & {
   body?: string;
 };
 
+const serviceDecisionBriefs: Record<string, {
+  fit: string[];
+  nonFit: string[];
+  primaryLabel: string;
+  whatsappMessageKey: 'customSystems';
+}> = {
+  'custom-business-systems': {
+    fit: [
+      'The same customer, approval, document, or reporting workflow is repeated every week.',
+      'Generic tools create duplicate entry, missing ownership, or manual management reports.',
+      'The first release can focus on one complete operating loop instead of every future module.',
+    ],
+    nonFit: [
+      'A standard CRM or SaaS product already fits the process with minor configuration.',
+      'The project has no named users, process owner, or first-release business outcome yet.',
+    ],
+    primaryLabel: 'Request a System Scope Review',
+    whatsappMessageKey: 'customSystems',
+  },
+};
+
+const explicitServiceProof: Record<string, string[]> = {
+  // Physioway is a deployed custom platform used in treatment operations.
+  // ANR is a portfolio website, so taxonomy alone must not present it as
+  // proof of an internal business system.
+  'custom-business-systems': ['physioway'],
+};
+
 export async function generateStaticParams() {
   const dbServices = await listServiceSlugStatuses();
   const dbStatusBySlug = new Map(dbServices.map((item) => [item.slug, item.status]));
@@ -49,31 +78,39 @@ function objectArray(value: unknown) {
     : [];
 }
 
+function sanitizeRejectedServiceClaim(value: string) {
+  return value.replace(
+    /reducing no-shows by up to 40%/gi,
+    'reducing manual scheduling and follow-up work',
+  );
+}
+
 function mapDbService(service: Awaited<ReturnType<typeof getServiceBySlug>>): ServiceViewContent | null {
   if (!service) return null;
 
   const hero = typeof service.hero === 'object' && service.hero !== null ? (service.hero as Record<string, unknown>) : {};
   const modules = objectArray(service.modules);
   const faqs = objectArray(service.faqs);
+  const heroSummary = sanitizeRejectedServiceClaim(String(hero.summary ?? service.metaDescription ?? ''));
 
   return {
     slug: service.slug,
     title: service.title,
-    description: service.metaDescription || String(hero.summary ?? ''),
+    description: sanitizeRejectedServiceClaim(service.metaDescription || String(hero.summary ?? '')),
     accentColor: 'teal',
-    painPoints: stringArray(service.painPoints),
-    solution: String(hero.summary ?? service.metaDescription ?? ''),
-    body: service.body ?? undefined,
+    painPoints: stringArray(service.painPoints).map(sanitizeRejectedServiceClaim),
+    solution: heroSummary,
+    body: service.body ? sanitizeRejectedServiceClaim(service.body) : undefined,
     features: modules.map((module) => ({
       title: String(module.title ?? ''),
-      description: String(module.description ?? ''),
+      description: sanitizeRejectedServiceClaim(String(module.description ?? '')),
     })),
     // DB records carry no stack field yet — fall back to the static content
     // so migrated services keep their published technology list.
     techStack: servicesBySlug[service.slug]?.techStack ?? [],
     faqs: faqs.map((faq) => ({
       question: String(faq.question ?? ''),
-      answer: String(faq.answer ?? ''),
+      answer: sanitizeRejectedServiceClaim(String(faq.answer ?? '')),
     })),
   };
 }
@@ -82,6 +119,7 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ service: string }> }): Promise<Metadata> {
   const { service } = await params;
+  const staticService = servicesBySlug[service];
   const dbService = await getServiceBySlug(service);
   const data = dbService
     ? (dbService.status === ContentStatus.PUBLISHED ? mapDbService(dbService) : null)
@@ -92,10 +130,18 @@ export async function generateMetadata({ params }: { params: Promise<{ service: 
   const canonicalPath = dbService?.canonicalPath?.startsWith('/')
     ? dbService.canonicalPath
     : `/services/${service}`;
+  const generatedDbTitle = dbService ? `${dbService.title} | CodingBull Technovations Pvt. Ltd.` : null;
+  const useReviewedStaticTitle = Boolean(staticService?.metaTitle && (!dbService?.metaTitle || dbService.metaTitle === generatedDbTitle));
+  const useReviewedStaticDescription = Boolean(
+    staticService?.metaDescription &&
+    (!dbService?.metaDescription || dbService.metaDescription === staticService.description),
+  );
 
   return generatePageMetadata({
-    title: dbService?.metaTitle || data.title,
-    description: dbService?.metaDescription || data.description,
+    title: useReviewedStaticTitle ? staticService!.metaTitle! : dbService?.metaTitle || data.metaTitle || data.title,
+    description: useReviewedStaticDescription
+      ? staticService!.metaDescription!
+      : dbService?.metaDescription || data.metaDescription || data.description,
     canonical: `${siteConfig.baseUrl}${canonicalPath}`,
   });
 }
@@ -131,10 +177,16 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   const relatedInsights = insights
     .filter((post) => !hiddenInsightSlugs.has(post.slug) && getIndustryForPath(`/insights/${post.slug}`) === industry)
     .slice(0, 3);
+  const explicitProofSlugs = explicitServiceProof[serviceData.slug];
   const relatedCaseStudies = caseStudies
-    .filter((study) => !hiddenCaseStudySlugs.has(study.slug) && getIndustryForPath(`/case-studies/${study.slug}`) === industry)
+    .filter((study) => !hiddenCaseStudySlugs.has(study.slug) && (
+      explicitProofSlugs
+        ? explicitProofSlugs.includes(study.slug)
+        : getIndustryForPath(`/case-studies/${study.slug}`) === industry
+    ))
     .slice(0, 2);
   const relatedServiceLinks = serviceRelatedLinks[serviceData.slug] ?? [];
+  const decisionBrief = serviceDecisionBriefs[serviceData.slug];
 
   return (
     <>
@@ -155,6 +207,34 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         subtitle={serviceData.description}
         badge={serviceData.features[0]?.title}
       />
+
+      {decisionBrief && (
+        <section className="relative z-10 border-b border-white/[0.08] bg-black/30 py-12 lg:py-16">
+          <div className="mx-auto grid max-w-[var(--max-w-content)] gap-8 px-6 lg:grid-cols-[1fr_0.9fr_auto] lg:items-start lg:px-10">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Good fit when</span>
+              <ul className="mt-5 space-y-3">
+                {decisionBrief.fit.map((item) => (
+                  <li key={item} className="border-l border-teal/35 pl-4 text-sm leading-6 text-white/60">{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/45">Use SaaS first when</span>
+              <ul className="mt-5 space-y-3">
+                {decisionBrief.nonFit.map((item) => (
+                  <li key={item} className="border-l border-white/15 pl-4 text-sm leading-6 text-white/50">{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col gap-3 lg:min-w-64">
+              <Button label={decisionBrief.primaryLabel} href="/contact" variant="primary" trackingSource={`service_${serviceData.slug}_early_scope`} />
+              <Button label="Discuss on WhatsApp" href="#whatsapp" icon="whatsapp" variant="secondary" trackingSource={`service_${serviceData.slug}_early_whatsapp`} whatsappMessageKey={decisionBrief.whatsappMessageKey} />
+              <p className="text-xs leading-5 text-white/40">Bring the current process, users, exceptions, integrations, and the first result the system must support.</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Pain Points Section */}
       <section className="py-20 lg:py-28 bg-[rgba(10,12,20,0.5)] border-y border-white/[0.05] relative z-10">
@@ -256,7 +336,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 {industryLabels[industry]} proof and guidance
               </h2>
               <p className="mt-5 text-sm leading-6 text-white/50">
-                Deployed work and practical writing connected to this service, so you can judge how we handle the exact operating problems it solves.
+                Selected deployed work and practical writing relevant to this service, with each case labelled by its actual project type.
               </p>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -344,7 +424,18 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         </section>
       )}
 
-      <CTASection cta={homeContent.finalCTA} />
+      <CTASection
+        cta={serviceData.slug === 'custom-business-systems'
+          ? { ...homeContent.finalCTA, label: 'Discuss Your Workflow', trackingSource: 'custom_systems_final_whatsapp' }
+          : homeContent.finalCTA}
+        {...(serviceData.slug === 'custom-business-systems' ? {
+          title: 'Scope one operating loop before building every module.',
+          description: 'Share the users, decisions, approvals, source data, integrations, and reporting gap. CodingBull will review whether custom software is justified and define a focused first release.',
+          primaryLabel: 'Request a System Scope Review',
+          trustLine: 'Founder-led review · Clear scope · No obligation',
+          kicker: 'Custom system scope',
+        } : {})}
+      />
     </>
   );
 }

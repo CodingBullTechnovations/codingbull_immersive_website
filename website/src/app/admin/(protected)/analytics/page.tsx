@@ -23,12 +23,15 @@ export default async function AdminAnalyticsPage() {
       />
 
       <SectionTitle title="First-party visitors" detail="Internal site analytics stored in PostgreSQL. This is separate from GA4 and is not sent to Google." />
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <AdminStat label="Visits" value={formatNumber(data.traffic.visits)} detail="First-party page views" />
         <AdminStat label="Visitors" value={formatNumber(data.visitorIntelligence.profiles || data.traffic.visitors)} detail="First-party visitor profiles" />
         <AdminStat label="Sessions" value={formatNumber(data.visitorIntelligence.sessions || data.traffic.sessions)} detail="First-party sessions" />
         <AdminStat label="CTA clicks" value={formatNumber(data.traffic.ctaClicks)} />
         <AdminStat label="Form submits" value={formatNumber(data.traffic.formSubmits)} />
+        <AdminStat label="WhatsApp clicks" value={formatNumber(data.traffic.whatsappClicks)} />
+        <AdminStat label="Phone clicks" value={formatNumber(data.traffic.phoneClicks)} />
+        <AdminStat label="Email clicks" value={formatNumber(data.traffic.emailClicks)} />
       </section>
 
       <section className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">

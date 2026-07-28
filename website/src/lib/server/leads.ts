@@ -2,6 +2,7 @@ import {
   AnalyticsEventType,
   BudgetRange,
   LeadActivityType,
+  Prisma,
   type Lead,
   ProjectTimeline,
   ServiceInterest,
@@ -11,6 +12,7 @@ import { getIndustryForServiceInterest, getLandingPage, getTrafficChannel } from
 import { prisma } from '@/lib/server/prisma';
 import { scoreLead } from '@/lib/server/lead-scoring';
 import { sendLeadNotification } from '@/lib/server/email';
+import { upsertVisitorAttribution } from '@/lib/server/visitor-attribution';
 
 function mapServiceInterest(value: ContactFormData['service']) {
   const map: Record<ContactFormData['service'], ServiceInterest> = {
@@ -53,9 +55,18 @@ export interface CreateLeadContext {
   ipHash?: string | null;
   userAgentHash?: string | null;
   referrer?: string | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  sessionIdHash?: string | null;
+  visitorIdHash?: string | null;
+  country?: string | null;
+  region?: string | null;
+  city?: string | null;
 }
 
 export async function createLeadFromContactForm(data: ContactFormData, context: CreateLeadContext) {
+  const normalizedEmail = data.email.toLowerCase().trim();
+  const normalizedMessage = data.message.trim();
   const serviceInterest = mapServiceInterest(data.service);
   const industry = getIndustryForServiceInterest(serviceInterest);
   const budgetRange = mapBudget(data.budget);
@@ -70,76 +81,137 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
     sourcePage,
   });
 
-  const lead = await prisma.$transaction(async (tx) => {
-    const createdLead = await tx.lead.create({
-      data: {
-        name: data.name.trim(),
-        email: data.email.toLowerCase().trim(),
-        phone: data.phone.trim(),
-        company: data.company?.trim() || null,
-        website: data.companyWebsite?.trim() || null,
-        country: data.country?.trim() || null,
-        serviceInterest,
-        industry,
-        budgetRange,
-        timeline,
-        message: data.message.trim(),
-        sourcePage,
-        referrer: data.referrer || context.referrer || null,
-        utmSource: data.utmSource || null,
-        utmMedium: data.utmMedium || null,
-        utmCampaign: data.utmCampaign || null,
-        utmTerm: data.utmTerm || null,
-        utmContent: data.utmContent || null,
-        score,
-        ipHash: context.ipHash ?? null,
-        userAgentHash: context.userAgentHash ?? null,
-      },
-    });
-
-    await tx.leadActivity.create({
-      data: {
-        leadId: createdLead.id,
-        type: LeadActivityType.FORM_SUBMIT,
-        title: 'Inquiry submitted',
-        detail: `${createdLead.name} submitted the contact form from ${sourcePage}.`,
-        metadata: {
-          score,
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const createdLead = await tx.lead.create({
+        data: {
+          submissionId: data.submissionId,
+          name: data.name.trim(),
+          email: normalizedEmail,
+          phone: data.phone.trim(),
+          company: data.company?.trim() || null,
+          website: data.companyWebsite?.trim() || null,
+          country: data.country?.trim() || null,
+          serviceInterest,
+          industry,
           budgetRange,
           timeline,
-          serviceInterest,
-          industry,
+          message: normalizedMessage,
+          sourcePage,
+          referrer: data.referrer || context.referrer || null,
+          utmSource: data.utmSource || null,
+          utmMedium: data.utmMedium || null,
+          utmCampaign: data.utmCampaign || null,
+          utmTerm: data.utmTerm || null,
+          utmContent: data.utmContent || null,
+          score,
+          ipHash: context.ipHash ?? null,
+          userAgentHash: context.userAgentHash ?? null,
         },
-      },
-    });
+      });
 
-    const trafficChannel = getTrafficChannel(data.referrer || context.referrer, data.utmMedium, data.utmSource);
+      await tx.leadActivity.create({
+        data: {
+          leadId: createdLead.id,
+          type: LeadActivityType.FORM_SUBMIT,
+          title: 'Inquiry submitted',
+          detail: `${createdLead.name} submitted the contact form from ${sourcePage}.`,
+          metadata: {
+            score,
+            budgetRange,
+            timeline,
+            serviceInterest,
+            industry,
+          },
+        },
+      });
 
-    await tx.analyticsEvent.create({
-      data: {
-        type: AnalyticsEventType.FORM_SUBMIT,
+      const trafficChannel = getTrafficChannel(
+        data.referrer || context.referrer,
+        data.utmMedium,
+        data.utmSource,
+      );
+      const landingPage = getLandingPage(sourcePage);
+      const visitorSessionId = await upsertVisitorAttribution(tx, {
+        sessionIdHash: context.sessionIdHash,
+        visitorIdHash: context.visitorIdHash,
+        ipAddress: context.ipAddress,
+        userAgent: context.userAgent,
+        country: context.country,
+        region: context.region,
+        city: context.city,
+        landingPage,
         page: sourcePage,
-        landingPage: getLandingPage(sourcePage),
-        industry,
-        trafficChannel,
         referrer: data.referrer || context.referrer || null,
+        trafficChannel,
         utmSource: data.utmSource || null,
         utmMedium: data.utmMedium || null,
         utmCampaign: data.utmCampaign || null,
-        metadata: {
-          leadId: createdLead.id,
-          serviceInterest,
+      });
+
+      await tx.analyticsEvent.create({
+        data: {
+          visitorSessionId,
+          type: AnalyticsEventType.FORM_SUBMIT,
+          page: sourcePage,
+          landingPage,
           industry,
-          budgetRange,
+          trafficChannel,
+          sessionIdHash: context.sessionIdHash,
+          visitorIdHash: context.visitorIdHash,
+          referrer: data.referrer || context.referrer || null,
+          utmSource: data.utmSource || null,
+          utmMedium: data.utmMedium || null,
+          utmCampaign: data.utmCampaign || null,
+          country: context.country,
+          metadata: {
+            leadId: createdLead.id,
+            serviceInterest,
+            industry,
+            budgetRange,
+            ipHash: context.ipHash,
+            userAgentHash: context.userAgentHash,
+          },
         },
-      },
+      });
+
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+      await tx.pageMetricDaily.upsert({
+        where: {
+          date_page_industry_trafficChannel: {
+            date: today,
+            page: sourcePage,
+            industry,
+            trafficChannel,
+          },
+        },
+        create: {
+          date: today,
+          page: sourcePage,
+          industry,
+          trafficChannel,
+          visits: 0,
+          ctaClicks: 0,
+          formStarts: 0,
+          formSubmits: 1,
+          whatsappClicks: 0,
+        },
+        update: { formSubmits: { increment: 1 } },
+      });
+
+      return { lead: createdLead, created: true };
     });
 
-    return createdLead;
-  });
-
-  await sendLeadNotification(lead);
-  return lead;
+    await sendLeadNotification(result.lead);
+    return result;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      const existingLead = await prisma.lead.findUnique({ where: { submissionId: data.submissionId } });
+      if (existingLead) return { lead: existingLead, created: false };
+    }
+    throw error;
+  }
 }
 
 export async function getLeadStats() {

@@ -4,12 +4,26 @@ import { ContactForm } from '@/components/sections/ContactForm';
 import { generatePageMetadata, pageMetadata } from '@/lib/seo';
 import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
 import { primaryEntryPoints } from '@/content/link-graph';
+import { siteConfig } from '@/content/site';
+import { JsonLd, generateBreadcrumbSchema, generateContactPageSchema } from '@/lib/schema';
+import { TrackedContactLink } from '@/components/ui/TrackedContactLink';
 
 export const metadata = generatePageMetadata(pageMetadata.contact);
 
 export default function ContactPage() {
+  const pageUrl = `${siteConfig.baseUrl}/contact`;
+
   return (
     <>
+      <JsonLd data={generateContactPageSchema({
+        name: 'Contact CodingBull Technovations',
+        description: 'Share a custom software requirement with CodingBull for founder-led scope review.',
+        url: pageUrl,
+      })} />
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'Contact CodingBull', url: pageUrl },
+      ])} />
       <PageHero
         title="Start with the workflow."
         subtitle="Speak directly with the founder about the users, decisions, exceptions, integrations, and business outcome your system needs to support."
@@ -32,6 +46,10 @@ export default function ContactPage() {
               <p>Ahmedabad, Gujarat, India</p>
               <p>GSTIN 24AAMCC7617E1ZP</p>
               <p className="mt-4">Serving India, USA, UAE, and Canada through founder-led remote delivery.</p>
+              <div className="mt-5 flex flex-col gap-1 text-white/65">
+                <TrackedContactLink href={`mailto:${siteConfig.email}`} source="contact_page_email" className="hover:text-white">{siteConfig.email}</TrackedContactLink>
+                <TrackedContactLink href={`tel:${siteConfig.phone.replaceAll(' ', '')}`} source="contact_page_phone" className="hover:text-white">{siteConfig.phone}</TrackedContactLink>
+              </div>
             </div>
           </aside>
 

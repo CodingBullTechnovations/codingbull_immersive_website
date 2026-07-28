@@ -13,6 +13,7 @@ export async function submitContactForm(data: ContactFormData) {
   if (data.website) {
     return {
       success: true,
+      created: false,
       message: 'Inquiry received. Thank you.',
     };
   }
@@ -28,8 +29,12 @@ export async function submitContactForm(data: ContactFormData) {
 
   try {
     const headersList = await headers();
-    const ipHash = hashValue(getClientIp(headersList));
-    const userAgentHash = hashValue(headersList.get('user-agent'));
+    const ipAddress = getClientIp(headersList);
+    const userAgent = headersList.get('user-agent');
+    const ipHash = hashValue(ipAddress);
+    const userAgentHash = hashValue(userAgent);
+    const sessionIdHash = hashValue(validated.data.sessionId);
+    const visitorIdHash = hashValue(validated.data.visitorId);
     const referrer = headersList.get('referer');
     const emailHash = hashValue(validated.data.email.toLowerCase());
     const identifier = ipHash ?? emailHash ?? 'anonymous';
@@ -48,14 +53,22 @@ export async function submitContactForm(data: ContactFormData) {
       };
     }
 
-    await createLeadFromContactForm(validated.data, {
+    const result = await createLeadFromContactForm(validated.data, {
       ipHash,
       userAgentHash,
       referrer,
+      ipAddress,
+      userAgent,
+      sessionIdHash,
+      visitorIdHash,
+      country: headersList.get('cf-ipcountry') ?? headersList.get('x-vercel-ip-country'),
+      region: headersList.get('x-vercel-ip-country-region') ?? headersList.get('x-region'),
+      city: headersList.get('x-vercel-ip-city') ?? headersList.get('x-city'),
     });
 
     return {
       success: true,
+      created: result.created,
       message: "Your inquiry has been received. We'll review it and get back to you shortly.",
     };
   } catch (error) {

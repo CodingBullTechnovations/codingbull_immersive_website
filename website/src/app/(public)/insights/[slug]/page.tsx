@@ -39,6 +39,9 @@ function mapDbPost(post: Awaited<ReturnType<typeof getInsightBySlug>>): InsightP
     content: post.body,
     author: post.author,
     date: (post.publishedAt ?? post.createdAt).toISOString().slice(0, 10),
+    // Prisma updatedAt includes workflow/status saves and is never published
+    // as editorial freshness. Only the explicit content date is eligible.
+    updatedAt: post.contentUpdatedAt?.toISOString().slice(0, 10),
     readingTime: `${Math.max(3, Math.ceil(post.body.split(/\s+/).length / 220))} min read`,
     category: post.niche.replaceAll('_', ' '),
     accentColor: 'teal',
@@ -117,6 +120,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
   }
 
   const postUrl = `${siteConfig.baseUrl}/insights/${post.slug}`;
+  const modifiedDate = post.updatedAt && post.updatedAt > post.date ? post.updatedAt : undefined;
   const blocks = parseMarkdownToBlocks(post.content);
   const headings = blocks
     .filter((b) => b.type === 'h2')
@@ -167,6 +171,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
         description: post.excerpt,
         url: postUrl,
         datePublished: post.date,
+        dateModified: modifiedDate,
         author: post.author,
         image: `${siteConfig.baseUrl}/images/og/codingbull-og.png`,
       })} />
@@ -200,7 +205,9 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                 </div>
                 <div>
                   <p className="text-white/80 text-sm font-medium">{post.author}</p>
-                  <p className="text-white/35 text-xs">{post.date} · {post.readingTime}</p>
+                  <p className="text-white/35 text-xs">
+                    Published {post.date}{modifiedDate ? ` · Updated ${modifiedDate}` : ''} · {post.readingTime}
+                  </p>
                 </div>
               </div>
 
@@ -336,6 +343,7 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
               headings={headings}
               author={post.author}
               date={post.date}
+              updatedAt={modifiedDate}
               readingTime={post.readingTime}
               slug={post.slug}
               title={post.title}

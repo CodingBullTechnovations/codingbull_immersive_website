@@ -12,6 +12,8 @@ export interface ProductStep {
 export interface Product {
   slug: string;
   name: string;
+  /** ISO date of the most recent material public-content edit. */
+  updatedAt?: string;
   tagline: string;
   category: string;
   audience: string;

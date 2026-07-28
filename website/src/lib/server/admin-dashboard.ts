@@ -1,4 +1,4 @@
-import { SeoSyncProvider, type SeoIndustry, type TrafficChannel } from '@prisma/client';
+import { AnalyticsEventType, SeoSyncProvider, type SeoIndustry, type TrafficChannel } from '@prisma/client';
 import { caseStudies } from '@/content/case-studies';
 import { insights } from '@/content/insights';
 import { services } from '@/content/services';
@@ -8,7 +8,15 @@ import { prisma } from '@/lib/server/prisma';
 
 type HealthStatus = 'ok' | 'missing_credentials' | 'not_configured' | 'error';
 
-const defaultTraffic = { visits: 0, ctaClicks: 0, formStarts: 0, formSubmits: 0, whatsappClicks: 0 };
+const defaultTraffic = {
+  visits: 0,
+  ctaClicks: 0,
+  formStarts: 0,
+  formSubmits: 0,
+  whatsappClicks: 0,
+  phoneClicks: 0,
+  emailClicks: 0,
+};
 
 function baseIndustryMetric(industry: SeoIndustry) {
   return {
@@ -28,6 +36,8 @@ function baseIndustryMetric(industry: SeoIndustry) {
     formStarts: 0,
     formSubmits: 0,
     whatsappClicks: 0,
+    phoneClicks: 0,
+    emailClicks: 0,
     conversionRate: 0,
   };
 }
@@ -232,7 +242,7 @@ export async function getAdminDashboardData() {
       }),
       prisma.analyticsEvent.findMany({
         where: { createdAt: { gte: since } },
-        select: { sessionIdHash: true, visitorIdHash: true },
+        select: { sessionIdHash: true, visitorIdHash: true, type: true, industry: true },
       }),
       prisma.lead.groupBy({
         by: ['industry', 'status'],
@@ -304,9 +314,13 @@ export async function getAdminDashboardData() {
         formStarts: acc.formStarts + day.formStarts,
         formSubmits: acc.formSubmits + day.formSubmits,
         whatsappClicks: acc.whatsappClicks + day.whatsappClicks,
+        phoneClicks: acc.phoneClicks,
+        emailClicks: acc.emailClicks,
       }),
       { ...defaultTraffic },
     );
+    traffic.phoneClicks = analyticsEvents.filter((event) => event.type === AnalyticsEventType.PHONE_CLICK).length;
+    traffic.emailClicks = analyticsEvents.filter((event) => event.type === AnalyticsEventType.EMAIL_CLICK).length;
 
     const visitors = new Set(analyticsEvents.map((event) => event.visitorIdHash).filter(Boolean)).size;
     const sessions = new Set(analyticsEvents.map((event) => event.sessionIdHash).filter(Boolean)).size;
@@ -327,6 +341,8 @@ export async function getAdminDashboardData() {
       metric.formStarts = industryTraffic.reduce((sum, day) => sum + day.formStarts, 0);
       metric.formSubmits = industryTraffic.reduce((sum, day) => sum + day.formSubmits, 0);
       metric.whatsappClicks = industryTraffic.reduce((sum, day) => sum + day.whatsappClicks, 0);
+      metric.phoneClicks = analyticsEvents.filter((event) => event.industry === industry && event.type === AnalyticsEventType.PHONE_CLICK).length;
+      metric.emailClicks = analyticsEvents.filter((event) => event.industry === industry && event.type === AnalyticsEventType.EMAIL_CLICK).length;
       metric.sessions = industryGa4.reduce((sum, row) => sum + row.sessions, 0);
       metric.users = industryGa4.reduce((sum, row) => sum + row.users, 0);
       metric.organicClicks = industrySearch.reduce((sum, row) => sum + row.clicks, 0);

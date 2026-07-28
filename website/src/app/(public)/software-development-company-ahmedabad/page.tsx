@@ -12,13 +12,14 @@ import { JsonLd, generateBreadcrumbSchema, generateFAQSchema } from '@/lib/schem
 import { siteConfig } from '@/content/site';
 import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
 import { ahmedabadSiblings } from '@/content/link-graph';
+import { isCaseStudyPubliclyVisible, listVisibleCaseStudyStatuses } from '@/lib/server/public-content';
 
 const pageUrl = `${siteConfig.baseUrl}/software-development-company-ahmedabad`;
 
 export const metadata: Metadata = generatePageMetadata({
   title: 'Software Development Company in Ahmedabad',
   description:
-    'CodingBull Technovations is a custom software development company in Ahmedabad building business websites, admin panels, CRM, HRMS, e-commerce systems, healthcare software, dashboards, and workflow automation.',
+    'Ahmedabad custom software company for CRM, HRMS, healthcare, e-commerce, dashboards and workflow automation. Request a founder-led scope review.',
   keywords: [
     'software development company in Ahmedabad',
     'custom software development company in Ahmedabad',
@@ -136,8 +137,26 @@ const faqs = [
   },
 ];
 
-export default function SoftwareDevelopmentCompanyAhmedabadPage() {
-  const relevantCaseStudies = caseStudies.filter((study) => ['physioway', 'shashwat-ivf', 'anr-mechanical'].includes(study.slug));
+const buyerFit = [
+  'Your team is reconciling the same work across spreadsheets, WhatsApp, email, or disconnected tools.',
+  'The workflow needs custom roles, approvals, reports, integrations, or branch-specific rules.',
+  'You can define one high-friction operating loop to solve in the first release.',
+];
+
+const buyerNonFit = [
+  'A standard SaaS product already supports the workflow without repeated manual work.',
+  'The request is to copy a large existing product without a differentiated operating need.',
+  'Stakeholders cannot yet name the users, decisions, source data, or first-release outcome.',
+];
+
+export default async function SoftwareDevelopmentCompanyAhmedabadPage() {
+  const caseStudyStatuses = await listVisibleCaseStudyStatuses();
+  const hiddenCaseStudySlugs = new Set(
+    caseStudyStatuses.filter((item) => !isCaseStudyPubliclyVisible(item)).map((item) => item.slug),
+  );
+  const relevantCaseStudies = caseStudies.filter(
+    (study) => !hiddenCaseStudySlugs.has(study.slug) && ['physioway', 'shashwat-ivf', 'anr-mechanical'].includes(study.slug),
+  );
 
   return (
     <>
@@ -153,6 +172,35 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
         subtitle="CodingBull Technovations Pvt. Ltd. is a custom software development company in Ahmedabad building business websites, admin panels, CRM, HRMS, e-commerce systems, healthcare software, dashboards, and workflow automation."
         badge="Ahmedabad Software Development"
       />
+
+      <SectionWrapper className="border-b border-white/10 bg-black/30 py-12 lg:py-16">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_1fr_auto] lg:items-start">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Good fit when</p>
+            <ul className="mt-5 space-y-3">
+              {buyerFit.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-white/60">
+                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-teal" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/45">Not the right first move when</p>
+            <ul className="mt-5 space-y-3">
+              {buyerNonFit.map((item) => (
+                <li key={item} className="border-l border-white/15 pl-4 text-sm leading-6 text-white/50">{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-col gap-3 lg:min-w-64">
+            <Button label="Request a Scope Review" href="/contact" variant="primary" trackingSource="ahmedabad_software_early_scope" />
+            <Button label="Discuss on WhatsApp" href="#whatsapp" icon="whatsapp" variant="secondary" trackingSource="ahmedabad_software_early_whatsapp" />
+            <p className="text-xs leading-5 text-white/40">Share the current workflow, users, integrations, and the first outcome that matters.</p>
+          </div>
+        </div>
+      </SectionWrapper>
 
       <SectionWrapper className="py-20 lg:py-28">
         <div className="mx-auto max-w-6xl">
@@ -309,7 +357,14 @@ export default function SoftwareDevelopmentCompanyAhmedabadPage() {
         intro="Related local pages covering the same delivery capability from a different buying intent."
       />
 
-      <CTASection cta={homeContent.finalCTA} />
+      <CTASection
+        cta={{ ...homeContent.finalCTA, label: 'Discuss the Workflow', trackingSource: 'ahmedabad_software_final_whatsapp' }}
+        title="Turn the operating problem into a first-release scope."
+        description="Share the current workflow, users, exceptions, integrations, and desired outcome. CodingBull will review whether a custom build is justified and define the next scoping step."
+        primaryLabel="Request a Scope Review"
+        trustLine="Founder-led review · Existing proof available · No obligation"
+        kicker="Ahmedabad software scope"
+      />
     </>
   );
 }

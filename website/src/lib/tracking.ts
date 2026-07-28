@@ -12,16 +12,18 @@ export function trackWhatsAppClick(source: string) {
 }
 
 /** Track Direct Call click */
-export function trackPhoneClick(page?: string) {
+export function trackPhoneClick(source?: string) {
   trackEvent('phone_click', {
-    page: page ?? window.location.pathname,
+    source: source ?? 'direct_phone_link',
+    page: window.location.pathname,
   });
 }
 
 /** Track Direct Email click */
-export function trackEmailClick(page?: string) {
+export function trackEmailClick(source?: string) {
   trackEvent('email_click', {
-    page: page ?? window.location.pathname,
+    source: source ?? 'direct_email_link',
+    page: window.location.pathname,
   });
 }
 
@@ -30,14 +32,6 @@ export function trackCTAClick(label: string, page?: string) {
   trackEvent('cta_click', {
     label,
     page: page ?? window.location.pathname,
-  });
-}
-
-/** Track contact form submission */
-export function trackFormSubmit(formType: string) {
-  trackEvent('form_submit', {
-    form_type: formType,
-    page: window.location.pathname,
   });
 }
 

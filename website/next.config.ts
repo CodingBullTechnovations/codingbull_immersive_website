@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import legacyRedirects from './src/config/legacy-redirects.json';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -16,200 +17,26 @@ const nextConfig: NextConfig = {
     qualities: [60, 75, 90],
   },
   async redirects() {
+    const oldRoutes = Object.entries(legacyRedirects);
+
     return [
-      {
-        source: '/blog',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/insights',
-        statusCode: 301,
-      },
-      {
-        source: '/privacy-policy',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/privacy',
-        statusCode: 301,
-      },
-      {
-        source: '/cookie-policy',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/privacy',
-        statusCode: 301,
-      },
-      {
-        source: '/our-projects',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/case-studies',
-        statusCode: 301,
-      },
-      {
-        source: '/projects',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/case-studies',
-        statusCode: 301,
-      },
-      {
-        source: '/contact-us',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/contact',
-        statusCode: 301,
-      },
-      {
-        source: '/healthcare-software-development',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services/healthcare-software-development',
-        statusCode: 301,
-      },
-      {
-        source: '/ecommerce-development',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services/ecommerce-development',
-        statusCode: 301,
-      },
-      {
-        source: '/custom-hrms-payroll-software',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services/custom-hrms-payroll-software',
-        statusCode: 301,
-      },
-      {
-        source: '/custom-crm-appointment-software',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/ui-ux-design',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services',
-        statusCode: 301,
-      },
-      {
-        source: '/services/web-development',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services',
-        statusCode: 301,
-      },
-      {
-        source: '/services/mobile-app-development',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services',
-        statusCode: 301,
-      },
-      {
-        source: '/services/ai-machine-learning',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/cloud-solutions',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/cybersecurity',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/digital-marketing',
-        has: [{ type: 'host', value: 'codingbullz.com' }],
-        destination: 'https://www.codingbullz.com/services',
-        statusCode: 301,
-      },
+      ...oldRoutes.map(([source, destination]) => ({
+        source,
+        has: [{ type: 'host' as const, value: 'codingbullz.com' }],
+        destination: `https://www.codingbullz.com${destination}`,
+        statusCode: 301 as const,
+      })),
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'codingbullz.com' }],
         destination: 'https://www.codingbullz.com/:path*',
         statusCode: 301,
       },
-      {
-        source: '/healthcare-software-development',
-        destination: '/services/healthcare-software-development',
-        statusCode: 301,
-      },
-      {
-        source: '/ecommerce-development',
-        destination: '/services/ecommerce-development',
-        statusCode: 301,
-      },
-      {
-        source: '/custom-hrms-payroll-software',
-        destination: '/services/custom-hrms-payroll-software',
-        statusCode: 301,
-      },
-      {
-        source: '/custom-crm-appointment-software',
-        destination: '/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/ui-ux-design',
-        destination: '/services',
-        statusCode: 301,
-      },
-      {
-        source: '/services/web-development',
-        destination: '/services',
-        statusCode: 301,
-      },
-      {
-        source: '/services/mobile-app-development',
-        destination: '/services',
-        statusCode: 301,
-      },
-      {
-        source: '/services/ai-machine-learning',
-        destination: '/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/cloud-solutions',
-        destination: '/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/cybersecurity',
-        destination: '/services/custom-business-systems',
-        statusCode: 301,
-      },
-      {
-        source: '/services/digital-marketing',
-        destination: '/services',
-        statusCode: 301,
-      },
-      {
-        source: '/blog',
-        destination: '/insights',
-        statusCode: 301,
-      },
-      {
-        source: '/our-projects',
-        destination: '/case-studies',
-        statusCode: 301,
-      },
-      {
-        source: '/projects',
-        destination: '/case-studies',
-        statusCode: 301,
-      },
-      {
-        source: '/privacy-policy',
-        destination: '/privacy',
-        statusCode: 301,
-      },
-      {
-        source: '/cookie-policy',
-        destination: '/privacy',
-        statusCode: 301,
-      },
-      {
-        source: '/contact-us',
-        destination: '/contact',
-        statusCode: 301,
-      },
+      ...oldRoutes.map(([source, destination]) => ({
+        source,
+        destination,
+        statusCode: 301 as const,
+      })),
     ];
   },
   async headers() {

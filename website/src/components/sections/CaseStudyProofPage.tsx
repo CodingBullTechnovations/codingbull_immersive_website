@@ -76,12 +76,13 @@ export function CaseStudyProofPage({ study }: { study: CaseStudy }) {
 
   const snapshot = [
     { label: 'Industry', value: study.category },
-    { label: 'Market', value: study.market ?? 'Not specified in public case-study data' },
+    { label: 'Market', value: study.market },
     { label: 'Project type', value: study.projectType ?? study.title },
     { label: 'Main service', value: study.mainServiceCategory ?? study.category },
     { label: 'Delivery model', value: study.deliveryModel ?? 'Founder-led custom build' },
     { label: 'Status', value: study.status ?? 'Public case study' },
-  ];
+    ...(study.updatedAt ? [{ label: 'Updated', value: study.updatedAt }] : []),
+  ].filter((item): item is { label: string; value: string } => Boolean(item.value));
 
   return (
     <>

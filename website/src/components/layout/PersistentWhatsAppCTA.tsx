@@ -43,7 +43,7 @@ export function PersistentWhatsAppCTA() {
       }`}
     >
       <div className="hidden min-[390px]:block rounded-full border border-white/10 bg-black/80 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white/70 shadow-xl backdrop-blur-md lg:px-4 lg:py-2 lg:text-xs">
-        Founder Available
+        Discuss your workflow
       </div>
       
       <a

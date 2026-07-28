@@ -98,7 +98,7 @@ export default async function IndiaPage() {
       marketLabel="India Software Development"
       positioningTitle="Custom software development for Indian businesses"
       intro="Indian businesses need software that respects cost, speed, staff workflows, branch realities, and long-term maintainability. CodingBull is an Ahmedabad-based software partner that scopes the operating process first, then builds business websites, custom CRM, HRMS, healthcare systems, e-commerce workflows, inventory tools, dashboards, and internal software around real daily use."
-      responseWindow="Architecture response within 48 Indian working hours for qualified healthcare, e-commerce, HRMS, payroll, and custom business system inquiries."
+      responseWindow="Founder-led scope review for qualified healthcare, e-commerce, HRMS, payroll, and custom business system inquiries."
       deliveryModel="Ahmedabad-based, remote-capable delivery with written scope, fixed milestones, review calls, and change-control visibility for Indian businesses."
       bestFitProjects="Healthcare and clinic systems, CRM, HRMS, payroll, attendance, e-commerce, inventory/order automation, dashboards, admin panels, and custom business systems."
       marketHighlights={[

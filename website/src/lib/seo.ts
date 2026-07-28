@@ -124,9 +124,9 @@ export const pageMetadata: Record<string, PageMetadata> = {
     canonical: `${siteConfig.baseUrl}/insights`,
   },
   ahmedabad: {
-    title: 'Software Development Company in Ahmedabad | CodingBull',
+    title: 'CodingBull Ahmedabad — Local Software Company',
     description:
-      'CodingBull Technovations — Ahmedabad-based custom software company specializing in healthcare, e-commerce, and HRMS systems. Fixed-price, founder-led delivery.',
+      'Local company details, service coverage and project links for CodingBull Technovations, an Ahmedabad-based founder-led software company.',
     keywords: ['software company Ahmedabad', 'custom software Ahmedabad', 'web development Ahmedabad'],
     canonical: `${siteConfig.baseUrl}/ahmedabad`,
   },

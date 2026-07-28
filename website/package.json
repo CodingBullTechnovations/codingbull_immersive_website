@@ -22,7 +22,11 @@
     "setup:prod": "npm ci && npm run setup:db && npm run lint && npm run build",
     "sync:seo": "node prisma/sync-seo.mjs",
     "check:urls": "node scripts/check-urls.mjs",
-    "postbuild": "node scripts/check-urls.mjs"
+    "check:llms": "node scripts/check-llms-links.mjs",
+    "check:redirects": "node scripts/check-redirects.mjs",
+    "check:rendered-content": "node scripts/check-rendered-content.mjs",
+    "generate:nginx-redirects": "node scripts/generate-nginx-redirect-map.mjs",
+    "postbuild": "node scripts/check-urls.mjs && node scripts/check-redirects.mjs && node scripts/check-llms-links.mjs && node scripts/check-rendered-content.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

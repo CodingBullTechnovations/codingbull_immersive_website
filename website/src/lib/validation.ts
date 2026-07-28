@@ -5,6 +5,9 @@ import { z } from 'zod';
  * Includes honeypot for basic spam protection.
  */
 export const contactFormSchema = z.object({
+  submissionId: z.string().min(16).max(120),
+  sessionId: z.string().min(16).max(120).optional().or(z.literal('')),
+  visitorId: z.string().min(16).max(120).optional().or(z.literal('')),
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   company: z.string().max(120).optional(),

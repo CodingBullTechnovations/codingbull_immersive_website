@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getIndustryForPath, getLandingPage, getTrafficChannel, industries, trafficChannels } from '@/lib/industry';
 import { prisma } from '@/lib/server/prisma';
 import { getClientIp, hashValue } from '@/lib/server/crypto';
+import { upsertVisitorAttribution } from '@/lib/server/visitor-attribution';
 
 export const runtime = 'nodejs';
 
@@ -151,101 +152,24 @@ export async function POST(request: Request) {
     const clientContext = parsed.data.clientContext ?? {};
 
     await prisma.$transaction(async (tx) => {
-      let visitorSessionId: string | null = null;
-
-      if (sessionIdHash && visitorIdHash) {
-        const existingSession = await tx.visitorSession.findUnique({
-          where: { sessionIdHash },
-          select: { id: true },
-        });
-
-        const visitorProfile = await tx.visitorProfile.upsert({
-          where: { visitorIdHash },
-          create: {
-            visitorIdHash,
-            firstSeenAt: new Date(),
-            lastSeenAt: new Date(),
-            totalSessions: existingSession ? 0 : 1,
-            totalEvents: 1,
-            latestIpAddress: ipAddress,
-            latestCountry: geo.country,
-            latestRegion: geo.region,
-            latestCity: geo.city,
-            latestDeviceType: parsedDevice.deviceType,
-            latestBrowser: parsedDevice.browser,
-            latestOs: parsedDevice.os,
-          },
-          update: {
-            lastSeenAt: new Date(),
-            totalSessions: existingSession ? undefined : { increment: 1 },
-            totalEvents: { increment: 1 },
-            latestIpAddress: ipAddress ?? undefined,
-            latestCountry: geo.country ?? undefined,
-            latestRegion: geo.region ?? undefined,
-            latestCity: geo.city ?? undefined,
-            latestDeviceType: parsedDevice.deviceType,
-            latestBrowser: parsedDevice.browser,
-            latestOs: parsedDevice.os,
-          },
-        });
-
-        const visitorSession = await tx.visitorSession.upsert({
-          where: { sessionIdHash },
-          create: {
-            sessionIdHash,
-            visitorIdHash,
-            visitorId: visitorProfile.id,
-            ipAddress,
-            userAgent,
-            country: geo.country,
-            region: geo.region,
-            city: geo.city,
-            landingPage,
-            lastPage: page,
-            referrer: parsed.data.referrer || null,
-            trafficChannel,
-            utmSource: parsed.data.utmSource || null,
-            utmMedium: parsed.data.utmMedium || null,
-            utmCampaign: parsed.data.utmCampaign || null,
-            ...parsedDevice,
-            screenWidth: clientContext.screenWidth,
-            screenHeight: clientContext.screenHeight,
-            viewportWidth: clientContext.viewportWidth,
-            viewportHeight: clientContext.viewportHeight,
-            timezone: clientContext.timezone,
-            language: clientContext.language,
-            platform: clientContext.platform,
-            touchEnabled: clientContext.touchEnabled,
-            colorScheme: clientContext.colorScheme,
-            firstSeenAt: new Date(),
-            lastSeenAt: new Date(),
-            eventCount: 1,
-          },
-          update: {
-            lastPage: page,
-            ipAddress: ipAddress ?? undefined,
-            userAgent: userAgent ?? undefined,
-            country: geo.country ?? undefined,
-            region: geo.region ?? undefined,
-            city: geo.city ?? undefined,
-            trafficChannel,
-            ...parsedDevice,
-            screenWidth: clientContext.screenWidth ?? undefined,
-            screenHeight: clientContext.screenHeight ?? undefined,
-            viewportWidth: clientContext.viewportWidth ?? undefined,
-            viewportHeight: clientContext.viewportHeight ?? undefined,
-            timezone: clientContext.timezone ?? undefined,
-            language: clientContext.language ?? undefined,
-            platform: clientContext.platform ?? undefined,
-            touchEnabled: clientContext.touchEnabled ?? undefined,
-            colorScheme: clientContext.colorScheme ?? undefined,
-            lastSeenAt: new Date(),
-            eventCount: { increment: 1 },
-          },
-        });
-
-        visitorSessionId = visitorSession.id;
-      }
+      const visitorSessionId = await upsertVisitorAttribution(tx, {
+        sessionIdHash,
+        visitorIdHash,
+        ipAddress,
+        userAgent,
+        country: geo.country,
+        region: geo.region,
+        city: geo.city,
+        landingPage,
+        page,
+        referrer: parsed.data.referrer || null,
+        trafficChannel,
+        utmSource: parsed.data.utmSource || null,
+        utmMedium: parsed.data.utmMedium || null,
+        utmCampaign: parsed.data.utmCampaign || null,
+        device: parsedDevice,
+        clientContext,
+      });
 
       await tx.analyticsEvent.create({
         data: {

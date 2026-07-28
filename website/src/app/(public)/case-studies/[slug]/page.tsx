@@ -43,9 +43,16 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
 
   return generatePageMetadata({
     title: `${study.title} | Case Study | CodingBull`,
-    description: study.challenge.substring(0, 160),
+    description: truncateDescription(study.summary ?? study.challenge),
     canonical: `${siteConfig.baseUrl}${canonicalPath}`,
   });
+}
+
+function truncateDescription(value: string, maxLength = 155) {
+  if (value.length <= maxLength) return value;
+  const shortened = value.slice(0, maxLength + 1);
+  const lastSpace = shortened.lastIndexOf(' ');
+  return `${shortened.slice(0, lastSpace > 100 ? lastSpace : maxLength).replace(/[,:;.!?\s]+$/, '')}.`;
 }
 
 function pairStats(value: unknown) {
@@ -61,8 +68,19 @@ function pairStats(value: unknown) {
 
 function mapDbCaseStudy(study: Awaited<ReturnType<typeof getCaseStudyBySlug>>): CaseStudy | null {
   if (!study) return null;
+  const verifiedStatic = caseStudiesBySlug[study.slug];
   const stats = pairStats(study.metrics);
   const architecture = Array.isArray(study.architecture) ? study.architecture : [];
+  const architectureTitles = architecture
+    .map((item) => (typeof item === 'object' && item !== null ? String((item as Record<string, unknown>).title ?? '') : ''))
+    .filter(Boolean);
+  const architectureDescriptions = architecture
+    .map((item) => (typeof item === 'object' && item !== null ? String((item as Record<string, unknown>).description ?? '') : ''))
+    .filter(Boolean);
+  const rejectedMetricValues = new Set(['15k', '15k+', '500+', '45 seconds', '35%', '120%', '<2min', '80%', '2x inquiries']);
+  const hasRejectedMetrics = stats.some((item) => rejectedMetricValues.has(item.value));
+  const hasRejectedTechLabels = architectureTitles.some((title) => ['Django API', 'WhatsApp Business'].includes(title));
+  const hasGenericArchitecture = architectureDescriptions.some((description) => description.endsWith('used in the project architecture.'));
 
   return {
     slug: study.slug,
@@ -70,21 +88,28 @@ function mapDbCaseStudy(study: Awaited<ReturnType<typeof getCaseStudyBySlug>>): 
     client: study.client,
     category: study.industry,
     year: String((study.publishedAt ?? study.createdAt).getFullYear()),
+    updatedAt: verifiedStatic?.updatedAt ?? study.updatedAt.toISOString().slice(0, 10),
     accentColor: 'teal',
     challenge: study.problem,
     solution: study.solution,
     outcome: study.outcomes,
-    stats,
-    techStack: architecture
-      .map((item) => (typeof item === 'object' && item !== null ? String((item as Record<string, unknown>).title ?? '') : ''))
-      .filter(Boolean),
-    summary: study.problem,
-    projectType: study.industry,
-    market: 'Not specified in public case-study data',
+    stats: stats.length && !hasRejectedMetrics ? stats : verifiedStatic?.stats ?? [],
+    techStack: architectureTitles.length && !hasRejectedTechLabels ? architectureTitles : verifiedStatic?.techStack ?? [],
+    summary: verifiedStatic?.summary ?? study.problem,
+    projectType: verifiedStatic?.projectType ?? study.industry,
+    market: verifiedStatic?.market,
     mainServiceCategory: study.seoIndustry.replaceAll('_', ' '),
-    deliveryModel: 'Founder-led custom build',
+    deliveryModel: verifiedStatic?.deliveryModel ?? 'Founder-led custom build',
     // Only PUBLISHED + APPROVED records reach this mapper.
     status: 'Published case study',
+    servicesInvolved: verifiedStatic?.servicesInvolved,
+    modules: verifiedStatic?.modules,
+    technicalApproach: architectureDescriptions.length && !hasGenericArchitecture
+      ? architectureDescriptions
+      : verifiedStatic?.technicalApproach,
+    businessValue: verifiedStatic?.businessValue,
+    roadmap: verifiedStatic?.roadmap,
+    cta: verifiedStatic?.cta,
   };
 }
 
@@ -119,6 +144,7 @@ export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps
         description: study.challenge,
         url: caseUrl,
         about: study.category,
+        dateModified: study.updatedAt,
       })} />
       <JsonLd data={generateBreadcrumbSchema([
         { name: 'Home', url: siteConfig.baseUrl },

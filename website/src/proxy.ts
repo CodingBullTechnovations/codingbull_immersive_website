@@ -1,25 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
-
-const OLD_ROUTE_REDIRECTS: Record<string, string> = {
-  '/blog': '/insights',
-  '/privacy-policy': '/privacy',
-  '/cookie-policy': '/privacy',
-  '/our-projects': '/case-studies',
-  '/projects': '/case-studies',
-  '/contact-us': '/contact',
-  '/healthcare-software-development': '/services/healthcare-software-development',
-  '/ecommerce-development': '/services/ecommerce-development',
-  '/custom-hrms-payroll-software': '/services/custom-hrms-payroll-software',
-  '/custom-crm-appointment-software': '/services/custom-business-systems',
-  '/services/ui-ux-design': '/services',
-  '/services/web-development': '/services',
-  '/services/mobile-app-development': '/services',
-  '/services/ai-machine-learning': '/services/custom-business-systems',
-  '/services/cloud-solutions': '/services/custom-business-systems',
-  '/services/cybersecurity': '/services/custom-business-systems',
-  '/services/digital-marketing': '/services',
-};
+import legacyRedirects from '@/config/legacy-redirects.json';
 
 export default auth((request) => {
   const { pathname } = request.nextUrl;
@@ -30,7 +11,7 @@ export default auth((request) => {
   const isAuthenticated = Boolean(request.auth?.user);
 
   if (host === 'codingbullz.com') {
-    const destinationPath = OLD_ROUTE_REDIRECTS[pathname] ?? pathname;
+    const destinationPath = legacyRedirects[pathname as keyof typeof legacyRedirects] ?? pathname;
     const url = new URL(destinationPath, 'https://www.codingbullz.com');
     url.search = request.nextUrl.search;
     return NextResponse.redirect(url, 301);

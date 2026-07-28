@@ -204,14 +204,20 @@ export async function saveInsightPostAction(formData: FormData) {
   const id = optionalValue(formData, 'id');
   const status = statusSchema.parse(value(formData, 'status'));
   const existing = id ? await prisma.insightPost.findUnique({ where: { id } }) : null;
+  const title = z.string().min(3).parse(value(formData, 'title'));
+  const excerpt = z.string().min(20).parse(value(formData, 'excerpt'));
+  const body = z.string().min(80).parse(value(formData, 'body'));
+  const materialContentChanged = Boolean(existing && existing.status === 'PUBLISHED' && status === 'PUBLISHED' && (
+    existing.title !== title || existing.excerpt !== excerpt || existing.body !== body
+  ));
 
   const data = {
     slug: slugSchema.parse(value(formData, 'slug')),
-    title: z.string().min(3).parse(value(formData, 'title')),
+    title,
     metaTitle: optionalValue(formData, 'metaTitle'),
     metaDescription: optionalValue(formData, 'metaDescription'),
-    excerpt: z.string().min(20).parse(value(formData, 'excerpt')),
-    body: z.string().min(80).parse(value(formData, 'body')),
+    excerpt,
+    body,
     author: z.string().min(2).parse(value(formData, 'author')),
     niche: nicheSchema.parse(value(formData, 'niche')),
     tags: tags(value(formData, 'tags')),
@@ -224,6 +230,7 @@ export async function saveInsightPostAction(formData: FormData) {
     internalLinkTargets: lines(value(formData, 'internalLinkTargets')),
     status,
     publishedAt: publishedAt(status, existing?.publishedAt),
+    contentUpdatedAt: materialContentChanged ? new Date() : existing?.contentUpdatedAt ?? null,
   };
 
   const saved = id

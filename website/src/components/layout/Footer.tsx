@@ -5,6 +5,7 @@ import { footerContent } from '@/content/footer';
 import { siteConfig } from '@/content/site';
 import { enabledFooterSocialLinks, enabledSocialContentEmbeds, type SocialContentEmbed, type SocialLink } from '@/lib/social-links';
 import { getPublicSocialLinksConfig } from '@/lib/server/social-links';
+import { TrackedContactLink } from '@/components/ui/TrackedContactLink';
 
 function BrandIcon({ platform }: { platform: string }) {
   const iconClass = 'h-4 w-4';
@@ -89,8 +90,8 @@ export async function Footer() {
             </div>
             <h2 className="mt-10 max-w-[12ch] font-[family-name:var(--font-display)] text-[clamp(2.4rem,4.8vw,5rem)] font-medium leading-[0.94] tracking-[-0.058em] text-white">Software should fit the operation.</h2>
             <div className="mt-9 grid gap-2 text-sm text-white/68 sm:grid-cols-2">
-              <a href={`mailto:${siteConfig.email}`} className="hover:text-white">{siteConfig.email}</a>
-              <a href={`tel:${siteConfig.phone.replaceAll(' ', '')}`} className="hover:text-white">{siteConfig.phone}</a>
+              <TrackedContactLink href={`mailto:${siteConfig.email}`} source="footer_email" className="hover:text-white">{siteConfig.email}</TrackedContactLink>
+              <TrackedContactLink href={`tel:${siteConfig.phone.replaceAll(' ', '')}`} source="footer_phone" className="hover:text-white">{siteConfig.phone}</TrackedContactLink>
               <span>Ahmedabad, Gujarat, India</span>
               <span>GSTIN 24AAMCC7617E1ZP</span>
             </div>

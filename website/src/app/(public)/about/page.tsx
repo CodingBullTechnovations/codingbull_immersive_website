@@ -6,12 +6,30 @@ import { homeContent } from '@/content/home';
 import { generatePageMetadata, pageMetadata } from '@/lib/seo';
 import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
 import { primaryEntryPoints } from '@/content/link-graph';
+import { siteConfig } from '@/content/site';
+import { JsonLd, generateAboutPageSchema, generateBreadcrumbSchema, generatePersonSchema } from '@/lib/schema';
 
 export const metadata = generatePageMetadata(pageMetadata.about);
 
 export default function AboutPage() {
+  const pageUrl = `${siteConfig.baseUrl}/about`;
+
   return (
     <>
+      <JsonLd data={generateAboutPageSchema({
+        name: 'About CodingBull Technovations',
+        description: 'Founder-led custom software company based in Ahmedabad, India.',
+        url: pageUrl,
+      })} />
+      <JsonLd data={generatePersonSchema({
+        name: 'Pranshu Dixit',
+        jobTitle: 'Founder',
+        url: pageUrl,
+      })} />
+      <JsonLd data={generateBreadcrumbSchema([
+        { name: 'Home', url: siteConfig.baseUrl },
+        { name: 'About CodingBull', url: pageUrl },
+      ])} />
       <PageHero
         title="Founder-led by design."
         subtitle="CodingBull Technovations is an Ahmedabad-based custom software company built around direct technical ownership, workflow-first architecture, and fixed-scope delivery."

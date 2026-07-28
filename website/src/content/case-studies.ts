@@ -4,6 +4,8 @@ export interface CaseStudy {
   client: string;
   category: string;
   year: string;
+  /** ISO date of the most recent material public-content edit. */
+  updatedAt?: string;
   accentColor: string;
   challenge: string;
   solution: string;
@@ -35,6 +37,7 @@ export const caseStudies: CaseStudy[] = [
     client: 'Physioway Active Health LLP',
     category: 'Healthcare Systems',
     year: '2024',
+    updatedAt: '2026-07-26',
     accentColor: 'teal',
     challenge: 'Physioway Active Health LLP needed a custom digital platform that could support its day-to-day treatment work and provide a maintainable foundation for its online presence.',
     solution: 'We created Physioways.com as a custom healthcare platform for Physioway Active Health LLP and continue to support the organization through product work and digital marketing.',
@@ -100,6 +103,7 @@ export const caseStudies: CaseStudy[] = [
     client: 'Shashwat IVF',
     category: 'Clinic Websites',
     year: '2025',
+    updatedAt: '2026-07-26',
     accentColor: 'rose',
     challenge: 'Shashwat IVF needed a professional healthcare website that its own team could keep current without relying on developers for routine content and visual updates.',
     solution: 'We created a healthcare website backed by Django Admin, giving the team control over blogs, colors, images, team members, and other core website content.',

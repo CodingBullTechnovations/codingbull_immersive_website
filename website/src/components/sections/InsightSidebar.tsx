@@ -8,18 +8,20 @@ interface InsightSidebarProps {
   headings: { text: string; id: string }[];
   author: string;
   date: string;
+  updatedAt?: string;
   readingTime: string;
   slug: string;
   title: string;
   config: InsightSidebarWidgetConfig;
 }
 
-export function InsightSidebar({ headings, slug, title, config, author, date, readingTime }: InsightSidebarProps) {
+export function InsightSidebar({ headings, slug, title, config, author, date, updatedAt, readingTime }: InsightSidebarProps) {
   // Static, factual article metadata only — no simulated telemetry, fake
   // timestamps, or invented system activity.
   const articleFacts = [
     { label: 'AUTHOR', value: author.toUpperCase() },
     { label: 'PUBLISHED', value: date },
+    ...(updatedAt ? [{ label: 'UPDATED', value: updatedAt }] : []),
     { label: 'READ TIME', value: readingTime.toUpperCase() },
     { label: 'RENDER', value: 'SSR + ISR 60s' },
   ];

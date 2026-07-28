@@ -8,9 +8,9 @@ This guide explains what your team can update directly in Admin, and what still 
   Meaning: this page content is managed from Admin.  
   Action: open the matching Admin section and edit there.
 
-- **Mixed DB + Static**  
-  Meaning: Admin content is used first, but some fallback text still comes from code.  
-  Action: publish complete content in Admin to avoid fallback.
+- **Mixed DB + Static**
+  Meaning: Admin content is authoritative for fields that exist in the CMS, while code supplies fields the CMS does not model.
+  Action: edit CMS-owned fields in Admin; request engineering changes for code-only enrichment.
 
 - **Code Managed**  
   Meaning: this page is not editable in Admin yet.  
@@ -37,14 +37,25 @@ Main location:
 - `/about`
 - `/contact`
 - `/ahmedabad`
+- `/software-development-company-ahmedabad`
+- `/web-development-company-ahmedabad`
 - `/india`
 - `/usa`
+- `/uae`
+- `/canada`
 - `/services` (index page)
 - `/case-studies` (index page)
 - `/privacy`
 - `/terms`
 
 These are listed in the Admin Content sidebar as **“Pages not controlled from admin.”**
+
+## 3a) Detail-page ownership rules
+
+- **Services:** DB-first for title, description, modules, FAQs, body, canonical, and SEO fields. Static code supplies technology lists and explicitly dated reviewed fallbacks. A narrow safety check blocks the already-rejected healthcare `40%` claim until the corrected DB content is synchronized; it does not override a normal Admin edit.
+- **Insights:** DB-first. `updatedAt` is an internal record timestamp and is never published as editorial freshness. Visible `Updated`, `BlogPosting.dateModified`, and sitemap modification dates use only `contentUpdatedAt`, which changes when title, excerpt, or body changes.
+- **Case studies:** DB-first for client, title, problem, solution, outcome, metrics, architecture, status, and permission. Code supplies richer fields not represented in the current CMS schema, such as modules, business value, roadmap, and page-specific CTA. Narrow safety checks reject the known old fabricated metrics and generic seeded architecture descriptions until DB synchronization is complete.
+- **Publication control:** DB status remains authoritative. A DB row in draft/review/archive does not become public merely because a static fallback exists.
 
 ## 4) Common tasks (step-by-step)
 

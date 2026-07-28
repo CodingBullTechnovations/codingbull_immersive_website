@@ -5,6 +5,8 @@ export interface InsightPost {
   content: string;      // Full article content (markdown-style)
   author: string;
   date: string;
+  /** ISO date, present only after a material edit made after publication. */
+  updatedAt?: string;
   readingTime: string;
   category: string;
   accentColor: string;

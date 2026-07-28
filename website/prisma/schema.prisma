@@ -201,6 +201,7 @@ model VerificationToken {
 
 model Lead {
   id              String          @id @default(cuid())
+  submissionId    String?         @unique
   name            String
   email           String
   phone           String
@@ -382,6 +383,7 @@ model InsightPost {
   internalLinkTargets  String[]        @default([])
   status               ContentStatus   @default(DRAFT)
   publishedAt          DateTime?
+  contentUpdatedAt     DateTime?
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
 

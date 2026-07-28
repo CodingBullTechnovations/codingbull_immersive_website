@@ -47,9 +47,12 @@ Interpretation notes:
 - [Clinic management software modules](https://www.codingbullz.com/insights/clinic-management-software-modules): Practical module planning for appointments, records, billing, staff workflows, follow-ups, reporting, and access control.
 - [Patient appointment system architecture](https://www.codingbullz.com/insights/patient-appointment-booking-system-architecture): Availability, booking, reminders, cancellation, data ownership, and operational design decisions.
 - [Django for healthcare backends](https://www.codingbullz.com/insights/why-django-powers-healthcare-backends): Backend architecture considerations for maintainable healthcare platforms.
+- [React and Next.js for SEO-first e-commerce](https://www.codingbullz.com/insights/react-nextjs-seo-first-ecommerce): Server rendering, crawlable catalog architecture, performance, metadata, and commerce operations.
 - [E-commerce inventory and order automation](https://www.codingbullz.com/insights/custom-ecommerce-inventory-order-automation): Catalog, stock, order, payment, shipping, and exception workflows.
 - [Shopify versus custom e-commerce](https://www.codingbullz.com/insights/shopify-vs-custom-ecommerce-platform): Decision framework for templates, integrations, custom operations, ownership, and scale.
 - [Payroll automation rules](https://www.codingbullz.com/insights/payroll-automation-rules-custom-hrms): Attendance inputs, salary rules, exceptions, review, payslips, and audit history.
+- [Building HRMS for 500+ employees](https://www.codingbullz.com/insights/building-hrms-that-scales-500-employees): Data, permissions, attendance, payroll, reporting, and architecture decisions for growing workforces.
+- [Multi-location attendance system design](https://www.codingbullz.com/insights/multi-location-attendance-management-system): Branch, shift, device, exception, approval, and payroll-ready attendance workflows.
 - [Internal CRM and workflow automation](https://www.codingbullz.com/insights/internal-crm-workflow-automation-guide): Records, approvals, task routing, dashboards, ownership, and data quality.
 - [SaaS versus custom software](https://www.codingbullz.com/insights/saas-vs-custom-software-decision-guide): A practical framework for choosing SaaS, integrations, custom software, or a hybrid approach.
 - [ANR Mechanicals digital presence](https://www.codingbullz.com/insights/anr-mechanicals-digital-presence): How ANR's offline industrial portfolio was structured into a public website without attributing contract or traffic outcomes to the site.
@@ -63,6 +66,11 @@ Interpretation notes:
 - [USA](https://www.codingbullz.com/usa): Remote software delivery from India for USA businesses; this page does not claim a US office.
 - [UAE](https://www.codingbullz.com/uae): Remote software delivery from India for UAE businesses; this page does not claim a UAE office.
 - [Canada](https://www.codingbullz.com/canada): Remote software delivery from India for Canadian businesses; this page does not claim a Canadian office.
+
+## Products
+
+- [Products by CodingBull](https://www.codingbullz.com/products): Software products built and operated by CodingBull.
+- [RemoteRadar](https://www.codingbullz.com/products/remote-radar): CodingBull's remote engineering job aggregation product with source-first applications and practical filtering.
 
 ## Optional
 

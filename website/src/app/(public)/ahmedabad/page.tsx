@@ -53,14 +53,14 @@ export default async function AhmedabadPage() {
         sameAs: sameAsSocialUrls(socialConfig),
       })} />
       <PageHero
-        title="Software Development in Ahmedabad"
-        subtitle="Founder-led custom software, business websites, CRM, HRMS, healthcare systems, e-commerce platforms, admin panels, dashboards, and workflow automation for Ahmedabad businesses."
-        badge="Ahmedabad Hub"
+        title="CodingBull Ahmedabad"
+        subtitle="Local company information, service coverage, project proof, and the direct routes for Ahmedabad businesses comparing custom software or website partners."
+        badge="Local Company Hub"
       />
 
       <SectionWrapper className="py-24">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8">Ahmedabad&apos;s Enterprise Software Partner</h2>
+          <h2 className="text-3xl font-bold mb-8">An Ahmedabad-based, founder-led software company</h2>
           <p className="text-white/60 text-lg mb-10 max-w-4xl">
             CodingBull Technovations Pvt. Ltd. is based in Ahmedabad and builds practical digital systems for businesses that need more than a brochure site or generic SaaS subscription. We scope the workflow first, then build the website, CRM, HRMS, admin panel, dashboard, e-commerce, healthcare, or custom software around how the team actually works.
           </p>

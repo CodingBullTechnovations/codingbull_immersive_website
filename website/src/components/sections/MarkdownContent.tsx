@@ -129,9 +129,8 @@ export function MarkdownContent({ blocks }: { blocks: ContentBlock[] }) {
               <h2
                 key={idx}
                 id={headingId}
-                className="group/heading mt-12 mb-6 flex scroll-mt-24 items-center gap-2 font-[family-name:var(--font-display)] text-2xl font-bold text-white lg:text-3xl"
+                className="mt-12 mb-6 scroll-mt-24 font-[family-name:var(--font-display)] text-2xl font-bold text-white lg:text-3xl"
               >
-                <span className="font-mono text-lg text-teal opacity-0 transition-opacity group-hover/heading:opacity-60">#</span>
                 {renderInline(block.text || '')}
               </h2>
             );

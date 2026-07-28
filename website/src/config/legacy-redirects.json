@@ -1,0 +1,19 @@
+{
+  "/blog": "/insights",
+  "/privacy-policy": "/privacy",
+  "/cookie-policy": "/privacy",
+  "/our-projects": "/case-studies",
+  "/projects": "/case-studies",
+  "/contact-us": "/contact",
+  "/healthcare-software-development": "/services/healthcare-software-development",
+  "/ecommerce-development": "/services/ecommerce-development",
+  "/custom-hrms-payroll-software": "/services/custom-hrms-payroll-software",
+  "/custom-crm-appointment-software": "/services/custom-business-systems",
+  "/services/ui-ux-design": "/services",
+  "/services/web-development": "/services",
+  "/services/mobile-app-development": "/services",
+  "/services/ai-machine-learning": "/services/custom-business-systems",
+  "/services/cloud-solutions": "/services/custom-business-systems",
+  "/services/cybersecurity": "/services/custom-business-systems",
+  "/services/digital-marketing": "/services"
+}

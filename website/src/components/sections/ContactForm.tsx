@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { contactFormSchema, type ContactFormData } from '@/lib/validation';
 import { submitContactForm } from '@/app/actions/contact';
 import { Button } from '@/components/ui/Button';
-import { trackFormStart, trackFormSubmit } from '@/lib/tracking';
+import { getAnalyticsIdentity } from '@/lib/analytics';
+import { trackFormStart } from '@/lib/tracking';
 
 const inputClasses =
   'w-full min-h-14 bg-[var(--surface-panel)] border border-white/12 rounded-[2px] px-4 py-3.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[var(--accent)]/65 focus:bg-[var(--surface-card)] transition-colors';
@@ -32,6 +33,10 @@ function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.Re
   );
 }
 
+function makeSubmissionId() {
+  return window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+}
+
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
@@ -49,11 +54,16 @@ export function ContactForm() {
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
+    defaultValues: { submissionId: '', sessionId: '', visitorId: '' },
     // No preselected service/budget/timeline — preselections pollute lead
     // data with defaults the visitor never chose.
   });
 
   useEffect(() => {
+    setValue('submissionId', makeSubmissionId());
+    const identity = getAnalyticsIdentity();
+    setValue('sessionId', identity.sessionId ?? '');
+    setValue('visitorId', identity.visitorId ?? '');
     const params = new URLSearchParams(window.location.search);
     setValue('sourcePage', window.location.pathname);
     setValue('referrer', document.referrer);
@@ -85,7 +95,19 @@ export function ContactForm() {
       if (result.success) {
         setSubmitStatus({ success: true, message: result.message || 'Thank you. We will reach out soon.' });
         reset();
-        trackFormSubmit('contact_page_form');
+        setValue('submissionId', makeSubmissionId());
+        const identity = getAnalyticsIdentity();
+        setValue('sessionId', identity.sessionId ?? '');
+        setValue('visitorId', identity.visitorId ?? '');
+        setValue('sourcePage', window.location.pathname);
+        setValue('referrer', document.referrer);
+        const params = new URLSearchParams(window.location.search);
+        setValue('utmSource', params.get('utm_source') ?? '');
+        setValue('utmMedium', params.get('utm_medium') ?? '');
+        setValue('utmCampaign', params.get('utm_campaign') ?? '');
+        setValue('utmTerm', params.get('utm_term') ?? '');
+        setValue('utmContent', params.get('utm_content') ?? '');
+        formStarted.current = false;
       } else {
         setSubmitStatus({ success: false, message: result.error || 'Something went wrong. Please try again.' });
       }
@@ -296,6 +318,9 @@ export function ContactForm() {
                 <FieldError id="contact-message-error" message={errors.message?.message} />
               </div>
 
+              <input type="hidden" {...register('submissionId')} />
+              <input type="hidden" {...register('sessionId')} />
+              <input type="hidden" {...register('visitorId')} />
               <input type="hidden" {...register('sourcePage')} />
               <input type="hidden" {...register('referrer')} />
               <input type="hidden" {...register('utmSource')} />

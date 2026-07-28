@@ -1,7 +1,11 @@
 export interface ServiceContent {
   slug: string;
   title: string;
+  metaTitle?: string;
   description: string;
+  metaDescription?: string;
+  /** ISO date of the most recent material public-content edit. */
+  updatedAt?: string;
   body?: string;
   accentColor: string;
   painPoints: string[];
@@ -15,6 +19,7 @@ export const services: ServiceContent[] = [
   {
     slug: 'healthcare-software-development',
     title: 'Healthcare Software Development',
+    updatedAt: '2026-07-26',
     description: 'CodingBull Technovations Pvt. Ltd. builds medical and healthcare software for clinics, diagnostics, wellness chains, and healthcare operators that need secure patient workflows, appointment systems, reporting, and compliant operations across India, USA, UAE, and Canada.',
     accentColor: 'teal',
     painPoints: [
@@ -25,7 +30,7 @@ export const services: ServiceContent[] = [
     ],
     solution: 'We architect end-to-end healthcare platforms that automate patient flow from online booking through consultation to follow-up while keeping encryption, auditability, and access controls scoped to the operating model.',
     features: [
-      { title: 'Smart Appointment Engine', description: 'Real-time slot management with automated reminders via WhatsApp and SMS, reducing no-shows by up to 40%.' },
+      { title: 'Smart Appointment Engine', description: 'Real-time slot management with WhatsApp and SMS reminder readiness, clear follow-up ownership, and visible no-show workflows.' },
       { title: 'Patient Records & Analytics', description: 'Centralized digital records with search, filters, and analytics dashboards for clinical decision-making.' },
       { title: 'Doctor Availability Grid', description: 'Multi-branch, multi-doctor scheduling with leave management, shift rotation, and conflict detection.' },
       { title: 'Compliance & Security', description: 'End-to-end encryption, role-based access, audit logs, and data residency controls for healthcare regulations.' },
@@ -269,6 +274,7 @@ For inventory-specific scope, review [inventory and order management software](/
   {
     slug: 'custom-hrms-payroll-software',
     title: 'Custom HRMS & Payroll Systems',
+    updatedAt: '2026-07-26',
     description: 'CodingBull Technovations Pvt. Ltd. builds custom HRMS and payroll software for companies that need attendance, leave, salary rules, payslips, approvals, workforce dashboards, and multi-location employee operations in one controlled system.',
     accentColor: 'violet',
     painPoints: [
@@ -277,7 +283,7 @@ For inventory-specific scope, review [inventory and order management software](/
       'Manual attendance tracking with no accountability',
       'Complex leave policies impossible to enforce consistently',
     ],
-    solution: 'We engineer HRMS platforms that automate the entire employee lifecycle — from onboarding through attendance tracking to payslip generation — scaled for 500+ employees.',
+    solution: 'We engineer HRMS platforms that automate the employee lifecycle—from onboarding through attendance tracking to payslip generation—with roles, approvals, and reporting designed for growing teams.',
     features: [
       { title: 'Automated Attendance', description: 'Biometric/GPS-based check-in with shift management, overtime calculation, and real-time dashboards.' },
       { title: 'Smart Payroll Engine', description: 'Custom formulas for deductions, bonuses, PF, ESI, and TDS — generating error-free payslips every cycle.' },
@@ -408,6 +414,9 @@ For focused attendance and payroll scope, review [attendance and payroll managem
   {
     slug: 'custom-business-systems',
     title: 'Custom Business Systems',
+    metaTitle: 'Custom Business Software Development Company',
+    metaDescription: 'Custom business software for CRM, approvals, portals, dashboards and workflow automation. Founder-led discovery and fixed-scope delivery by CodingBull.',
+    updatedAt: '2026-07-26',
     description: 'CodingBull Technovations Pvt. Ltd. builds custom business software, internal CRMs, workflow portals, dashboards, approval systems, reporting tools, and automation layers around the way your business actually operates.',
     accentColor: 'sky',
     painPoints: [

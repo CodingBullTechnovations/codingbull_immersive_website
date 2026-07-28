@@ -87,7 +87,7 @@ export default function CanadaPage() {
       marketLabel="Canada Software Development"
       positioningTitle="Remote software development for Canadian businesses"
       intro="Canadian businesses often need a practical India software development partner for fixed-scope websites, CRM, clinic systems, dashboards, e-commerce workflows, HRMS, payroll, and custom internal tools. CodingBull works remotely from India with clear documentation, milestone planning, and software scoped around the business process before production build starts."
-      responseWindow="Architecture response within 48 working hours with planned overlap for Canadian discovery, review, and milestone decisions."
+      responseWindow="Founder-led scope review with planned overlap for Canadian discovery, review, and milestone decisions."
       deliveryModel="Remote-first delivery from India with planned overlap for Canadian discovery, milestone reviews, written updates, and decision checkpoints."
       bestFitProjects="Business websites, custom CRM, clinic and appointment systems, dashboards, e-commerce workflows, HRMS/payroll systems, admin panels, and internal automation."
       marketHighlights={[

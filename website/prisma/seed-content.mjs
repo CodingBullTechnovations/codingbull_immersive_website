@@ -70,8 +70,30 @@ function detectForceMode() {
   return process.argv.includes('--force') || process.env.SEED_FORCE === 'true' || process.env.SEED_FORCE === '1';
 }
 
+function normalizeComparable(value) {
+  if (value instanceof Date) return value.toISOString();
+  if (Array.isArray(value)) return value.map(normalizeComparable);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, nested]) => [key, normalizeComparable(nested)]),
+    );
+  }
+  return value;
+}
+
+function changedFields(existing, updateData) {
+  return Object.fromEntries(
+    Object.entries(updateData).filter(([key, value]) => {
+      if (value === undefined) return false;
+      return JSON.stringify(normalizeComparable(existing[key])) !== JSON.stringify(normalizeComparable(value));
+    }),
+  );
+}
+
 async function upsertBySlug({ prismaModel, slug, createData, updateData, force, updateExisting = false, counters }) {
-  const existing = await prismaModel.findUnique({ where: { slug }, select: { id: true } });
+  const existing = await prismaModel.findUnique({ where: { slug } });
   if (!existing) {
     await prismaModel.create({ data: createData });
     counters.created += 1;
@@ -83,9 +105,15 @@ async function upsertBySlug({ prismaModel, slug, createData, updateData, force, 
     return;
   }
 
+  const data = force ? updateData : changedFields(existing, updateData);
+  if (Object.keys(data).length === 0) {
+    counters.skipped += 1;
+    return;
+  }
+
   await prismaModel.update({
     where: { slug },
-    data: updateData,
+    data,
   });
   counters.forceUpdated += 1;
 }
@@ -129,8 +157,8 @@ export async function seedContent(prisma, options = {}) {
     const data = {
       slug: service.slug,
       title: service.title,
-      metaTitle: `${service.title} | CodingBull Technovations Pvt. Ltd.`,
-      metaDescription: service.description,
+      metaTitle: service.metaTitle ?? `${service.title} | CodingBull Technovations Pvt. Ltd.`,
+      metaDescription: service.metaDescription ?? service.description,
       body: service.body ?? null,
       niche: serviceInterestForPath(pathname),
       hero: {
@@ -151,14 +179,16 @@ export async function seedContent(prisma, options = {}) {
       status: 'PUBLISHED',
       publishedAt: new Date(),
     };
+    const serviceUpdateData = Object.fromEntries(
+      Object.entries(data).filter(([key]) => key !== 'publishedAt'),
+    );
 
     await upsertBySlug({
       prismaModel: prisma.servicePage,
       slug: service.slug,
       createData: data,
-      updateData: data,
+      updateData: serviceUpdateData,
       force,
-      updateExisting: true,
       counters: summary.services,
     });
   }
@@ -230,7 +260,6 @@ export async function seedContent(prisma, options = {}) {
       createData: data,
       updateData: data,
       force,
-      updateExisting: true,
       counters: summary.insights,
     });
   }

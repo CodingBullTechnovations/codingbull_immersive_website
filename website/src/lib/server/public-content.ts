@@ -70,7 +70,7 @@ export async function listPublishedInsightSlugs() {
     () =>
       prisma.insightPost.findMany({
         where: { status: ContentStatus.PUBLISHED },
-        select: { slug: true, publishedAt: true, updatedAt: true },
+        select: { slug: true, publishedAt: true, contentUpdatedAt: true },
       }),
     [],
   );
@@ -80,7 +80,7 @@ export async function listInsightSlugStatuses() {
   return safeQuery(
     () =>
       prisma.insightPost.findMany({
-        select: { slug: true, status: true, publishedAt: true, updatedAt: true },
+        select: { slug: true, status: true, publishedAt: true, contentUpdatedAt: true },
       }),
     [],
   );

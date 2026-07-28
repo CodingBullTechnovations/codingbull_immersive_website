@@ -160,6 +160,7 @@ export function generateArticleSchema(article: {
   description: string;
   url: string;
   datePublished: string;
+  dateModified?: string;
   author: string;
   image?: string;
 }) {
@@ -174,6 +175,7 @@ export function generateArticleSchema(article: {
     description: article.description,
     url: article.url,
     datePublished: article.datePublished,
+    ...(article.dateModified ? { dateModified: article.dateModified } : {}),
     author: {
       '@type': 'Person',
       name: article.author,
@@ -188,6 +190,7 @@ export function generateCreativeWorkSchema(work: {
   description: string;
   url: string;
   about?: string;
+  dateModified?: string;
 }) {
   return {
     '@context': 'https://schema.org',
@@ -196,7 +199,58 @@ export function generateCreativeWorkSchema(work: {
     description: work.description,
     url: work.url,
     about: work.about,
+    ...(work.dateModified ? { dateModified: work.dateModified } : {}),
     creator: organizationRef(),
+  };
+}
+
+export function generateAboutPageSchema(page: {
+  name: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${page.url}#about-page`,
+    name: page.name,
+    description: page.description,
+    url: page.url,
+    mainEntity: organizationRef(),
+    isPartOf: { '@id': `${siteConfig.baseUrl}/#website` },
+  };
+}
+
+export function generatePersonSchema(person: {
+  name: string;
+  jobTitle: string;
+  url: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${person.url}#founder`,
+    name: person.name,
+    jobTitle: person.jobTitle,
+    url: person.url,
+    worksFor: organizationRef(),
+  };
+}
+
+export function generateContactPageSchema(page: {
+  name: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${page.url}#contact-page`,
+    name: page.name,
+    description: page.description,
+    url: page.url,
+    about: organizationRef(),
+    isPartOf: { '@id': `${siteConfig.baseUrl}/#website` },
   };
 }
 

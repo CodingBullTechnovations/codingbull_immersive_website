@@ -232,4 +232,9 @@ export interface PageMetadata {
   ogImageWidth?: number;
   ogImageHeight?: number;
   noIndex?: boolean;
+  article?: {
+    publishedTime: string;
+    modifiedTime?: string;
+    authors: string[];
+  };
 }

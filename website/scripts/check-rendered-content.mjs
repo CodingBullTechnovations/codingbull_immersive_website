@@ -57,6 +57,29 @@ forbidText('case-studies/shashwat-ivf.html', [
 forbidText('insights/custom-ecommerce-inventory-order-automation.html', ['"dateModified"']);
 forbidText('sitemap.xml.body', ['2026-07-14']);
 
+const appointmentRoute = 'insights/patient-appointment-booking-system-architecture.html';
+requireText(appointmentRoute, 'Before commissioning a booking system');
+requireText(appointmentRoute, 'Configure, integrate, or build?');
+requireText(appointmentRoute, 'Discuss a Booking Workflow');
+requireText(appointmentRoute, 'insight_appointment_contact');
+requireText(appointmentRoute, 'insight_appointment_whatsapp');
+requireText(appointmentRoute, '"dateModified":"2026-10-01"');
+requireText(appointmentRoute, 'property="og:type" content="article"');
+requireText(appointmentRoute, 'property="article:published_time"');
+requireText(appointmentRoute, 'property="article:author" content="Pranshu Dixit"');
+requireText(appointmentRoute, 'clinic%20booking%20workflow');
+requireText('insights/custom-ecommerce-inventory-order-automation.html', 'final_cta_scope_review');
+forbidText('insights/custom-ecommerce-inventory-order-automation.html', [
+  'Before commissioning a booking system',
+  'property="article:modified_time"',
+]);
+requireText('index.html', 'property="og:type" content="website"');
+const sitemap = read('sitemap.xml.body');
+const appointmentEntry = sitemap.match(/<url>\s*<loc>https:\/\/www\.codingbullz\.com\/insights\/patient-appointment-booking-system-architecture<\/loc>(.*?)<\/url>/s)?.[1];
+if (!appointmentEntry?.includes('<lastmod>2026-10-01T00:00:00.000Z</lastmod>')) {
+  failures.push('Appointment article sitemap date must reflect its actual decision-guide update');
+}
+
 if (failures.length) {
   console.error('Rendered-content guard failed:');
   for (const failure of failures) console.error(`- ${failure}`);

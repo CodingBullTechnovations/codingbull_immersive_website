@@ -1,5 +1,45 @@
 # CodingBull SEO/GEO implementation handoff — 2026-07-26
 
+> ## STATUS UPDATE — 2026-07-28: ALL TECHNICAL WORK IS DEPLOYED AND VERIFIED
+>
+> **Owner actions 1–4 below are COMPLETE. Do not repeat them.**
+>
+> - **§1 Deploy — DONE.** `npm ci` → `setup:db` → `build` → `pm2 restart` all succeeded on production.
+>   Three migrations applied: `add_lead_submission_id`, `add_insight_content_updated_at`,
+>   `sync_reviewed_service_corrections`. The seed correctly **skipped** all existing rows
+>   (9 services / 3 case studies / 12 insights / 3 testimonials; 0 created, 0 overwritten),
+>   so no CMS content was clobbered. All four build guards passed. Health: `{"ok":true,"database":"ok"}`.
+>   Verified live: corrected money-page title, AboutPage/Person/ContactPage schema, contact budget
+>   field, de-cannibalized `/ahmedabad` title, restored timeline + 48-hour claims, and **all
+>   fabricated case-study metrics and the healthcare "40%" claim are gone from production**.
+> - **§2 Nginx one-hop map — DONE.** Applied to `/etc/nginx/sites-available/codingbull`
+>   (map at line 1; the three `return 301` blocks now use `$codingbull_canonical_path$is_args$args`
+>   instead of `$request_uri`; the `proxy_pass` www block untouched). `nginx -t` passed, reloaded.
+>   **Verified externally: every legacy URL is now a single 301 and query strings survive**
+>   (`/our-projects?utm_source=test` → `/case-studies?utm_source=test`). This matters because the
+>   UTM destinations in §5 depend on parameter preservation.
+>   Backups: `/root/nginx-backup-2026-07-28` and `sites-available/codingbull.bak-2026-07-28`.
+> - **§4 Search Console — DONE.** Sitemap resubmitted; indexing requested for the six changed URLs.
+>   **"Page with redirect" validation was correctly NOT re-requested** — those 16 URLs are
+>   intentional redirects and will fail that validation by design, permanently. This is the
+>   correct end state, not a defect.
+> - **§3 GSC URL examples — NO LONGER BLOCKING.** The `Page with redirect` export was supplied and
+>   analysed on 2026-07-28. All 19 URLs resolve correctly, and **every redirect destination was
+>   confirmed indexed** (`/`, `/about`, `/case-studies`, `/insights`, `/privacy`,
+>   `/services/custom-business-systems`). Redirect equity is landing. Nothing further to fix here.
+>
+> ### The one problem that remains — and it is NOT a code problem
+>
+> **Only 20 of 41 pages are indexed.** Not indexed: **all 12 blog posts**, 7 of 9 service pages,
+> `/products`, `/terms`. These pages were tested live and are technically flawless — HTTP 200,
+> `index, follow`, self-canonical, 4,200–6,600 words, present in the sitemap, not blocked by
+> robots.txt. Google has crawled them and declined to index.
+>
+> **This is a domain-trust ceiling. No further code change will lift it.** The only lever is
+> §5–§8 below: Google Business Profile, directory profiles, and genuine client reviews.
+> **That work is now the entire remaining project.** See `analysis/NEXT-STEPS-OWNER-ACTIONS.md`
+> for a plain-language version.
+
 ## Outcome
 
 This sprint implements the evidence-backed repository work that can be completed without production credentials or invented business facts. It does not promise rankings, traffic, leads, local-pack placement, or AI citations.

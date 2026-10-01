@@ -6,6 +6,7 @@
     "node": ">=20.19.0"
   },
   "scripts": {
+    "addbacklinks": "node scripts/addbacklinks.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -25,8 +26,10 @@
     "check:llms": "node scripts/check-llms-links.mjs",
     "check:redirects": "node scripts/check-redirects.mjs",
     "check:rendered-content": "node scripts/check-rendered-content.mjs",
+    "check:enquiry-tracking": "node scripts/check-enquiry-tracking.mjs",
+    "check:insight-cms": "node scripts/check-insight-cms.mjs",
     "generate:nginx-redirects": "node scripts/generate-nginx-redirect-map.mjs",
-    "postbuild": "node scripts/check-urls.mjs && node scripts/check-redirects.mjs && node scripts/check-llms-links.mjs && node scripts/check-rendered-content.mjs"
+    "postbuild": "node scripts/check-urls.mjs && node scripts/check-redirects.mjs && node scripts/check-llms-links.mjs && node scripts/check-rendered-content.mjs && node scripts/check-enquiry-tracking.mjs && node scripts/check-insight-cms.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

@@ -2,6 +2,7 @@
   "name": "codingbull-root",
   "private": true,
   "scripts": {
+    "addbacklinks": "npm --prefix website run addbacklinks --",
     "dev": "npm --prefix website run dev",
     "build": "npm --prefix website run build",
     "start": "npm --prefix website run start",

@@ -1,5 +1,6 @@
 'use client';
 
+import { getSessionAcquisition } from '@/lib/acquisition-attribution';
 import { env } from '@/lib/env';
 import { getIndustryForPath, getTrafficChannel, normalizePath } from '@/lib/industry';
 
@@ -20,7 +21,7 @@ export function trackEvent(
   if (typeof window !== 'undefined' && shouldIgnorePath(window.location.pathname)) return;
 
   const page = typeof window !== 'undefined' ? normalizePath(window.location.pathname) : String(params?.page ?? '/');
-  const attribution = typeof window !== 'undefined' ? getAttribution(page) : {};
+  const attribution = typeof window !== 'undefined' ? getAnalyticsAttribution(page) : {};
   const payload = {
     name,
     page,
@@ -107,31 +108,15 @@ function getVisitorId() {
   }
 }
 
-function getAttribution(page: string) {
-  const searchParams = new URLSearchParams(window.location.search);
-  let landingPage = page;
-  try {
-    landingPage = window.sessionStorage.getItem('cb_landing_page') ?? page;
-    window.sessionStorage.setItem('cb_landing_page', landingPage);
-  } catch {
-    // Storage can be unavailable in hardened/privacy browser contexts. The
-    // current page is still valid first-party attribution for this request.
-  }
-
-  const utmSource = searchParams.get('utm_source') ?? undefined;
-  const utmMedium = searchParams.get('utm_medium') ?? undefined;
-  const utmCampaign = searchParams.get('utm_campaign') ?? undefined;
-  const trafficChannel = getTrafficChannel(document.referrer, utmMedium, utmSource);
-
+export function getAnalyticsAttribution(page = normalizePath(window.location.pathname)) {
+  const attribution = getSessionAcquisition();
   return {
-    landingPage,
+    ...attribution,
     industry: getIndustryForPath(page),
-    trafficChannel,
-    utmSource,
-    utmMedium,
-    utmCampaign,
+    trafficChannel: getTrafficChannel(attribution.referrer, attribution.utmMedium, attribution.utmSource),
   };
 }
+
 
 function isDuplicatePageView(page: string) {
   if (typeof window === 'undefined') return true;

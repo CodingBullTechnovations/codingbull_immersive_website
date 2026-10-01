@@ -27,9 +27,9 @@ export default async function AdminAnalyticsPage() {
         <AdminStat label="Visits" value={formatNumber(data.traffic.visits)} detail="First-party page views" />
         <AdminStat label="Visitors" value={formatNumber(data.visitorIntelligence.profiles || data.traffic.visitors)} detail="First-party visitor profiles" />
         <AdminStat label="Sessions" value={formatNumber(data.visitorIntelligence.sessions || data.traffic.sessions)} detail="First-party sessions" />
-        <AdminStat label="CTA clicks" value={formatNumber(data.traffic.ctaClicks)} />
+        <AdminStat label="CTA clicks" value={formatNumber(data.traffic.ctaClicks)} detail="Includes tracked WhatsApp buttons; counts overlap" />
         <AdminStat label="Form submits" value={formatNumber(data.traffic.formSubmits)} />
-        <AdminStat label="WhatsApp clicks" value={formatNumber(data.traffic.whatsappClicks)} />
+        <AdminStat label="WhatsApp clicks" value={formatNumber(data.traffic.whatsappClicks)} detail="Link opens, not confirmed enquiries" />
         <AdminStat label="Phone clicks" value={formatNumber(data.traffic.phoneClicks)} />
         <AdminStat label="Email clicks" value={formatNumber(data.traffic.emailClicks)} />
       </section>

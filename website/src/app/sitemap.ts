@@ -4,6 +4,7 @@ import { caseStudies } from '@/content/case-studies';
 import { services } from '@/content/services';
 import { insights } from '@/content/insights';
 import { products } from '@/content/products';
+import { getInsightConversion } from '@/content/insight-conversion';
 import { canonicalUrl } from '@/lib/seo';
 import { isCaseStudyPubliclyVisible, listInsightSlugStatuses, listServiceSlugStatuses, listVisibleCaseStudyStatuses } from '@/lib/server/public-content';
 
@@ -102,7 +103,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
   const insightRoutes = Array.from(insightSlugs).map((slug) => {
     const dbOwnsRoute = dbInsightStatusBySlug.get(slug) === ContentStatus.PUBLISHED;
-    const lastModified = dbOwnsRoute ? dbInsightDates.get(slug) : staticInsightDates.get(slug);
+    const articleDate = dbOwnsRoute ? dbInsightDates.get(slug) : staticInsightDates.get(slug);
+    const supplementDate = getInsightConversion(slug)?.updatedAt;
+    const candidateDates = [articleDate, supplementDate ? new Date(`${supplementDate}T00:00:00.000Z`) : undefined]
+      .filter((date): date is Date => date !== undefined);
+    const lastModified = candidateDates.length
+      ? new Date(Math.max(...candidateDates.map((date) => date.getTime())))
+      : undefined;
     return {
       url: canonicalUrl(`/insights/${slug}`),
       ...(lastModified ? { lastModified } : {}),

@@ -92,7 +92,7 @@ export default async function AdminDashboardPage() {
         <AdminStat label="Visitors" value={formatNumber(data.traffic.visitors)} detail="Unique hashed visitors, 30 days" />
         <AdminStat label="Sessions" value={formatNumber(data.traffic.sessions)} detail="Unique hashed sessions" />
         <AdminStat label="Organic clicks" value={formatNumber(data.seo.organicClicks)} detail={`${formatNumber(data.seo.impressions)} impressions`} />
-        <AdminStat label="Lead conversion" value={formatPercent(data.traffic.conversionRate)} detail={`${formatNumber(data.traffic.formSubmits)} form submits`} />
+        <AdminStat label="Enquiries / page views" value={formatPercent(data.traffic.conversionRate)} detail={`${formatNumber(data.traffic.formSubmits)} form submits; not qualified leads`} />
       </section>
 
       <section className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -118,7 +118,7 @@ export default async function AdminDashboardPage() {
                 <span className="text-white">{industry.averagePosition || '-'}</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-white/45">
-                <span>Conversion</span>
+                <span title="Forms grouped by selected service; views grouped by page industry. This ratio is not a visitor conversion rate.">Service enquiries / industry page views</span>
                 <span className="text-white">{formatPercent(industry.conversionRate)}</span>
               </div>
             </div>

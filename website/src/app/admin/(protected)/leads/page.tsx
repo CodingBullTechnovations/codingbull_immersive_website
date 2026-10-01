@@ -21,7 +21,7 @@ export default async function AdminLeadsPage() {
     <>
       <AdminPageHeader
         title="Leads"
-        description="Qualified inquiry pipeline from the public website, WhatsApp CTAs, and local first-party conversion events."
+        description="Saved website enquiries. Review and qualify each lead here. WhatsApp clicks are tracked separately and do not confirm an enquiry."
       />
 
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">

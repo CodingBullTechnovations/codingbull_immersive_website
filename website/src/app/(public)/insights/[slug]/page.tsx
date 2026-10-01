@@ -18,6 +18,13 @@ import { getInsightSidebarConfigForSlug } from '@/lib/server/sidebar-config';
 import { ContentStatus } from '@prisma/client';
 import { RelatedLinksRail } from '@/components/sections/RelatedLinksRail';
 import { caseStudies } from '@/content/case-studies';
+import { getInsightConversion } from '@/content/insight-conversion';
+
+function getEditorialModifiedDate(post: InsightPost) {
+  const dates = [post.updatedAt, getInsightConversion(post.slug)?.updatedAt]
+    .filter((date): date is string => Boolean(date && date > post.date));
+  return dates.sort().at(-1);
+}
 
 export async function generateStaticParams() {
   const dbPosts = await listInsightSlugStatuses();
@@ -90,7 +97,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const dbPost = await getInsightBySlug(slug);
   const post = dbPost
     ? (dbPost.status === ContentStatus.PUBLISHED ? mapDbPost(dbPost) : null)
-    : insightsBySlug[slug];
+    : (Object.hasOwn(insightsBySlug, slug) ? insightsBySlug[slug] : undefined);
   if (!post) return { title: 'Post Not Found' };
 
   // Honor admin-configured meta fields and same-origin canonical paths.
@@ -102,6 +109,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: dbPost?.metaTitle || post.title,
     description: dbPost?.metaDescription || post.excerpt,
     canonical: `${siteConfig.baseUrl}${canonicalPath}`,
+    article: {
+      publishedTime: post.date,
+      modifiedTime: getEditorialModifiedDate(post),
+      authors: [post.author],
+    },
   });
 }
 
@@ -113,15 +125,18 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
   ]);
   const post = dbPost
     ? (dbPost.status === ContentStatus.PUBLISHED ? mapDbPost(dbPost) : null)
-    : insightsBySlug[slug];
+    : (Object.hasOwn(insightsBySlug, slug) ? insightsBySlug[slug] : undefined);
 
   if (!post) {
     notFound();
   }
 
   const postUrl = `${siteConfig.baseUrl}/insights/${post.slug}`;
-  const modifiedDate = post.updatedAt && post.updatedAt > post.date ? post.updatedAt : undefined;
-  const blocks = parseMarkdownToBlocks(post.content);
+  const conversionContent = getInsightConversion(post.slug);
+  const modifiedDate = getEditorialModifiedDate(post);
+  const blocks = parseMarkdownToBlocks(
+    conversionContent ? `${post.content}\n\n${conversionContent.decisionGuide}` : post.content,
+  );
   const headings = blocks
     .filter((b) => b.type === 'h2')
     .map((b) => ({
@@ -221,6 +236,11 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
                     <p className="mb-5 text-sm font-light leading-relaxed text-white/60 md:text-base">
                       {post.excerpt}
                     </p>
+                    {conversionContent && (
+                      <a href={conversionContent.jumpHref} className="mb-5 inline-flex text-sm font-medium text-teal underline underline-offset-4">
+                        {conversionContent.jumpLabel}
+                      </a>
+                    )}
                     {briefHeadings.length > 0 && (
                       <div className="grid gap-2">
                         {briefHeadings.map((heading) => (
@@ -360,7 +380,19 @@ export default async function InsightPostPage({ params }: { params: Promise<{ sl
         links={relatedProof}
       />
 
-      <CTASection cta={homeContent.finalCTA} />
+      {conversionContent ? (
+        <CTASection
+          cta={conversionContent.cta}
+          title={conversionContent.title}
+          description={conversionContent.description}
+          kicker={conversionContent.kicker}
+          primaryLabel={conversionContent.primaryLabel}
+          primaryTrackingSource={conversionContent.primaryTrackingSource}
+          whatsappMessageKey={conversionContent.whatsappMessageKey}
+        />
+      ) : (
+        <CTASection cta={homeContent.finalCTA} />
+      )}
     </>
   );
 }

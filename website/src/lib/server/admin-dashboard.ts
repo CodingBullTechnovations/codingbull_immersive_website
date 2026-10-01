@@ -352,7 +352,7 @@ export async function getAdminDashboardData() {
       metric.leads = industryLeadGroups.reduce((sum, group) => sum + group._count._all, 0);
       metric.qualified = industryLeadGroups.filter((group) => group.status === 'QUALIFIED').reduce((sum, group) => sum + group._count._all, 0);
       metric.won = industryLeadGroups.filter((group) => group.status === 'WON').reduce((sum, group) => sum + group._count._all, 0);
-      metric.conversionRate = calculateRate(metric.formSubmits || metric.leads, metric.visits || metric.organicClicks);
+      metric.conversionRate = calculateRate(metric.formSubmits, metric.visits);
 
       return metric;
     });

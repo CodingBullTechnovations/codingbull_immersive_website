@@ -98,7 +98,7 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
           timeline,
           message: normalizedMessage,
           sourcePage,
-          referrer: data.referrer || context.referrer || null,
+          referrer: data.referrer ?? context.referrer ?? null,
           utmSource: data.utmSource || null,
           utmMedium: data.utmMedium || null,
           utmCampaign: data.utmCampaign || null,
@@ -127,11 +127,11 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
       });
 
       const trafficChannel = getTrafficChannel(
-        data.referrer || context.referrer,
+        data.referrer ?? context.referrer,
         data.utmMedium,
         data.utmSource,
       );
-      const landingPage = getLandingPage(sourcePage);
+      const landingPage = getLandingPage(sourcePage, data.landingPage);
       const visitorSessionId = await upsertVisitorAttribution(tx, {
         sessionIdHash: context.sessionIdHash,
         visitorIdHash: context.visitorIdHash,
@@ -142,7 +142,7 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
         city: context.city,
         landingPage,
         page: sourcePage,
-        referrer: data.referrer || context.referrer || null,
+        referrer: data.referrer ?? context.referrer ?? null,
         trafficChannel,
         utmSource: data.utmSource || null,
         utmMedium: data.utmMedium || null,
@@ -159,7 +159,7 @@ export async function createLeadFromContactForm(data: ContactFormData, context: 
           trafficChannel,
           sessionIdHash: context.sessionIdHash,
           visitorIdHash: context.visitorIdHash,
-          referrer: data.referrer || context.referrer || null,
+          referrer: data.referrer ?? context.referrer ?? null,
           utmSource: data.utmSource || null,
           utmMedium: data.utmMedium || null,
           utmCampaign: data.utmCampaign || null,

@@ -41,7 +41,8 @@ const eventMap: Record<string, AnalyticsEventType> = {
   phone_click: AnalyticsEventType.PHONE_CLICK,
   email_click: AnalyticsEventType.EMAIL_CLICK,
   form_start: AnalyticsEventType.FORM_START,
-  form_submit: AnalyticsEventType.FORM_SUBMIT,
+  // FORM_SUBMIT is server-owned: leads.ts records it with the saved lead.
+  // Public browser events must never create an enquiry conversion.
   case_study_click: AnalyticsEventType.CASE_STUDY_CLICK,
   scroll_depth: AnalyticsEventType.SCROLL_DEPTH,
 };
@@ -123,7 +124,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false }, { status: 400 });
     }
 
-    const type = eventMap[parsed.data.name];
+    const type = Object.hasOwn(eventMap, parsed.data.name) ? eventMap[parsed.data.name] : undefined;
     if (!type) {
       return NextResponse.json({ ok: true });
     }

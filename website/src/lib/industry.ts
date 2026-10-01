@@ -135,7 +135,8 @@ export function getIndustryForServiceInterest(serviceInterest?: string | null): 
 export function getTrafficChannel(referrer?: string | null, utmMedium?: string | null, utmSource?: string | null): TrafficChannel {
   const medium = utmMedium?.toLowerCase() ?? '';
   const source = utmSource?.toLowerCase() ?? '';
-  const referrerHost = getHost(referrer);
+  const host = getHost(referrer);
+  const referrerHost = host === 'codingbullz.com' ? '' : host;
 
   if (['cpc', 'ppc', 'paid', 'paid_search', 'display', 'ads'].some((term) => medium.includes(term))) {
     return 'PAID';

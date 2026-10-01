@@ -18,6 +18,7 @@ export const contactFormSchema = z.object({
   budget: z.enum(['under_2000', '2000_3000', '3000_5000', 'above_5000', 'unknown']).optional(),
   timeline: z.enum(['asap', 'this_month', 'this_quarter', 'flexible', 'unknown']).optional(),
   message: z.string().min(20, 'Please share at least 20 characters about the requirement'),
+  landingPage: z.string().max(300).optional(),
   sourcePage: z.string().max(300).optional(),
   referrer: z.string().max(500).optional(),
   utmSource: z.string().max(120).optional(),

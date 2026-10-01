@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { contactFormSchema, type ContactFormData } from '@/lib/validation';
 import { submitContactForm } from '@/app/actions/contact';
 import { Button } from '@/components/ui/Button';
-import { getAnalyticsIdentity } from '@/lib/analytics';
+import { getAnalyticsAttribution, getAnalyticsIdentity } from '@/lib/analytics';
 import { trackFormStart } from '@/lib/tracking';
 
 const inputClasses =
@@ -64,14 +64,15 @@ export function ContactForm() {
     const identity = getAnalyticsIdentity();
     setValue('sessionId', identity.sessionId ?? '');
     setValue('visitorId', identity.visitorId ?? '');
-    const params = new URLSearchParams(window.location.search);
+    const attribution = getAnalyticsAttribution();
     setValue('sourcePage', window.location.pathname);
-    setValue('referrer', document.referrer);
-    setValue('utmSource', params.get('utm_source') ?? '');
-    setValue('utmMedium', params.get('utm_medium') ?? '');
-    setValue('utmCampaign', params.get('utm_campaign') ?? '');
-    setValue('utmTerm', params.get('utm_term') ?? '');
-    setValue('utmContent', params.get('utm_content') ?? '');
+    setValue('landingPage', attribution.landingPage);
+    setValue('referrer', attribution.referrer.slice(0, 500));
+    setValue('utmSource', attribution.utmSource ?? '');
+    setValue('utmMedium', attribution.utmMedium ?? '');
+    setValue('utmCampaign', attribution.utmCampaign ?? '');
+    setValue('utmTerm', attribution.utmTerm ?? '');
+    setValue('utmContent', attribution.utmContent ?? '');
   }, [setValue]);
 
   useEffect(() => {
@@ -99,14 +100,15 @@ export function ContactForm() {
         const identity = getAnalyticsIdentity();
         setValue('sessionId', identity.sessionId ?? '');
         setValue('visitorId', identity.visitorId ?? '');
+        const attribution = getAnalyticsAttribution();
         setValue('sourcePage', window.location.pathname);
-        setValue('referrer', document.referrer);
-        const params = new URLSearchParams(window.location.search);
-        setValue('utmSource', params.get('utm_source') ?? '');
-        setValue('utmMedium', params.get('utm_medium') ?? '');
-        setValue('utmCampaign', params.get('utm_campaign') ?? '');
-        setValue('utmTerm', params.get('utm_term') ?? '');
-        setValue('utmContent', params.get('utm_content') ?? '');
+        setValue('landingPage', attribution.landingPage);
+        setValue('referrer', attribution.referrer.slice(0, 500));
+        setValue('utmSource', attribution.utmSource ?? '');
+        setValue('utmMedium', attribution.utmMedium ?? '');
+        setValue('utmCampaign', attribution.utmCampaign ?? '');
+        setValue('utmTerm', attribution.utmTerm ?? '');
+        setValue('utmContent', attribution.utmContent ?? '');
         formStarted.current = false;
       } else {
         setSubmitStatus({ success: false, message: result.error || 'Something went wrong. Please try again.' });
@@ -322,6 +324,7 @@ export function ContactForm() {
               <input type="hidden" {...register('sessionId')} />
               <input type="hidden" {...register('visitorId')} />
               <input type="hidden" {...register('sourcePage')} />
+              <input type="hidden" {...register('landingPage')} />
               <input type="hidden" {...register('referrer')} />
               <input type="hidden" {...register('utmSource')} />
               <input type="hidden" {...register('utmMedium')} />

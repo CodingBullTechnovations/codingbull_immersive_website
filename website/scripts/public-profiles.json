@@ -1,0 +1,6 @@
+[
+  { "id": "techbehemoths", "label": "TechBehemoths", "url": "https://techbehemoths.com/company/codingbull-technovations-pvt-ltd", "order": 100 },
+  { "id": "clutch", "label": "Clutch", "url": "https://clutch.co/profile/codingbull-technovations", "order": 110 },
+  { "id": "goodfirms", "label": "GoodFirms", "url": "https://www.goodfirms.co/company/codingbull-technovations-pvt-ltd", "order": 120 },
+  { "id": "pinterest", "label": "Pinterest", "url": "https://www.pinterest.com/codingbullz/", "order": 130 }
+]

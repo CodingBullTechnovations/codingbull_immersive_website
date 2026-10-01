@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/Button';
 import type { CTAConfig } from '@/types/content';
 import { Reveal } from '@/components/animations/Reveal';
+import type { WhatsAppMessageKey } from '@/content/site';
 
 interface CTASectionProps {
   cta: CTAConfig;
@@ -9,6 +10,8 @@ interface CTASectionProps {
   trustLine?: string;
   primaryLabel?: string;
   kicker?: string;
+  primaryTrackingSource?: string;
+  whatsappMessageKey?: WhatsAppMessageKey;
 }
 
 export function CTASection({
@@ -18,6 +21,8 @@ export function CTASection({
   trustLine = 'Founder-led review · Clear scope · No obligation',
   primaryLabel = 'Request a Scope Review',
   kicker = 'Project brief / 10',
+  primaryTrackingSource = 'final_cta_scope_review',
+  whatsappMessageKey,
 }: CTASectionProps) {
   return (
     <section className="mind-section relative overflow-hidden px-5 py-24 sm:px-8 lg:px-10 lg:py-36" aria-labelledby="final-brief-title">
@@ -35,8 +40,8 @@ export function CTASection({
           <div>
             <p className="cb-copy max-w-xl">{description}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button label={primaryLabel} href="/contact" variant="primary" icon="arrow" trackingSource="final_cta_scope_review" size="large" />
-              <Button label={cta.label} href={cta.href} variant="secondary" icon="whatsapp" trackingSource={cta.trackingSource} size="large" />
+              <Button label={primaryLabel} href="/contact" variant="primary" icon="arrow" trackingSource={primaryTrackingSource} size="large" />
+              <Button label={cta.label} href={cta.href} variant="secondary" icon="whatsapp" trackingSource={cta.trackingSource} whatsappMessageKey={whatsappMessageKey} size="large" />
             </div>
             <p className="cb-mono mt-7 text-xs uppercase tracking-[0.15em] text-white/58">{trustLine}</p>
           </div>

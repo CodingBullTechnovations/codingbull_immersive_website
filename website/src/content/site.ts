@@ -4,6 +4,8 @@ import { env } from '@/lib/env';
 export const whatsappMessages = {
   general:
     "Hi, I'd like to discuss a custom software project with CodingBull.",
+  bookingWorkflow:
+    "Hi, I'd like to discuss our clinic booking workflow, the tools we use, and whether configuration, integration, or custom development would help.",
   healthcare:
     "Hi, I'm interested in a custom healthcare software solution. I'd like to discuss a fixed-price project.",
   ecommerce:

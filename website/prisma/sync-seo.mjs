@@ -1,3 +1,4 @@
+import { normalizeGa4PropertyId, normalizeSearchConsoleSiteUrl, requestGoogleJson } from '../src/lib/google-sync-protocol.mjs';
 import { createDecipheriv, createHash } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
 
@@ -50,7 +51,7 @@ async function accessToken() {
   const refreshToken = await credential('GOOGLE', 'refresh_token', 'GOOGLE_REFRESH_TOKEN');
   if (!clientId || !clientSecret || !refreshToken) throw new Error('Missing Google OAuth credentials.');
 
-  const response = await fetch('https://oauth2.googleapis.com/token', {
+  const json = await requestGoogleJson('Google OAuth token refresh', 'https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
@@ -60,8 +61,7 @@ async function accessToken() {
       grant_type: 'refresh_token',
     }),
   });
-  const json = await response.json();
-  if (!response.ok) throw new Error(json.error_description || json.error || 'Google token refresh failed.');
+  if (typeof json.access_token !== 'string' || !json.access_token) throw new Error('Google OAuth token refresh: response did not contain an access token. Reconnect Google OAuth.');
   return json.access_token;
 }
 
@@ -86,21 +86,20 @@ async function mark(provider, data) {
   });
 }
 
-async function syncSearchConsole(days, token) {
+async function syncSearchConsole(days, getToken) {
   const provider = 'SEARCH_CONSOLE';
-  await mark(provider, { lastAttemptedAt: new Date() });
-  const siteUrl = await credential('SEARCH_CONSOLE', 'site_url', 'GOOGLE_SEARCH_CONSOLE_SITE_URL');
-  if (!siteUrl) throw new Error('Missing Search Console site_url.');
+  const site = normalizeSearchConsoleSiteUrl(await credential('SEARCH_CONSOLE', 'site_url', 'GOOGLE_SEARCH_CONSOLE_SITE_URL'));
+  if (!site.ok) throw new Error(`Search Console configuration: ${site.reason}`);
+  const siteUrl = site.value;
+  const token = await getToken();
   let imported = 0;
 
   for (const date of dates(days)) {
-    const response = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`, {
+    const json = await requestGoogleJson(`Search Console query (${date}, ${siteUrl})`, `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ startDate: date, endDate: date, dimensions: ['query', 'page', 'country', 'device'], rowLimit: 25000 }),
     });
-    const json = await response.json();
-    if (!response.ok) throw new Error(json.error?.message || 'Search Console sync failed.');
 
     for (const row of json.rows ?? []) {
       const [query, page, country, device] = row.keys ?? [];
@@ -118,24 +117,22 @@ async function syncSearchConsole(days, token) {
   return imported;
 }
 
-async function syncGa4(days, token) {
+async function syncGa4(days, getToken) {
   const provider = 'GA4';
-  await mark(provider, { lastAttemptedAt: new Date() });
-  const propertyId = await credential('GA4', 'property_id', 'GA4_PROPERTY_ID');
-  if (!propertyId) throw new Error('Missing GA4 property_id.');
-  const property = propertyId.startsWith('properties/') ? propertyId : `properties/${propertyId}`;
-  const response = await fetch(`https://analyticsdata.googleapis.com/v1beta/${property}:runReport`, {
+  const normalized = normalizeGa4PropertyId(await credential('GA4', 'property_id', 'GA4_PROPERTY_ID'));
+  if (!normalized.ok) throw new Error(`GA4 configuration: ${normalized.reason}`);
+  const property = `properties/${normalized.value}`;
+  const token = await getToken();
+  const json = await requestGoogleJson(`GA4 report (${property})`, `https://analyticsdata.googleapis.com/v1beta/${property}:runReport`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       dateRanges: [{ startDate: `${days}daysAgo`, endDate: 'today' }],
       dimensions: [{ name: 'date' }, { name: 'landingPagePlusQueryString' }, { name: 'sessionSource' }, { name: 'sessionMedium' }],
-      metrics: [{ name: 'sessions' }, { name: 'engagedSessions' }, { name: 'totalUsers' }, { name: 'conversions' }],
+      metrics: [{ name: 'sessions' }, { name: 'engagedSessions' }, { name: 'totalUsers' }, { name: 'keyEvents' }],
       limit: 25000,
     }),
   });
-  const json = await response.json();
-  if (!response.ok) throw new Error(json.error?.message || 'GA4 sync failed.');
   let imported = 0;
 
   for (const row of json.rows ?? []) {
@@ -161,12 +158,26 @@ const daysArg = process.argv.find((arg) => arg.startsWith('--days='));
 const days = daysArg ? Number(daysArg.split('=')[1]) : 30;
 
 try {
-  const token = await accessToken();
-  const searchRows = await syncSearchConsole(days, token);
-  const ga4Rows = await syncGa4(days, token);
-  console.log(JSON.stringify({ ok: true, searchConsoleRows: searchRows, ga4Rows }, null, 2));
+  if (!Number.isInteger(days) || days < 1) throw new Error('--days must be a positive integer.');
+  const result = { ok: true };
+  for (const [provider, run, output] of [
+    ['SEARCH_CONSOLE', syncSearchConsole, 'searchConsoleRows'],
+    ['GA4', syncGa4, 'ga4Rows'],
+  ]) {
+    await mark(provider, { lastAttemptedAt: new Date() });
+    try {
+      result[output] = await run(days, accessToken);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown sync error';
+      await mark(provider, { lastError: message });
+      result.ok = false;
+      result[`${provider}Error`] = message;
+      process.exitCode = 1;
+    }
+  }
+  console.log(JSON.stringify(result, null, 2));
 } catch (error) {
-  console.error(error);
+  console.error(error instanceof Error ? error.message : 'Unknown sync error');
   process.exitCode = 1;
 } finally {
   await prisma.$disconnect();

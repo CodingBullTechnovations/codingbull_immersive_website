@@ -46,7 +46,7 @@ export default async function AdminAnalyticsPage() {
         </StatusPanel>
       </section>
 
-      <SectionTitle title="GA4 imported sessions / reports" detail="Server-side GA4 Data API imports. Empty until Google OAuth and the GA4 property are connected." />
+      <SectionTitle title="GA4 imported sessions / reports" detail="Server-side GA4 Data API imports. Empty until Google OAuth and the GA4 property are connected. The conversions reporting field contains GA4 key-event counts; these are not necessarily qualified enquiries." />
       <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <AdminStat label="GA4 status" value={data.health.ga4DataApi.status.replaceAll('_', ' ')} detail={data.health.ga4DataApi.detail} />
         <AdminStat label="Imported sessions" value={formatNumber(data.industryPerformance.reduce((sum, item) => sum + item.sessions, 0))} />
@@ -72,7 +72,7 @@ export default async function AdminAnalyticsPage() {
         </div>
       </section>
 
-      <SectionTitle title="Search Console SEO" detail="Query and landing-page data imported from Google Search Console only after live domain verification." />
+      <SectionTitle title="Search Console SEO" detail="Query and landing-page data imported from Google Search Console only after live domain verification. Query reports omit anonymized searches, so these totals can be lower than the Search Console overview." />
       <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <AdminStat label="Organic clicks" value={formatNumber(data.seo.organicClicks)} />
         <AdminStat label="Impressions" value={formatNumber(data.seo.impressions)} />
@@ -113,6 +113,7 @@ export default async function AdminAnalyticsPage() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.03]">
           <div className="border-b border-white/10 px-5 py-4 font-semibold text-white">Sync status</div>
           <div className="space-y-3 p-5">
+            <p className="text-xs leading-5 text-white/55">Imported Google reports update when a sync succeeds. Configuration readiness does not mean reports are current. Timestamps are UTC. Row counts below are cumulative processed rows, including repeated imports. A successful sync can return zero rows.</p>
             {data.seo.syncStatus.length === 0 ? (
               <p className="text-sm text-white/40">No Search Console or GA4 import sync has run yet.</p>
             ) : (
@@ -123,7 +124,10 @@ export default async function AdminAnalyticsPage() {
                     <span className="text-xs text-teal">{formatNumber(sync.rowsImported)} rows</span>
                   </div>
                   <p className="mt-2 text-xs text-white/40">
-                    Last success: {sync.lastSuccessfulAt ? sync.lastSuccessfulAt.toISOString().slice(0, 10) : 'Never'}
+                    Last success: {sync.lastSuccessfulAt ? sync.lastSuccessfulAt.toISOString() : 'Never'}
+                  </p>
+                  <p className="mt-2 text-xs text-white/40">
+                    Last attempt (UTC): {sync.lastAttemptedAt ? sync.lastAttemptedAt.toISOString() : 'Never'}
                   </p>
                   {sync.lastError && <p className="mt-2 text-xs text-amber-200">{sync.lastError}</p>}
                 </div>

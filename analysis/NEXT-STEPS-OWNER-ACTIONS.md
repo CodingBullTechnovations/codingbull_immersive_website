@@ -1,5 +1,7 @@
 # What to do next — plain language
 
+> October 5 update: this July document is historical. Its indexing counts, missing-profile claims, causal explanations and timelines are not current verified findings. Use [the October 5 verification and owner steps](OCT-05-VERIFICATION-AND-OWNER-STEPS.md) before acting. Existing profiles are now present; do not create duplicates.
+
 **Updated 2026-07-28. For Pranshu. No technical work left.**
 
 ---

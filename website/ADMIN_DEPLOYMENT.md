@@ -1,3 +1,5 @@
+> October 5 verification note: Admin and `npm run sync:seo` now share property validation and stage diagnostics. The CLI records attempts/errors in Analytics and tries GA4 independently after Search Console failure. The existing credential-row verification status is still updated by Admin, not CLI. Isolated tests and the normal Mac production build/postbuild checks pass; real Google API access and the server deployment still require verification. See [current owner steps](../analysis/OCT-05-VERIFICATION-AND-OWNER-STEPS.md).
+
 # CodingBull Website Deployment
 
 ## Required Runtime

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { AdminField, adminInputClass, AdminSubmitButton } from '@/components/admin/AdminForm';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { listSettingsAdmin } from '@/lib/server/cms';
@@ -592,6 +593,10 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
 
         <div className="mt-5 rounded-xl border border-white/10 bg-black/20 p-4">
           <p className="text-sm font-semibold text-white">Sync readiness</p>
+          <p className="mt-2 text-xs leading-5 text-white/55">
+            These checks confirm configuration only. They do not verify Google access or a successful import.{' '}
+            <Link href="/admin/analytics" className="text-teal underline">Check the last attempt, success, and error in Analytics.</Link>
+          </p>
           <div className="mt-3 grid gap-3 text-xs leading-5 text-white/55 md:grid-cols-2 xl:grid-cols-4">
             {[
               ['OAuth ready', readinessText(syncReadiness.oauth)],

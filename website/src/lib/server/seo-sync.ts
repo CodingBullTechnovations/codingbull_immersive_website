@@ -1,7 +1,9 @@
+import { requestGoogleJson } from '@/lib/google-sync-protocol.mjs';
 import { SeoSyncProvider } from '@prisma/client';
 import { getIndustryForPath, getTrafficChannel, normalizePath } from '@/lib/industry';
 import { getIntegrationValue, upsertCredential } from '@/lib/server/credentials';
 import { prisma } from '@/lib/server/prisma';
+import { normalizeGa4PropertyId, normalizeSearchConsoleSiteUrl } from '@/lib/server/google-sync-readiness';
 
 const googleScopes = [
   'https://www.googleapis.com/auth/webmasters.readonly',
@@ -59,7 +61,7 @@ async function getGoogleAccessToken() {
     throw new Error('Google OAuth credentials are missing. Save client_id, client_secret, and connect OAuth.');
   }
 
-  const response = await fetch('https://oauth2.googleapis.com/token', {
+  const json = await requestGoogleJson('Google OAuth token refresh', 'https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
@@ -70,10 +72,10 @@ async function getGoogleAccessToken() {
     }),
   });
 
-  const json = await response.json();
-  if (!response.ok) throw new Error(json.error_description || json.error || 'Google refresh token failed.');
-
-  return String(json.access_token);
+  if (typeof json.access_token !== 'string' || !json.access_token) {
+    throw new Error('Google OAuth token refresh: response did not contain an access token. Reconnect Google OAuth.');
+  }
+  return json.access_token;
 }
 
 export async function runSearchConsoleSync({ days = 30 }: { days?: number } = {}) {
@@ -81,14 +83,15 @@ export async function runSearchConsoleSync({ days = 30 }: { days?: number } = {}
   await markAttempt(provider);
 
   try {
-    const siteUrl = await getIntegrationValue('SEARCH_CONSOLE', 'site_url', 'GOOGLE_SEARCH_CONSOLE_SITE_URL');
-    if (!siteUrl) throw new Error('Search Console site_url is missing.');
+    const site = normalizeSearchConsoleSiteUrl(await getIntegrationValue('SEARCH_CONSOLE', 'site_url', 'GOOGLE_SEARCH_CONSOLE_SITE_URL'));
+    if (!site.ok) throw new Error(`Search Console configuration: ${site.reason}`);
+    const siteUrl = site.value;
 
     const accessToken = await getGoogleAccessToken();
     let rowsImported = 0;
 
     for (const date of lastNDates(days)) {
-      const response = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`, {
+      const json = await requestGoogleJson(`Search Console query (${date}, ${siteUrl})`, `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -102,8 +105,6 @@ export async function runSearchConsoleSync({ days = 30 }: { days?: number } = {}
         }),
       });
 
-      const json = await response.json();
-      if (!response.ok) throw new Error(json.error?.message || 'Search Console sync failed.');
 
       for (const row of json.rows ?? []) {
         const [query, page, country, device] = row.keys ?? [];
@@ -167,13 +168,13 @@ export async function runGa4Sync({ days = 30 }: { days?: number } = {}) {
   await markAttempt(provider);
 
   try {
-    const propertyId = await getIntegrationValue('GA4', 'property_id', 'GA4_PROPERTY_ID');
-    if (!propertyId) throw new Error('GA4 property_id is missing.');
+    const property = normalizeGa4PropertyId(await getIntegrationValue('GA4', 'property_id', 'GA4_PROPERTY_ID'));
+    if (!property.ok) throw new Error(`GA4 configuration: ${property.reason}`);
+    const normalizedPropertyId = property.value;
 
     const accessToken = await getGoogleAccessToken();
-    const normalizedPropertyId = propertyId.startsWith('properties/') ? propertyId.slice('properties/'.length) : propertyId;
     const normalizedProperty = `properties/${normalizedPropertyId}`;
-    const response = await fetch(`https://analyticsdata.googleapis.com/v1beta/${normalizedProperty}:runReport`, {
+    const json = await requestGoogleJson(`GA4 report (${normalizedProperty})`, `https://analyticsdata.googleapis.com/v1beta/${normalizedProperty}:runReport`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -191,14 +192,12 @@ export async function runGa4Sync({ days = 30 }: { days?: number } = {}) {
           { name: 'sessions' },
           { name: 'engagedSessions' },
           { name: 'totalUsers' },
-          { name: 'conversions' },
+          { name: 'keyEvents' },
         ],
         limit: 25000,
       }),
     });
 
-    const json = await response.json();
-    if (!response.ok) throw new Error(json.error?.message || 'GA4 sync failed.');
 
     let rowsImported = 0;
 
@@ -250,7 +249,8 @@ export async function runGa4Sync({ days = 30 }: { days?: number } = {}) {
     await markError(provider, error);
     const propertyId = await getIntegrationValue('GA4', 'property_id', 'GA4_PROPERTY_ID').catch(() => '');
     if (propertyId) {
-      const normalizedPropertyId = propertyId.startsWith('properties/') ? propertyId.slice('properties/'.length) : propertyId;
+      const property = normalizeGa4PropertyId(propertyId);
+      const normalizedPropertyId = property.ok ? property.value : propertyId;
       await upsertCredential({
         provider: 'GA4',
         key: 'property_id',

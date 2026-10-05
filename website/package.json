@@ -29,7 +29,9 @@
     "check:enquiry-tracking": "node scripts/check-enquiry-tracking.mjs",
     "check:insight-cms": "node scripts/check-insight-cms.mjs",
     "generate:nginx-redirects": "node scripts/generate-nginx-redirect-map.mjs",
-    "postbuild": "node scripts/check-urls.mjs && node scripts/check-redirects.mjs && node scripts/check-llms-links.mjs && node scripts/check-rendered-content.mjs && node scripts/check-enquiry-tracking.mjs && node scripts/check-insight-cms.mjs"
+    "postbuild": "node scripts/check-urls.mjs && node scripts/check-redirects.mjs && node scripts/check-llms-links.mjs && node scripts/check-rendered-content.mjs && node scripts/check-enquiry-tracking.mjs && node scripts/check-insight-cms.mjs && node scripts/check-google-sync.mjs",
+    "check:google-sync": "node scripts/check-google-sync.mjs",
+    "check:email": "node scripts/check-email-config.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
